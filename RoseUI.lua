@@ -1933,7 +1933,7 @@ function RoseUI:CreateWindow(options)
             dropMenuBg.ZIndex = currentZ + 50
             dropMenuBg.ClipsDescendants = true -- Verhindert dass buttons rausgucken
             dropMenuBg.Visible = false
-            dropMenuBg.Parent = screenGui -- Fix: Render above the clipped window boundaries
+            dropMenuBg.Parent = dropFrame:FindFirstAncestor("DragBox") or screenGui -- Fix: Render above the clipped window boundaries
             Instance.new("UICorner", dropMenuBg).CornerRadius = UDim.new(0, 4)
             
             local dropMenuStroke = Instance.new("UIStroke")
@@ -1979,8 +1979,10 @@ function RoseUI:CreateWindow(options)
                     
                     -- Calculate absolute position and size relative to screen
                     dropMenuBg.Size = UDim2.new(0, dropBtn.AbsoluteSize.X, 0, 0)
-                    -- FIX: +50 to forcefully push the dropdown menu below the button, bypassing any Roblox GUI inset miscalculations
-                    dropMenuBg.Position = UDim2.new(0, dropBtn.AbsolutePosition.X, 0, dropBtn.AbsolutePosition.Y + dropBtn.AbsoluteSize.Y + 50)
+                    local dropParent = dropMenuBg.Parent
+                    local relativeX = dropBtn.AbsolutePosition.X - (dropParent:IsA("GuiObject") and dropParent.AbsolutePosition.X or 0)
+                    local relativeY = dropBtn.AbsolutePosition.Y - (dropParent:IsA("GuiObject") and dropParent.AbsolutePosition.Y or 0)
+                    dropMenuBg.Position = UDim2.new(0, relativeX, 0, relativeY + dropBtn.AbsoluteSize.Y + 4)
                     
                     tweenService:Create(arrow, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Rotation = 180, TextColor3 = TEXT_COLOR}):Play()
                     tweenService:Create(outline, TweenInfo.new(0.3), {Transparency = 0}):Play()
@@ -2514,7 +2516,7 @@ function RoseUI:CreateWindow(options)
             dropMenuBg.ZIndex = currentZ + 50
             dropMenuBg.ClipsDescendants = true
             dropMenuBg.Visible = false
-            dropMenuBg.Parent = screenGui
+            dropMenuBg.Parent = dropFrame:FindFirstAncestor("DragBox") or screenGui
             Instance.new("UICorner", dropMenuBg).CornerRadius = UDim.new(0, 4)
             
             local dropMenuStroke = Instance.new("UIStroke")
@@ -2615,8 +2617,10 @@ function RoseUI:CreateWindow(options)
                 isOpen = not isOpen
                 if isOpen then
                     dropMenuBg.Visible = true
-                    -- FIX: +50 spacing instead of +38
-                    dropMenuBg.Position = UDim2.new(0, dropBtn.AbsolutePosition.X, 0, dropBtn.AbsolutePosition.Y + dropBtn.AbsoluteSize.Y + 50)
+                    local dropParent = dropMenuBg.Parent
+                    local relativeX = dropBtn.AbsolutePosition.X - (dropParent:IsA("GuiObject") and dropParent.AbsolutePosition.X or 0)
+                    local relativeY = dropBtn.AbsolutePosition.Y - (dropParent:IsA("GuiObject") and dropParent.AbsolutePosition.Y or 0)
+                    dropMenuBg.Position = UDim2.new(0, relativeX, 0, relativeY + dropBtn.AbsoluteSize.Y + 4)
                     arrow.Text = "▲"
                     tweenService:Create(outline, TweenInfo.new(0.3), {Transparency = 0.2}):Play()
                     
