@@ -1979,7 +1979,8 @@ function RoseUI:CreateWindow(options)
                     
                     -- Calculate absolute position and size relative to screen
                     dropMenuBg.Size = UDim2.new(0, dropBtn.AbsoluteSize.X, 0, 0)
-                    dropMenuBg.Position = UDim2.new(0, dropBtn.AbsolutePosition.X, 0, dropBtn.AbsolutePosition.Y + dropBtn.AbsoluteSize.Y + 2)
+                    -- FIX: +38 instead of +2 because Roblox's Topbar offset causes AbsolutePosition desync in CoreGui exploits
+                    dropMenuBg.Position = UDim2.new(0, dropBtn.AbsolutePosition.X, 0, dropBtn.AbsolutePosition.Y + dropBtn.AbsoluteSize.Y + 38)
                     
                     tweenService:Create(arrow, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Rotation = 180, TextColor3 = TEXT_COLOR}):Play()
                     tweenService:Create(outline, TweenInfo.new(0.3), {Transparency = 0}):Play()
@@ -2614,7 +2615,8 @@ function RoseUI:CreateWindow(options)
                 isOpen = not isOpen
                 if isOpen then
                     dropMenuBg.Visible = true
-                    dropMenuBg.Position = UDim2.new(0, dropBtn.AbsolutePosition.X, 0, dropBtn.AbsolutePosition.Y + dropBtn.AbsoluteSize.Y + 2)
+                    -- FIX: +38 instead of +2 to fix CoreGui Topbar Y-Offset bug
+                    dropMenuBg.Position = UDim2.new(0, dropBtn.AbsolutePosition.X, 0, dropBtn.AbsolutePosition.Y + dropBtn.AbsoluteSize.Y + 38)
                     arrow.Text = "▲"
                     tweenService:Create(outline, TweenInfo.new(0.3), {Transparency = 0.2}):Play()
                     
