@@ -13,7 +13,7 @@ RoseUI.Assets = import("Core/Assets")
 RoseUI.Utilities = import("Core/Utilities")
 
 -- Configurar Tema por Defecto
-RoseUI.CurrentTheme = RoseUI.Themes["Dark Rose"]
+RoseUI.CurrentTheme = RoseUI.Themes["Rose v2 (Premium)"]
 
 -- Cargar Componentes
 RoseUI.Notification = import("Components/Notification")
