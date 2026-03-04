@@ -180,6 +180,13 @@ function Tab:New(tabOptions, window)
         setActive(false)
     end
 
+    function TabObj:Select()
+        if window.CurrentTab == TabObj then return end
+        if window.CurrentTab then window.CurrentTab:Deactivate() end
+        window.CurrentTab = TabObj
+        setActive(true)
+    end
+
     -- Auto select first tab
     if #window.Tabs == 0 then
         window.CurrentTab = TabObj

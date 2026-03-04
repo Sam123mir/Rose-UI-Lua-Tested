@@ -1,7 +1,7 @@
 --[[
     RoseUI v2.5.0
     Created by RoseUI Team
-    Build Date: 4/3/2026, 2:12:32 p. m.
+    Build Date: 4/3/2026, 2:37:55 p. m.
     
     This is a unified distribution file. 
 ]]
@@ -178,7 +178,7 @@ function Utilities:MakeDraggable(dragFrame, parentFrame)
     return dragCon
 end
 
-function Utilities:MakeResizable(resizeBtn, parentFrame, minSize)
+function Utilities:MakeResizable(resizeBtn, parentFrame, minSize, maxSize)
     local minSize = minSize or Vector2.new(600, 400)
     local dragging, dragInput, dragStart, startSize
     
@@ -207,6 +207,11 @@ function Utilities:MakeResizable(resizeBtn, parentFrame, minSize)
             local delta = input.Position - dragStart
             local newSizeX = math.max(minSize.X, startSize.X + delta.X)
             local newSizeY = math.max(minSize.Y, startSize.Y + delta.Y)
+            
+            if maxSize then
+                newSizeX = math.min(maxSize.X, newSizeX)
+                newSizeY = math.min(maxSize.Y, newSizeY)
+            end
             
             parentFrame.Size = UDim2.new(0, newSizeX, 0, newSizeY)
         end
@@ -819,9 +824,14 @@ function Window:New(options, library)
         if not isMaximized then
             prevSize = mainFrame.Size
             prevPos = mainFrame.Position
+            
+            local viewSize = workspace.CurrentCamera.ViewportSize
+            local targetWidth = math.min(viewSize.X * 0.95, 1100)
+            local targetHeight = math.min(viewSize.Y * 0.95, 750)
+            
             TweenService:Create(mainFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quart), {
-                Size = UDim2.new(1, 0, 1, 36),
-                Position = UDim2.new(0.5, 0, 0.5, 18)
+                Size = UDim2.new(0, targetWidth, 0, targetHeight),
+                Position = UDim2.new(0.5, -targetWidth/2, 0.5, -targetHeight/2)
             }):Play()
             isMaximized = true
         else
@@ -941,11 +951,14 @@ function Window:New(options, library)
     
     
     
-    local searchBarFrame = Instance.new("Frame")
+    local searchBarFrame = Instance.new("TextButton")
+    searchBarFrame.Name = "SearchBarTrigger"
     searchBarFrame.Size = UDim2.new(1, -24, 0, 32)
     searchBarFrame.Position = UDim2.new(0, 12, 0, 78)
     searchBarFrame.BackgroundColor3 = theme.Surface
     searchBarFrame.BackgroundTransparency = 0.3
+    searchBarFrame.AutoButtonColor = false
+    searchBarFrame.Text = ""
     searchBarFrame.Parent = sidebar
     Instance.new("UICorner", searchBarFrame).CornerRadius = UDim.new(0, 10)
     
@@ -955,16 +968,6 @@ function Window:New(options, library)
     searchStroke.Thickness = 1
     searchStroke.Parent = searchBarFrame
 
-    
-    local searchIcon = Instance.new("TextLabel")
-    searchIcon.Size = UDim2.new(0, 20, 0, 20)
-    searchIcon.Position = UDim2.new(0, 8, 0.5, -10)
-    searchIcon.BackgroundTransparency = 1
-    searchIcon.Text = "🔍"
-    searchIcon.TextSize = 12
-    searchIcon.Parent = searchBarFrame
-
-    
     local searchIconImg = Instance.new("ImageLabel")
     searchIconImg.Size = UDim2.new(0, 14, 0, 14)
     searchIconImg.Position = UDim2.new(0, 10, 0.5, -7)
@@ -974,26 +977,22 @@ function Window:New(options, library)
     searchIconImg.ZIndex = 3
     searchIconImg.Parent = searchBarFrame
 
-    local searchTextbox = Instance.new("TextBox")
-    searchTextbox.Size = UDim2.new(1, -38, 1, 0)
-    searchTextbox.Position = UDim2.new(0, 30, 0, 0)
-    searchTextbox.BackgroundTransparency = 1
-    searchTextbox.Text = ""
-    searchTextbox.PlaceholderText = "Search..."
-    searchTextbox.PlaceholderColor3 = theme.MutedText
-    searchTextbox.TextColor3 = theme.Text
-    searchTextbox.Font = Enum.Font.Gotham
-    searchTextbox.TextSize = 10
-    searchTextbox.TextXAlignment = Enum.TextXAlignment.Left
-    searchTextbox.ClearTextOnFocus = false
-    searchTextbox.Parent = searchBarFrame
+    local searchFakeText = Instance.new("TextLabel")
+    searchFakeText.Size = UDim2.new(1, -38, 1, 0)
+    searchFakeText.Position = UDim2.new(0, 30, 0, 0)
+    searchFakeText.BackgroundTransparency = 1
+    searchFakeText.Text = "Search features..."
+    searchFakeText.TextColor3 = theme.MutedText
+    searchFakeText.Font = Enum.Font.Gotham
+    searchFakeText.TextSize = 10
+    searchFakeText.TextXAlignment = Enum.TextXAlignment.Left
+    searchFakeText.Parent = searchBarFrame
 
-    
-    searchTextbox.Focused:Connect(function()
+    searchBarFrame.MouseEnter:Connect(function()
         TweenService:Create(searchStroke, TweenInfo.new(0.2), {Color = theme.Primary, Transparency = 0.5}):Play()
         TweenService:Create(searchBarFrame, TweenInfo.new(0.2), {BackgroundTransparency = 0.15}):Play()
     end)
-    searchTextbox.FocusLost:Connect(function()
+    searchBarFrame.MouseLeave:Connect(function()
         TweenService:Create(searchStroke, TweenInfo.new(0.2), {Color = Color3.new(1,1,1), Transparency = 0.92}):Play()
         TweenService:Create(searchBarFrame, TweenInfo.new(0.2), {BackgroundTransparency = 0.3}):Play()
     end)
@@ -1029,33 +1028,6 @@ function Window:New(options, library)
     pageContainer.Parent = contentArea
 
     
-    local noResultsFrame = Instance.new("Frame")
-    noResultsFrame.Size = UDim2.new(1, 0, 1, 0)
-    noResultsFrame.BackgroundTransparency = 1
-    noResultsFrame.Visible = false
-    noResultsFrame.ZIndex = 50
-    noResultsFrame.Parent = contentArea
-
-    local noResultsLabel = Instance.new("TextLabel")
-    noResultsLabel.Size = UDim2.new(1, 0, 0, 30)
-    noResultsLabel.Position = UDim2.new(0, 0, 0.5, -40)
-    noResultsLabel.BackgroundTransparency = 1
-    noResultsLabel.Text = "No results found"
-    noResultsLabel.TextColor3 = theme.MutedText
-    noResultsLabel.Font = Enum.Font.GothamBold
-    noResultsLabel.TextSize = 16
-    noResultsLabel.Parent = noResultsFrame
-
-    local noResultsSub = Instance.new("TextLabel")
-    noResultsSub.Size = UDim2.new(1, 0, 0, 20)
-    noResultsSub.Position = UDim2.new(0, 0, 0.5, -8)
-    noResultsSub.BackgroundTransparency = 1
-    noResultsSub.Text = "Try a different search term"
-    noResultsSub.TextColor3 = theme.MutedText
-    noResultsSub.Font = Enum.Font.Gotham
-    noResultsSub.TextSize = 11
-    noResultsSub.TextTransparency = 0.4
-    noResultsSub.Parent = noResultsFrame
 
     
     local footer = Instance.new("Frame")
@@ -1086,159 +1058,268 @@ function Window:New(options, library)
         Library = library,
         Theme = theme,
         PageContainer = pageContainer,
-        NavScroll = navScroll,
-        NoResultsFrame = noResultsFrame
+        NavScroll = navScroll
     }
 
     
     
     
-    local function performSearch(query)
-        query = string.lower(query)
-        local anyVisible = false
-
-        if query == "" then
-            
-            for _, child in pairs(navScroll:GetChildren()) do
-                if child:IsA("Frame") then child.Visible = true end
-            end
-            for _, tab in pairs(WindowObj.Tabs) do
-                for _, child in pairs(tab.Page:GetChildren()) do
-                    if child:IsA("Frame") or child:IsA("TextButton") then
-                        child.Visible = true
-                        if child.Name:match("_Section$") then
-                            local sContent = child:FindFirstChild("Content")
-                            if sContent then
-                                child.Visible = true
-                                for _, sc in pairs(sContent:GetChildren()) do
-                                    if sc:IsA("Frame") then sc.Visible = true end
-                                end
-                            end
-                        end
-                    end
-                end
-            end
-            noResultsFrame.Visible = false
-            if WindowObj.CurrentTab then WindowObj.CurrentTab.Page.Visible = true end
-            return
+    local searchModal = Instance.new("Frame")
+    searchModal.Name = "SearchModal"
+    searchModal.Size = UDim2.new(1, 0, 1, 0)
+    searchModal.BackgroundColor3 = Color3.new(0, 0, 0)
+    searchModal.BackgroundTransparency = 1
+    searchModal.ZIndex = 100
+    searchModal.Visible = false
+    searchModal.Active = true
+    searchModal.Parent = screenGui
+    
+    local modalContainer = Instance.new("Frame")
+    modalContainer.Size = UDim2.new(0, 420, 0, 340)
+    modalContainer.Position = UDim2.new(0.5, 0, 0.45, 0)
+    modalContainer.AnchorPoint = Vector2.new(0.5, 0.5)
+    modalContainer.BackgroundColor3 = theme.Background
+    modalContainer.BackgroundTransparency = 1
+    modalContainer.ZIndex = 101
+    modalContainer.ClipsDescendants = true
+    modalContainer.Parent = searchModal
+    Instance.new("UICorner", modalContainer).CornerRadius = UDim.new(0, 12)
+    
+    local modalStroke = Instance.new("UIStroke")
+    modalStroke.Color = theme.Primary
+    modalStroke.Transparency = 1
+    modalStroke.Thickness = 1
+    modalStroke.Parent = modalContainer
+    
+    local modalInputFrame = Instance.new("Frame")
+    modalInputFrame.Size = UDim2.new(1, -20, 0, 40)
+    modalInputFrame.Position = UDim2.new(0, 10, 0, 10)
+    modalInputFrame.BackgroundColor3 = theme.Surface
+    modalInputFrame.BackgroundTransparency = 0.2
+    modalInputFrame.ZIndex = 102
+    modalInputFrame.Parent = modalContainer
+    Instance.new("UICorner", modalInputFrame).CornerRadius = UDim.new(0, 8)
+    
+    local modalSearchIcon = Instance.new("ImageLabel")
+    modalSearchIcon.Size = UDim2.new(0, 16, 0, 16)
+    modalSearchIcon.Position = UDim2.new(0, 12, 0.5, -8)
+    modalSearchIcon.BackgroundTransparency = 1
+    modalSearchIcon.Image = assets.Icons.Search or ""
+    modalSearchIcon.ImageColor3 = theme.Primary
+    modalSearchIcon.ZIndex = 103
+    modalSearchIcon.Parent = modalInputFrame
+    
+    local modalInput = Instance.new("TextBox")
+    modalInput.Size = UDim2.new(1, -44, 1, 0)
+    modalInput.Position = UDim2.new(0, 36, 0, 0)
+    modalInput.BackgroundTransparency = 1
+    modalInput.Text = ""
+    modalInput.PlaceholderText = "Type to search features..."
+    modalInput.PlaceholderColor3 = theme.MutedText
+    modalInput.TextColor3 = theme.Text
+    modalInput.Font = Enum.Font.Gotham
+    modalInput.TextSize = 12
+    modalInput.TextXAlignment = Enum.TextXAlignment.Left
+    modalInput.ClearTextOnFocus = false
+    modalInput.ZIndex = 103
+    modalInput.Parent = modalInputFrame
+    
+    local resultsScroll = Instance.new("ScrollingFrame")
+    resultsScroll.Size = UDim2.new(1, -20, 1, -66)
+    resultsScroll.Position = UDim2.new(0, 10, 0, 56)
+    resultsScroll.BackgroundTransparency = 1
+    resultsScroll.BorderSizePixel = 0
+    resultsScroll.ScrollBarThickness = 2
+    resultsScroll.ScrollBarImageColor3 = theme.Primary
+    resultsScroll.ZIndex = 102
+    resultsScroll.Parent = modalContainer
+    
+    local resultsLayout = Instance.new("UIListLayout")
+    resultsLayout.Padding = UDim.new(0, 6)
+    resultsLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+    resultsLayout.Parent = resultsScroll
+    
+    local mNoResults = Instance.new("TextLabel")
+    mNoResults.Size = UDim2.new(1, 0, 1, 0)
+    mNoResults.BackgroundTransparency = 1
+    mNoResults.Text = "No features found"
+    mNoResults.TextColor3 = theme.MutedText
+    mNoResults.Font = Enum.Font.GothamBold
+    mNoResults.TextSize = 13
+    mNoResults.ZIndex = 102
+    mNoResults.Visible = false
+    mNoResults.Parent = resultsScroll
+    
+    local function openSearchModal()
+        searchModal.Visible = true
+        modalInput.Text = ""
+        for _, child in pairs(resultsScroll:GetChildren()) do
+            if child:IsA("TextButton") then child:Destroy() end
         end
-
-        local matchedTabs = {}
-        local firstMatchTab = nil
-
+        mNoResults.Visible = false
+        modalInput:CaptureFocus()
+        TweenService:Create(searchModal, TweenInfo.new(0.3, Enum.EasingStyle.Quart), {BackgroundTransparency = 0.4}):Play()
+        TweenService:Create(modalContainer, TweenInfo.new(0.3, Enum.EasingStyle.Quart), {BackgroundTransparency = 0, Position = UDim2.new(0.5, 0, 0.5, 0)}):Play()
+        TweenService:Create(modalStroke, TweenInfo.new(0.3), {Transparency = 0.5}):Play()
+    end
+    
+    local function closeSearchModal()
+        TweenService:Create(searchModal, TweenInfo.new(0.2), {BackgroundTransparency = 1}):Play()
+        local t = TweenService:Create(modalContainer, TweenInfo.new(0.2), {BackgroundTransparency = 1, Position = UDim2.new(0.5, 0, 0.45, 0)})
+        TweenService:Create(modalStroke, TweenInfo.new(0.2), {Transparency = 1}):Play()
+        t:Play()
+        t.Completed:Connect(function()
+            if modalContainer.BackgroundTransparency >= 0.95 then
+                searchModal.Visible = false
+            end
+        end)
+    end
+    
+    searchBarFrame.MouseButton1Click:Connect(openSearchModal)
+    
+    local bgButton = Instance.new("TextButton")
+    bgButton.Size = UDim2.new(1, 0, 1, 0)
+    bgButton.BackgroundTransparency = 1
+    bgButton.Text = ""
+    bgButton.ZIndex = 99
+    bgButton.Parent = searchModal
+    bgButton.MouseButton1Click:Connect(closeSearchModal)
+    
+    local function createResultItem(name, parentName, targetTab, isSection)
+        local btn = Instance.new("TextButton")
+        btn.Size = UDim2.new(1, 0, 0, 38)
+        btn.BackgroundColor3 = theme.Surface
+        btn.BackgroundTransparency = 0.5
+        btn.Text = ""
+        btn.AutoButtonColor = false
+        btn.ZIndex = 103
+        btn.Parent = resultsScroll
+        Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
+        
+        local btnStroke = Instance.new("UIStroke")
+        btnStroke.Color = Color3.new(1,1,1)
+        btnStroke.Transparency = 0.95
+        btnStroke.Thickness = 1
+        btnStroke.Parent = btn
+        
+        local icon = Instance.new("ImageLabel")
+        icon.Size = UDim2.new(0, 16, 0, 16)
+        icon.Position = UDim2.new(0, 12, 0.5, -8)
+        icon.BackgroundTransparency = 1
+        icon.Image = isSection and (assets.Icons.Folder or "rbxassetid://10723405364") or (assets.Icons.SubTab or "rbxassetid://10723389516")
+        icon.ImageColor3 = theme.SecondaryText
+        icon.ZIndex = 103
+        icon.Parent = btn
+        
+        local title = Instance.new("TextLabel")
+        title.Size = UDim2.new(1, -40, 0, 14)
+        title.Position = UDim2.new(0, 36, 0, 6)
+        title.BackgroundTransparency = 1
+        title.Text = name
+        title.TextColor3 = theme.Text
+        title.Font = Enum.Font.GothamBold
+        title.TextSize = 11
+        title.TextXAlignment = Enum.TextXAlignment.Left
+        title.ZIndex = 103
+        title.Parent = btn
+        
+        local sub = Instance.new("TextLabel")
+        sub.Size = UDim2.new(1, -40, 0, 12)
+        sub.Position = UDim2.new(0, 36, 0, 22)
+        sub.BackgroundTransparency = 1
+        sub.Text = "in " .. parentName
+        sub.TextColor3 = theme.Primary
+        sub.Font = Enum.Font.Gotham
+        sub.TextSize = 9
+        sub.TextXAlignment = Enum.TextXAlignment.Left
+        sub.ZIndex = 103
+        sub.Parent = btn
+        
+        btn.MouseEnter:Connect(function()
+            TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundColor3 = theme.Accent, BackgroundTransparency = 0.1}):Play()
+            TweenService:Create(icon, TweenInfo.new(0.2), {ImageColor3 = theme.Primary}):Play()
+            TweenService:Create(btnStroke, TweenInfo.new(0.2), {Color = theme.Primary, Transparency = 0.7}):Play()
+        end)
+        btn.MouseLeave:Connect(function()
+            TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundColor3 = theme.Surface, BackgroundTransparency = 0.5}):Play()
+            TweenService:Create(icon, TweenInfo.new(0.2), {ImageColor3 = theme.SecondaryText}):Play()
+            TweenService:Create(btnStroke, TweenInfo.new(0.2), {Color = Color3.new(1,1,1), Transparency = 0.95}):Play()
+        end)
+        
+        btn.MouseButton1Click:Connect(function()
+            closeSearchModal()
+            if targetTab and targetTab.Select then
+                targetTab:Select()
+            end
+        end)
+    end
+    
+    local function performSearch(query)
+        for _, child in pairs(resultsScroll:GetChildren()) do
+            if child:IsA("TextButton") then child:Destroy() end
+        end
+        mNoResults.Visible = false
+        
+        query = string.lower(query)
+        if query == "" then return end
+        
+        local foundCount = 0
         
         for _, tab in pairs(WindowObj.Tabs) do
-            local tabMatches = string.find(string.lower(tab.Label.Text), query, 1, true) ~= nil
-            local hasVisibleChild = false
-
+            local tabName = tab.Label.Text
+            if string.find(string.lower(tabName), query, 1, true) then
+                createResultItem(tabName, "Sidebar / Tabs", tab, true)
+                foundCount = foundCount + 1
+            end
+            
             for _, child in pairs(tab.Page:GetChildren()) do
                 if child:IsA("Frame") or child:IsA("TextButton") then
                     if child.Name:match("_Section$") then
                         local sNameLbl = child:FindFirstChild("Header") and child.Header:FindFirstChild("Title")
-                        local sName = sNameLbl and string.lower(sNameLbl.Text) or string.lower(child.Name)
-                        local childMatches = string.find(sName, query, 1, true) ~= nil
+                        local sName = sNameLbl and sNameLbl.Text or child.Name:gsub("_Section", "")
                         
-                        local hasVisibleSectionChild = false
-                        local sContent = child:FindFirstChild("Content")
+                        if string.find(string.lower(sName), query, 1, true) then
+                            createResultItem(sName, tabName, tab, true)
+                            foundCount = foundCount + 1
+                        end
+                        
+                        local sContent = child:FindFirstChild("Content") or child:FindFirstChild("Container")
                         if sContent then
                             for _, sc in pairs(sContent:GetChildren()) do
                                 if sc:IsA("Frame") or sc:IsA("TextButton") then
-                                    local scMatches = string.find(string.lower(sc.Name), query, 1, true) ~= nil
-                                    if tabMatches or childMatches or scMatches then
-                                        sc.Visible = true
-                                        hasVisibleSectionChild = true
-                                    else
-                                        sc.Visible = false
+                                    local scNameLbl = sc:FindFirstChild("TextLabel") or sc:FindFirstChild("Title") or sc:FindFirstChild("TitleLbl")
+                                    local eName = scNameLbl and scNameLbl.Text or sc.Name:gsub("Frame", "")
+                                    
+                                    if string.find(string.lower(eName), query, 1, true) then
+                                        createResultItem(eName, tabName .. " > " .. sName, tab, false)
+                                        foundCount = foundCount + 1
                                     end
                                 end
                             end
                         end
-                        if tabMatches or childMatches or hasVisibleSectionChild then
-                            child.Visible = true
-                            hasVisibleChild = true
-                        else
-                            child.Visible = false
-                        end
                     else
-                        local childMatches = string.find(string.lower(child.Name), query, 1, true) ~= nil
-                        if tabMatches or childMatches then
-                            child.Visible = true
-                            hasVisibleChild = true
-                        else
-                            child.Visible = false
+                        local cNameLbl = child:FindFirstChild("TextLabel") or child:FindFirstChild("Title")
+                        local cName = cNameLbl and cNameLbl.Text or child.Name
+                        if string.find(string.lower(cName), query, 1, true) then
+                            createResultItem(cName, tabName, tab, false)
+                            foundCount = foundCount + 1
                         end
                     end
                 end
             end
-            
-            if tabMatches or hasVisibleChild then
-                matchedTabs[tab] = true
-                anyVisible = true
-                if not firstMatchTab then firstMatchTab = tab end
-            else
-                matchedTabs[tab] = false
-            end
         end
-
         
-        for _, child in pairs(navScroll:GetChildren()) do
-            if child:IsA("Frame") then
-                if child.Name:match("_Folder$") then
-                    local folderMatches = string.find(string.lower(child.Name), query, 1, true) ~= nil
-                    local hasMatchTab = false
-                    local filesContainer = child:FindFirstChild("Files")
-                    if filesContainer then
-                        for _, fileNode in pairs(filesContainer:GetChildren()) do
-                            if fileNode:IsA("Frame") then
-                                local cTab = nil
-                                for _, t in pairs(WindowObj.Tabs) do
-                                    if t.Btn == fileNode then cTab = t break end
-                                end
-                                if cTab and matchedTabs[cTab] then
-                                    hasMatchTab = true
-                                    fileNode.Visible = true
-                                elseif folderMatches and cTab then
-                                    
-                                    
-                                    fileNode.Visible = true
-                                    hasMatchTab = true
-                                    matchedTabs[cTab] = true
-                                else
-                                    fileNode.Visible = false
-                                end
-                            end
-                        end
-                    end
-                    child.Visible = folderMatches or hasMatchTab
-                else
-                    local cTab = nil
-                    for _, t in pairs(WindowObj.Tabs) do
-                        if t.Btn == child then cTab = t break end
-                    end
-                    if cTab then
-                        child.Visible = matchedTabs[cTab]
-                    end
-                end
-            end
-        end
-
-        noResultsFrame.Visible = not anyVisible
-        
-        
-        for _, tab in pairs(WindowObj.Tabs) do
-            tab.Page.Visible = false
-        end
-        if anyVisible then
-            if WindowObj.CurrentTab and matchedTabs[WindowObj.CurrentTab] then
-                WindowObj.CurrentTab.Page.Visible = true
-            elseif firstMatchTab then
-                firstMatchTab.Page.Visible = true
-            end
+        resultsScroll.CanvasSize = UDim2.new(0, 0, 0, resultsLayout.AbsoluteContentSize.Y)
+        if foundCount == 0 then
+            mNoResults.Visible = true
         end
     end
-
-    searchTextbox:GetPropertyChangedSignal("Text"):Connect(function()
-        performSearch(searchTextbox.Text)
+    
+    modalInput:GetPropertyChangedSignal("Text"):Connect(function()
+        performSearch(modalInput.Text)
+    end)
+    resultsLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+        resultsScroll.CanvasSize = UDim2.new(0, 0, 0, resultsLayout.AbsoluteContentSize.Y)
     end)
 
     
@@ -1253,7 +1334,9 @@ function Window:New(options, library)
     resizeHandle.ZIndex = 10
     resizeHandle.Parent = mainFrame
     
-    library.Utilities:MakeResizable(resizeHandle, mainFrame, Vector2.new(600, 400))
+    local viewSizeX = workspace.CurrentCamera.ViewportSize.X
+    local viewSizeY = workspace.CurrentCamera.ViewportSize.Y
+    library.Utilities:MakeResizable(resizeHandle, mainFrame, Vector2.new(600, 400), Vector2.new(math.min(viewSizeX - 40, 1100), math.min(viewSizeY - 40, 750)))
 
     function WindowObj:MakeTab(tabOptions)
         return library.Tab:New(tabOptions, self)
@@ -1634,6 +1717,13 @@ function Tab:New(tabOptions, window)
 
     function TabObj:Deactivate()
         setActive(false)
+    end
+
+    function TabObj:Select()
+        if window.CurrentTab == TabObj then return end
+        if window.CurrentTab then window.CurrentTab:Deactivate() end
+        window.CurrentTab = TabObj
+        setActive(true)
     end
 
     

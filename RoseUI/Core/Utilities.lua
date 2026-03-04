@@ -51,7 +51,7 @@ function Utilities:MakeDraggable(dragFrame, parentFrame)
     return dragCon
 end
 
-function Utilities:MakeResizable(resizeBtn, parentFrame, minSize)
+function Utilities:MakeResizable(resizeBtn, parentFrame, minSize, maxSize)
     local minSize = minSize or Vector2.new(600, 400)
     local dragging, dragInput, dragStart, startSize
     
@@ -80,6 +80,11 @@ function Utilities:MakeResizable(resizeBtn, parentFrame, minSize)
             local delta = input.Position - dragStart
             local newSizeX = math.max(minSize.X, startSize.X + delta.X)
             local newSizeY = math.max(minSize.Y, startSize.Y + delta.Y)
+            
+            if maxSize then
+                newSizeX = math.min(maxSize.X, newSizeX)
+                newSizeY = math.min(maxSize.Y, newSizeY)
+            end
             
             parentFrame.Size = UDim2.new(0, newSizeX, 0, newSizeY)
         end
