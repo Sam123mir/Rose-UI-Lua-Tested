@@ -135,8 +135,8 @@ function Window:New(options, library)
 
     -- Stats Container (Centered)
     local statsFrame = Instance.new("Frame")
-    statsFrame.Size = UDim2.new(0, 400, 1, 0)
-    statsFrame.Position = UDim2.new(0.5, 0, 0, 0)
+    statsFrame.Size = UDim2.new(0, 420, 1, 0)
+    statsFrame.Position = UDim2.new(0.5, 40, 0, 0) -- Centered between Logo and Controls
     statsFrame.AnchorPoint = Vector2.new(0.5, 0)
     statsFrame.BackgroundTransparency = 1
     statsFrame.Parent = header
@@ -214,8 +214,9 @@ function Window:New(options, library)
 
     -- Window Controls
     local controls = Instance.new("Frame")
-    controls.Size = UDim2.new(0, 110, 1, 0)
-    controls.Position = UDim2.new(1, -110, 0, 0)
+    controls.Size = UDim2.new(0, 100, 1, 0)
+    controls.Position = UDim2.new(1, -5, 0, 0)
+    controls.AnchorPoint = Vector2.new(1, 0)
     controls.BackgroundTransparency = 1
     controls.Parent = header
     
@@ -228,11 +229,11 @@ function Window:New(options, library)
 
     local function createControl(iconName, callback)
         local btn = Instance.new("ImageButton")
-        btn.Size = UDim2.new(0, 30, 0, 30)
+        btn.Size = UDim2.new(0, 22, 0, 22)
         btn.BackgroundTransparency = 1
         btn.Image = assets.Icons[iconName]
         btn.ImageColor3 = theme.SecondaryText
-        btn.ImageTransparency = 0.2
+        btn.ImageTransparency = 0.3
         btn.Parent = controls
         
         btn.MouseEnter:Connect(function() TweenService:Create(btn, TweenInfo.new(0.2), {ImageColor3 = theme.Primary, ImageTransparency = 0}):Play() end)
@@ -242,7 +243,7 @@ function Window:New(options, library)
     end
 
     createControl("Minimize", function() screenGui.Enabled = false end)
-    createControl("Restore", function() print("Toggle Size") end) -- Placeholder for Maximize
+    createControl("Maximize", function() print("Toggle Size") end)
     createControl("Close", function() screenGui:Destroy() end)
 
     -- Body
@@ -322,10 +323,10 @@ function Window:New(options, library)
     userStatus.Parent = profile
 
     local sep = Instance.new("Frame")
-    sep.Size = UDim2.new(1, -30, 0, 1)
-    sep.Position = UDim2.new(0, 15, 1, 0)
-    sep.BackgroundColor3 = Color3.new(1,1,1)
-    sep.BackgroundTransparency = 0.95
+    sep.Size = UDim2.new(1, -40, 0, 1)
+    sep.Position = UDim2.new(0, 20, 1, 0)
+    sep.BackgroundColor3 = theme.Primary
+    sep.BackgroundTransparency = 0.8
     sep.BorderSizePixel = 0
     sep.Parent = profile
 
@@ -389,6 +390,15 @@ function Window:New(options, library)
     function WindowObj:MakeTab(tabOptions)
         return library.Tab:New(tabOptions, self)
     end
+
+    function WindowObj:AddFolder(folderOptions)
+        return library.Folder:New(folderOptions, self)
+    end
+    
+    -- Auto Update Canvas Size
+    navLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+        navScroll.CanvasSize = UDim2.new(0, 0, 0, navLayout.AbsoluteContentSize.Y)
+    end)
 
     -- Toggle Hotkey
     local toggleConn = UserInputService.InputBegan:Connect(function(input, gpe)

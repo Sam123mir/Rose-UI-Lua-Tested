@@ -18,6 +18,7 @@ RoseUI.CurrentTheme = RoseUI.Themes["Rose v2 (Premium)"]
 -- Cargar Componentes
 RoseUI.Notification = import("Components/Notification")
 RoseUI.Window = import("Components/Window")
+RoseUI.Folder = import("Components/Folder")
 RoseUI.Tab = import("Components/Tab")
 RoseUI.Section = import("Components/Section")
 

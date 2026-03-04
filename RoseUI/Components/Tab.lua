@@ -7,17 +7,19 @@ local Tab = {}
 
 function Tab:New(tabOptions, window)
     local tabName = tabOptions.Name or "Tab"
-    local tabIcon = tabOptions.Icon or "Dashboard"
-    local isSubTab = tabOptions.IsSubTab or false
+    local tabIcon = tabOptions.Icon or (tabOptions.IsFile and "File" or "Dashboard")
+    local isSubTab = tabOptions.IsSubTab or tabOptions.IsFile or false
+    local isFile = tabOptions.IsFile or false
+    local parentOverride = tabOptions.ParentOverride
     local library = window.Library
     local theme = window.Theme
     local assets = library.Assets
 
     local tabBtn = Instance.new("Frame")
-    tabBtn.Name = tabName .. (isSubTab and "_Sub" or "_Main")
-    tabBtn.Size = UDim2.new(1, 0, 0, isSubTab and 30 or 40)
+    tabBtn.Name = tabName .. (isFile and "_File" or (isSubTab and "_Sub" or "_Main"))
+    tabBtn.Size = UDim2.new(1, 0, 0, (isFile or isSubTab) and 32 or 40)
     tabBtn.BackgroundTransparency = 1
-    tabBtn.Parent = window.NavScroll
+    tabBtn.Parent = parentOverride or window.NavScroll
 
     local btnTrigger = Instance.new("TextButton")
     btnTrigger.Size = UDim2.new(1, 0, 1, 0)
@@ -26,8 +28,8 @@ function Tab:New(tabOptions, window)
     btnTrigger.Parent = tabBtn
 
     local contentFrame = Instance.new("Frame")
-    contentFrame.Size = UDim2.new(1, isSubTab and -30 or -20, 1, -4)
-    contentFrame.Position = UDim2.new(0, isSubTab and 25 or 10, 0, 2)
+    contentFrame.Size = UDim2.new(1, isFile and -40 or (isSubTab and -30 or -20), 1, -4)
+    contentFrame.Position = UDim2.new(0, isFile and 30 or (isSubTab and 25 or 10), 0, 2)
     contentFrame.BackgroundColor3 = theme.Primary
     contentFrame.BackgroundTransparency = 1
     contentFrame.Parent = tabBtn
@@ -52,10 +54,10 @@ function Tab:New(tabOptions, window)
     label.TextXAlignment = Enum.TextXAlignment.Left
     label.Parent = contentFrame
 
-    if isSubTab then
+    if isSubTab or isFile then
         local subLine = Instance.new("Frame")
         subLine.Size = UDim2.new(0, 1, 1, 0)
-        subLine.Position = UDim2.new(0, -10, 0, 0)
+        subLine.Position = UDim2.new(0, isFile and -15 or -10, 0, 0)
         subLine.BackgroundColor3 = theme.Primary
         subLine.BackgroundTransparency = 0.8
         subLine.BorderSizePixel = 0
