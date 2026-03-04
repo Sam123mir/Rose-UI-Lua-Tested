@@ -1,7 +1,7 @@
 --[[
     RoseUI v2.5.0
     Created by RoseUI Team
-    Build Date: 4/3/2026, 1:40:26 p. m.
+    Build Date: 4/3/2026, 1:45:17 p. m.
     
     This is a unified distribution file. 
 ]]
@@ -698,15 +698,21 @@ function Window:New(options, library)
     minStroke.Thickness = 1
     minStroke.Parent = minBar
     
-    library.Utilities:MakeDraggable(minBar, minBar)
+    
+    local minGripHitbox = Instance.new("Frame")
+    minGripHitbox.Size = UDim2.new(0, 40, 1, 0)
+    minGripHitbox.BackgroundTransparency = 1
+    minGripHitbox.Parent = minBar
+    
+    library.Utilities:MakeDraggable(minBar, minGripHitbox)
 
     local minGrip = Instance.new("ImageLabel")
     minGrip.Size = UDim2.new(0, 16, 0, 16)
-    minGrip.Position = UDim2.new(0, 12, 0.5, -8)
+    minGrip.Position = UDim2.new(0.5, -8, 0.5, -8)
     minGrip.BackgroundTransparency = 1
     minGrip.Image = assets.Icons.Sliders or "rbxassetid://10734914191"
     minGrip.ImageColor3 = theme.SecondaryText
-    minGrip.Parent = minBar
+    minGrip.Parent = minGripHitbox
     
     local minSep = Instance.new("Frame")
     minSep.Size = UDim2.new(0, 1, 0, 20)
@@ -716,40 +722,41 @@ function Window:New(options, library)
     minSep.BorderSizePixel = 0
     minSep.Parent = minBar
     
-    local minLogo = Instance.new("ImageLabel")
-    minLogo.Size = UDim2.new(0, 18, 0, 18)
-    minLogo.Position = UDim2.new(0, 52, 0.5, -9)
-    minLogo.BackgroundTransparency = 1
-    minLogo.Image = finalLogo
-    minLogo.ImageColor3 = theme.Primary
-    minLogo.Parent = minBar
-    
-    local minTitle = Instance.new("TextLabel")
-    minTitle.Size = UDim2.new(0, 60, 1, 0)
-    minTitle.Position = UDim2.new(0, 78, 0, 0)
-    minTitle.BackgroundTransparency = 1
-    minTitle.Text = titleText:upper()
-    minTitle.TextColor3 = theme.Text
-    minTitle.Font = Enum.Font.GothamBlack
-    minTitle.TextSize = 12
-    minTitle.TextXAlignment = Enum.TextXAlignment.Left
-    minTitle.Parent = minBar
     
     local restoreBtn = Instance.new("TextButton")
-    restoreBtn.Size = UDim2.new(1, 0, 1, 0)
-    restoreBtn.Position = UDim2.new(0, 0, 0, 0)
-    restoreBtn.BackgroundColor3 = Color3.fromRGB(255,255,255)
+    restoreBtn.Size = UDim2.new(1, -41, 1, 0)
+    restoreBtn.Position = UDim2.new(0, 41, 0, 0)
+    restoreBtn.BackgroundColor3 = Color3.new(1,1,1)
     restoreBtn.BackgroundTransparency = 1
     restoreBtn.Text = ""
     restoreBtn.AutoButtonColor = false
     restoreBtn.Parent = minBar
     Instance.new("UICorner", restoreBtn).CornerRadius = UDim.new(0, 8)
     
+    local minLogo = Instance.new("ImageLabel")
+    minLogo.Size = UDim2.new(0, 18, 0, 18)
+    minLogo.Position = UDim2.new(0, 12, 0.5, -9)
+    minLogo.BackgroundTransparency = 1
+    minLogo.Image = finalLogo
+    minLogo.ImageColor3 = theme.Primary
+    minLogo.Parent = restoreBtn
+    
+    local minTitle = Instance.new("TextLabel")
+    minTitle.Size = UDim2.new(1, -40, 1, 0)
+    minTitle.Position = UDim2.new(0, 38, 0, 0)
+    minTitle.BackgroundTransparency = 1
+    minTitle.Text = titleText:upper()
+    minTitle.TextColor3 = theme.Text
+    minTitle.Font = Enum.Font.GothamBlack
+    minTitle.TextSize = 12
+    minTitle.TextXAlignment = Enum.TextXAlignment.Left
+    minTitle.Parent = restoreBtn
+    
     restoreBtn.MouseEnter:Connect(function()
-        TweenService:Create(minBar, TweenInfo.new(0.2), {BackgroundTransparency = 0.0}):Play()
+        TweenService:Create(restoreBtn, TweenInfo.new(0.2), {BackgroundTransparency = 0.95}):Play()
     end)
     restoreBtn.MouseLeave:Connect(function()
-        TweenService:Create(minBar, TweenInfo.new(0.2), {BackgroundTransparency = 0.05}):Play()
+        TweenService:Create(restoreBtn, TweenInfo.new(0.2), {BackgroundTransparency = 1}):Play()
     end)
     
     restoreBtn.MouseButton1Click:Connect(function()
