@@ -4,8 +4,8 @@ local Services = Constants.Services
 local CoreGui = Services.CoreGui
 local TweenService = Services.TweenService
 local RunService = Services.RunService
-local Lighting = game:GetService("Lighting")
-local GuiService = game:GetService("GuiService")
+local GuiService = Services.GuiService
+local Lighting = Services.Lighting
 
 local Notification = {}
 

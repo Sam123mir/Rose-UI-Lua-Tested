@@ -5,7 +5,7 @@ local TweenService = Services.TweenService
 local UserInputService = Services.UserInputService
 local RunService = Services.RunService
 local GuiService = Services.GuiService
-local Lighting = game:GetService("Lighting")
+local Lighting = Services.Lighting
 
 local Window = {}
 

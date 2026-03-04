@@ -4,6 +4,8 @@ local HttpService = game:GetService("HttpService")
 local RunService = game:GetService("RunService")
 local CoreGui = game:GetService("CoreGui")
 local Players = game:GetService("Players")
+local GuiService = game:GetService("GuiService")
+local Lighting = game:GetService("Lighting")
 local Camera = workspace.CurrentCamera
 
 local Constants = {
@@ -14,6 +16,8 @@ local Constants = {
         RunService = RunService,
         CoreGui = CoreGui,
         Players = Players,
+        GuiService = GuiService,
+        Lighting = Lighting,
         Camera = Camera
     },
     DefaultSize = UDim2.new(0, 650, 0, 520),
