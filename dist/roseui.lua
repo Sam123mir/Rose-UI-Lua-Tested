@@ -1,7 +1,7 @@
 --[[
     RoseUI v2.5.0
     Created by RoseUI Team
-    Build Date: 4/3/2026, 1:31:53 p. m.
+    Build Date: 4/3/2026, 1:40:26 p. m.
     
     This is a unified distribution file. 
 ]]
@@ -736,31 +736,20 @@ function Window:New(options, library)
     minTitle.Parent = minBar
     
     local restoreBtn = Instance.new("TextButton")
-    restoreBtn.Size = UDim2.new(0, 24, 0, 24)
-    restoreBtn.Position = UDim2.new(1, -32, 0.5, -12)
+    restoreBtn.Size = UDim2.new(1, 0, 1, 0)
+    restoreBtn.Position = UDim2.new(0, 0, 0, 0)
     restoreBtn.BackgroundColor3 = Color3.fromRGB(255,255,255)
-    restoreBtn.BackgroundTransparency = 0.95
+    restoreBtn.BackgroundTransparency = 1
     restoreBtn.Text = ""
     restoreBtn.AutoButtonColor = false
     restoreBtn.Parent = minBar
-    Instance.new("UICorner", restoreBtn).CornerRadius = UDim.new(0, 6)
-    
-    local restoreIcon = Instance.new("TextLabel")
-    restoreIcon.Size = UDim2.new(1, 0, 1, 0)
-    restoreIcon.BackgroundTransparency = 1
-    restoreIcon.Text = "+"
-    restoreIcon.TextColor3 = theme.SecondaryText
-    restoreIcon.Font = Enum.Font.GothamBold
-    restoreIcon.TextSize = 18
-    restoreIcon.Parent = restoreBtn
+    Instance.new("UICorner", restoreBtn).CornerRadius = UDim.new(0, 8)
     
     restoreBtn.MouseEnter:Connect(function()
-        TweenService:Create(restoreBtn, TweenInfo.new(0.2), {BackgroundTransparency = 0.8}):Play()
-        TweenService:Create(restoreIcon, TweenInfo.new(0.2), {TextColor3 = theme.Text}):Play()
+        TweenService:Create(minBar, TweenInfo.new(0.2), {BackgroundTransparency = 0.0}):Play()
     end)
     restoreBtn.MouseLeave:Connect(function()
-        TweenService:Create(restoreBtn, TweenInfo.new(0.2), {BackgroundTransparency = 0.95}):Play()
-        TweenService:Create(restoreIcon, TweenInfo.new(0.2), {TextColor3 = theme.SecondaryText}):Play()
+        TweenService:Create(minBar, TweenInfo.new(0.2), {BackgroundTransparency = 0.05}):Play()
     end)
     
     restoreBtn.MouseButton1Click:Connect(function()

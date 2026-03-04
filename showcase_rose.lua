@@ -18,7 +18,7 @@ RoseUI:Notify({
 local Window = RoseUI:CreateWindow({
     Name = "ROSE HUB",
     Tag = "V2.5 STABLE",
-    Logo = Icons.GetIcon("solar:Bolt"), -- Usando icono de Solar
+    Logo = Icons:Get("Solar", "Bolt"), -- Usando icono de Solar
     LoadingText = "SINCRONIZANDO CON GITHUB...",
     Keybind = Enum.KeyCode.RightControl
 })
@@ -27,25 +27,25 @@ local Window = RoseUI:CreateWindow({
 -- CARPETA: COMBATE
 local CombatFolder = Window:AddFolder({ 
     Name = "Combate", 
-    Icon = Icons.GetIcon("lucide:Zap") -- Usando Lucide
+    Icon = Icons:Get("Lucide", "Zap") -- Usando Lucide
 })
 local MainTab = CombatFolder:AddFile({ 
     Name = "Main", 
-    Icon = Icons.GetIcon("geist:Target") -- Usando Geist
+    Icon = Icons:Get("Geist", "Target") -- Usando Geist
 })
 local MiscTab = CombatFolder:AddFile({ 
     Name = "Miscellaneous", 
-    Icon = Icons.GetIcon("solar:Widget") -- Usando Solar
+    Icon = Icons:Get("Solar", "Widget") -- Usando Solar
 })
 
 -- CARPETA: CONFIGURACIÓN
 local ConfigFolder = Window:AddFolder({ 
     Name = "Config", 
-    Icon = Icons.GetIcon("solar:Settings") 
+    Icon = Icons:Get("Solar", "Settings") 
 })
 local ThemeTab = ConfigFolder:AddFile({ 
     Name = "Visuals", 
-    Icon = Icons.GetIcon("lucide:Eye") 
+    Icon = Icons:Get("Lucide", "Eye") 
 })
 
 -- ##########################################################################

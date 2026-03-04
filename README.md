@@ -15,12 +15,12 @@ local RoseUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/Sam123
 RoseUI utiliza un sistema de iconos dedicado con soporte para múltiples familias: **Lucide, Solar, Craft, Geist y SF Symbols**.
 
 ```lua
-local Icons = loadstring(game:HttpGet("https://raw.githubusercontent.com/Sam123mir/Icons-RoseV1/main/Main.lua"))()
+local Icons = loadstring(game:HttpGet("https://raw.githubusercontent.com/Sam123Rose/Icons-RoseV1/main/Main.lua"))()
 
 -- Ejemplo de uso con diferentes packs
 local Window = RoseUI:CreateWindow({
     Name = "ROSE UI",
-    Logo = Icons.GetIcon("solar:Bolt") -- Icono del pack Solar
+    Logo = Icons:Get("Solar", "Bolt") -- Icono del pack Solar
 })
 ```
 
