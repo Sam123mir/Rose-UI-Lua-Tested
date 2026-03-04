@@ -1,7 +1,7 @@
 --[[
     RoseUI v2.5.0
     Created by RoseUI Team
-    Build Date: 4/3/2026, 12:51:59 p. m.
+    Build Date: 4/3/2026, 1:06:00 p. m.
     
     This is a unified distribution file. 
 ]]
@@ -491,7 +491,15 @@ function Window:New(options, library)
     logoIcon.Size = UDim2.new(0, 20, 0, 20)
     logoIcon.Position = UDim2.new(0, 12, 0.5, -10)
     logoIcon.BackgroundTransparency = 1
-    logoIcon.Image = assets.Icons.Logo
+    
+    local finalLogo = options.Logo or "Logo"
+    if tonumber(finalLogo) or string.find(tostring(finalLogo), "rbxassetid://") then
+        finalLogo = string.find(tostring(finalLogo), "rbxassetid://") and finalLogo or "rbxassetid://" .. finalLogo
+    else
+        finalLogo = assets.Icons[finalLogo] or assets.Icons.Logo
+    end
+    
+    logoIcon.Image = finalLogo
     logoIcon.ImageColor3 = theme.Primary
     logoIcon.Parent = header
 
@@ -1097,9 +1105,18 @@ function Folder:New(options, window)
     iconImg.Size = UDim2.new(0, 16, 0, 16)
     iconImg.Position = UDim2.new(0, 16, 0.5, -8)
     iconImg.BackgroundTransparency = 1
-    iconImg.Image = assets.Icons[icon] or assets.Icons.Folder
     iconImg.ImageColor3 = theme.SecondaryText
     iconImg.Parent = content
+
+    local folderIcon = options.Icon or "Folder"
+    
+    if tonumber(folderIcon) or string.find(tostring(folderIcon), "rbxassetid://") then
+        folderIcon = string.find(tostring(folderIcon), "rbxassetid://") and folderIcon or "rbxassetid://" .. folderIcon
+    else
+        folderIcon = assets.Icons[folderIcon] or assets.Icons.Folder
+    end
+    
+    iconImg.Image = folderIcon
     
     local label = Instance.new("TextLabel")
     label.Size = UDim2.new(1, -60, 1, 0)

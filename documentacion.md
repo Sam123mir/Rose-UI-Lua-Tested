@@ -14,6 +14,35 @@ local RoseUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/Sam123
 local Icons = loadstring(game:HttpGet("https://raw.githubusercontent.com/Sam123mir/Icons-RoseV1/main/Main.lua"))()
 ```
 
+### Uso de Iconos
+La librería de iconos permite acceder a múltiples familias de diseño (Lucide, Solar, Craft, Geist, SF Symbols).
+
+**Método 1: Usar el set por defecto (Lucide)**
+```lua
+local homeIcon = Icons.GetIcon("Home") -- Retorna rbxassetid://...
+```
+
+**Método 2: Especificar el tipo de icono**
+```lua
+-- Formato "Tipo:Nombre"
+local solarHome = Icons.GetIcon("solar:Home")
+local geistUser = Icons.GetIcon("geist:User")
+```
+
+**Método 3: Cambiar el set global**
+```lua
+Icons.SetIconsType("solar")
+local userIcon = Icons.GetIcon("User") -- Ahora lo busca en Solar por defecto
+```
+
+**Integración con RoseUI**
+```lua
+Window:AddFolder({ 
+    Name = "Visuals", 
+    Icon = Icons.GetIcon("solar:Eye") -- Así se pasan los iconos del repo a la UI
+})
+```
+
 ### `RoseUI:CreateWindow(options)`
 Configura la base de tu interfaz.
 - `Name` (string): Título principal.

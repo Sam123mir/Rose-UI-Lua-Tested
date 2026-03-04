@@ -53,9 +53,18 @@ function Folder:New(options, window)
     iconImg.Size = UDim2.new(0, 16, 0, 16)
     iconImg.Position = UDim2.new(0, 16, 0.5, -8)
     iconImg.BackgroundTransparency = 1
-    iconImg.Image = assets.Icons[icon] or assets.Icons.Folder
     iconImg.ImageColor3 = theme.SecondaryText
     iconImg.Parent = content
+
+    local folderIcon = options.Icon or "Folder"
+    -- Support for custom asset IDs
+    if tonumber(folderIcon) or string.find(tostring(folderIcon), "rbxassetid://") then
+        folderIcon = string.find(tostring(folderIcon), "rbxassetid://") and folderIcon or "rbxassetid://" .. folderIcon
+    else
+        folderIcon = assets.Icons[folderIcon] or assets.Icons.Folder
+    end
+    
+    iconImg.Image = folderIcon
     
     local label = Instance.new("TextLabel")
     label.Size = UDim2.new(1, -60, 1, 0)

@@ -118,7 +118,15 @@ function Window:New(options, library)
     logoIcon.Size = UDim2.new(0, 20, 0, 20)
     logoIcon.Position = UDim2.new(0, 12, 0.5, -10)
     logoIcon.BackgroundTransparency = 1
-    logoIcon.Image = assets.Icons.Logo
+    
+    local finalLogo = options.Logo or "Logo"
+    if tonumber(finalLogo) or string.find(tostring(finalLogo), "rbxassetid://") then
+        finalLogo = string.find(tostring(finalLogo), "rbxassetid://") and finalLogo or "rbxassetid://" .. finalLogo
+    else
+        finalLogo = assets.Icons[finalLogo] or assets.Icons.Logo
+    end
+    
+    logoIcon.Image = finalLogo
     logoIcon.ImageColor3 = theme.Primary
     logoIcon.Parent = header
 
