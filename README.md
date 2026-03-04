@@ -20,7 +20,7 @@ local Icons = loadstring(game:HttpGet("https://raw.githubusercontent.com/Sam123m
 -- Ejemplo de uso con diferentes packs
 local Window = RoseUI:CreateWindow({
     Name = "ROSE UI",
-    Logo = Icons:Get("Solar", "Bolt") -- Icono del pack Solar
+    Logo = Icons.GetIcon("solar:Bolt") -- Icono del pack Solar
 })
 ```
 

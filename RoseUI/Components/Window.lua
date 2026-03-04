@@ -304,7 +304,101 @@ function Window:New(options, library)
         return btn
     end
 
-    createControl("-", theme.Primary, function() screenGui.Enabled = false end) -- Minimize
+    -- ========================================================================
+    -- Minimized State Bar
+    -- ========================================================================
+    local minBar = Instance.new("Frame")
+    minBar.Name = "MinimizedBar"
+    minBar.Size = UDim2.new(0, 220, 0, 42)
+    minBar.Position = UDim2.new(0.5, -110, 0.05, 0)
+    minBar.BackgroundColor3 = theme.Background
+    minBar.BackgroundTransparency = 0.05
+    minBar.BorderSizePixel = 0
+    minBar.Visible = false
+    minBar.Active = true
+    minBar.Parent = screenGui
+    Instance.new("UICorner", minBar).CornerRadius = UDim.new(0, 8)
+    
+    local minStroke = Instance.new("UIStroke")
+    minStroke.Color = theme.Primary
+    minStroke.Transparency = 0.7
+    minStroke.Thickness = 1
+    minStroke.Parent = minBar
+    
+    library.Utilities:MakeDraggable(minBar, minBar)
+
+    local minGrip = Instance.new("ImageLabel")
+    minGrip.Size = UDim2.new(0, 16, 0, 16)
+    minGrip.Position = UDim2.new(0, 12, 0.5, -8)
+    minGrip.BackgroundTransparency = 1
+    minGrip.Image = assets.Icons.Sliders or "rbxassetid://10734914191"
+    minGrip.ImageColor3 = theme.SecondaryText
+    minGrip.Parent = minBar
+    
+    local minSep = Instance.new("Frame")
+    minSep.Size = UDim2.new(0, 1, 0, 20)
+    minSep.Position = UDim2.new(0, 40, 0.5, -10)
+    minSep.BackgroundColor3 = Color3.new(1,1,1)
+    minSep.BackgroundTransparency = 0.9
+    minSep.BorderSizePixel = 0
+    minSep.Parent = minBar
+    
+    local minLogo = Instance.new("ImageLabel")
+    minLogo.Size = UDim2.new(0, 18, 0, 18)
+    minLogo.Position = UDim2.new(0, 52, 0.5, -9)
+    minLogo.BackgroundTransparency = 1
+    minLogo.Image = finalLogo
+    minLogo.ImageColor3 = theme.Primary
+    minLogo.Parent = minBar
+    
+    local minTitle = Instance.new("TextLabel")
+    minTitle.Size = UDim2.new(0, 60, 1, 0)
+    minTitle.Position = UDim2.new(0, 78, 0, 0)
+    minTitle.BackgroundTransparency = 1
+    minTitle.Text = titleText:upper()
+    minTitle.TextColor3 = theme.Text
+    minTitle.Font = Enum.Font.GothamBlack
+    minTitle.TextSize = 12
+    minTitle.TextXAlignment = Enum.TextXAlignment.Left
+    minTitle.Parent = minBar
+    
+    local restoreBtn = Instance.new("TextButton")
+    restoreBtn.Size = UDim2.new(0, 24, 0, 24)
+    restoreBtn.Position = UDim2.new(1, -32, 0.5, -12)
+    restoreBtn.BackgroundColor3 = Color3.fromRGB(255,255,255)
+    restoreBtn.BackgroundTransparency = 0.95
+    restoreBtn.Text = ""
+    restoreBtn.AutoButtonColor = false
+    restoreBtn.Parent = minBar
+    Instance.new("UICorner", restoreBtn).CornerRadius = UDim.new(0, 6)
+    
+    local restoreIcon = Instance.new("TextLabel")
+    restoreIcon.Size = UDim2.new(1, 0, 1, 0)
+    restoreIcon.BackgroundTransparency = 1
+    restoreIcon.Text = "+"
+    restoreIcon.TextColor3 = theme.SecondaryText
+    restoreIcon.Font = Enum.Font.GothamBold
+    restoreIcon.TextSize = 18
+    restoreIcon.Parent = restoreBtn
+    
+    restoreBtn.MouseEnter:Connect(function()
+        TweenService:Create(restoreBtn, TweenInfo.new(0.2), {BackgroundTransparency = 0.8}):Play()
+        TweenService:Create(restoreIcon, TweenInfo.new(0.2), {TextColor3 = theme.Text}):Play()
+    end)
+    restoreBtn.MouseLeave:Connect(function()
+        TweenService:Create(restoreBtn, TweenInfo.new(0.2), {BackgroundTransparency = 0.95}):Play()
+        TweenService:Create(restoreIcon, TweenInfo.new(0.2), {TextColor3 = theme.SecondaryText}):Play()
+    end)
+    
+    restoreBtn.MouseButton1Click:Connect(function()
+        minBar.Visible = false
+        mainFrame.Visible = true
+    end)
+
+    createControl("-", theme.Primary, function() 
+        mainFrame.Visible = false
+        minBar.Visible = true
+    end) -- Minimize
     createControl("□", theme.Primary, function() print("Toggle Size") end)       -- Maximize
     createControl("×", Color3.fromRGB(220, 50, 50), function() screenGui:Destroy() end)  -- Close
 
