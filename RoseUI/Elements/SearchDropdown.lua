@@ -1,6 +1,8 @@
-local Constants = ...
+local import = ...
+local Constants = import("Core/Constants")
 local Services = Constants.Services
 local TweenService = Services.TweenService
+local UserInputService = Services.UserInputService
 
 local SearchDropdown = {}
 
