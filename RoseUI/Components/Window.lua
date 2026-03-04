@@ -221,18 +221,28 @@ function Window:New(options, library)
     local timeStat = createStat("Time", "T", "00:00")
 
     -- Auto Stats Update
-    local lastTime = tick()
-    local frameCount = 0
-    local statsUpdateConn = RunService.RenderStepped:Connect(function()
-        frameCount = frameCount + 1
-        if tick() - lastTime >= 1 then
-            fpsStat.Text = tostring(frameCount)
-            frameCount = 0
-            lastTime = tick()
+    local lastUpdate = tick()
+    local frames = 0
+    local statsUpdateConn = RunService.RenderStepped:Connect(function(dt)
+        frames = frames + 1
+        local now = tick()
+        
+        if now - lastUpdate >= 1 then
+            -- FPS
+            fpsStat.Text = tostring(frames)
+            frames = 0
+            lastUpdate = now
             
-            ramStat.Text = string.format("%.1f GB", collectgarbage("count") / 1024 / 1024)
-            pingStat.Text = math.floor(Services.Players.LocalPlayer:GetNetworkPing() * 1000) .. "ms"
-            timeStat.Text = os.date("%H:%M")
+            -- RAM (Total memory usage in MB)
+            local totalMem = Services.Stats:GetTotalMemoryUsageMb()
+            ramStat.Text = string.format("%.0f MB", totalMem)
+            
+            -- Ping
+            local ping = math.floor(Services.Players.LocalPlayer:GetNetworkPing() * 1000)
+            pingStat.Text = ping .. "ms"
+            
+            -- Time (User's local time)
+            timeStat.Text = os.date("%H:%M:%S")
         end
     end)
     table.insert(_G.RoseUI_Connections, statsUpdateConn)
