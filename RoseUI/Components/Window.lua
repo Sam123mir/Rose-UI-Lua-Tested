@@ -70,7 +70,7 @@ function Window:New(options, library)
     blurPart.Parent = camera
     
     local blurConn = RunService.RenderStepped:Connect(function()
-        if not mainFrame or not mainFrame.Parent or not screenGui.Enabled then
+        if not mainFrame or not mainFrame.Parent or not screenGui.Enabled or not mainFrame.Visible then
             blurPart.CFrame = CFrame.new(0, 9999, 0)
             return
         end
@@ -328,10 +328,11 @@ function Window:New(options, library)
     -- Hitbox for dragging
     local minGripHitbox = Instance.new("Frame")
     minGripHitbox.Size = UDim2.new(0, 40, 1, 0)
+    minGripHitbox.Active = true -- Asegura que reciba inputs
     minGripHitbox.BackgroundTransparency = 1
     minGripHitbox.Parent = minBar
     
-    library.Utilities:MakeDraggable(minBar, minGripHitbox)
+    library.Utilities:MakeDraggable(minGripHitbox, minBar)
 
     local minGrip = Instance.new("ImageLabel")
     minGrip.Size = UDim2.new(0, 16, 0, 16)
@@ -663,60 +664,140 @@ function Window:New(options, library)
         if query == "" then
             -- Show everything
             for _, child in pairs(navScroll:GetChildren()) do
-                if child:IsA("Frame") then
-                    child.Visible = true
-                end
+                if child:IsA("Frame") then child.Visible = true end
             end
-            noResultsFrame.Visible = false
-            -- Show current tab's page
-            if WindowObj.CurrentTab then
-                WindowObj.CurrentTab.Page.Visible = true
-            end
-            return
-        end
-
-        -- Hide all pages while searching
-        for _, tab in pairs(WindowObj.Tabs) do
-            tab.Page.Visible = false
-        end
-
-        for _, child in pairs(navScroll:GetChildren()) do
-            if child:IsA("Frame") then
-                local childName = string.lower(child.Name)
-                -- Check if the name contains the query
-                if string.find(childName, query, 1, true) then
-                    child.Visible = true
-                    anyVisible = true
-                else
-                    -- For folders, also check children (files inside)
-                    local filesContainer = child:FindFirstChild("Files")
-                    if filesContainer then
-                        local folderHasMatch = false
-                        for _, fileChild in pairs(filesContainer:GetChildren()) do
-                            if fileChild:IsA("Frame") then
-                                if string.find(string.lower(fileChild.Name), query, 1, true) then
-                                    folderHasMatch = true
-                                    break
+            for _, tab in pairs(WindowObj.Tabs) do
+                for _, child in pairs(tab.Page:GetChildren()) do
+                    if child:IsA("Frame") or child:IsA("TextButton") then
+                        child.Visible = true
+                        if child.Name:match("_Section$") then
+                            local sContent = child:FindFirstChild("Content")
+                            if sContent then
+                                child.Visible = true
+                                for _, sc in pairs(sContent:GetChildren()) do
+                                    if sc:IsA("Frame") then sc.Visible = true end
                                 end
                             end
                         end
-                        if folderHasMatch then
+                    end
+                end
+            end
+            noResultsFrame.Visible = false
+            if WindowObj.CurrentTab then WindowObj.CurrentTab.Page.Visible = true end
+            return
+        end
+
+        local matchedTabs = {}
+        local firstMatchTab = nil
+
+        -- 1. Filter Elements inside Tabs
+        for _, tab in pairs(WindowObj.Tabs) do
+            local tabMatches = string.find(string.lower(tab.Label.Text), query, 1, true) ~= nil
+            local hasVisibleChild = false
+
+            for _, child in pairs(tab.Page:GetChildren()) do
+                if child:IsA("Frame") or child:IsA("TextButton") then
+                    if child.Name:match("_Section$") then
+                        local sNameLbl = child:FindFirstChild("Header") and child.Header:FindFirstChild("Title")
+                        local sName = sNameLbl and string.lower(sNameLbl.Text) or string.lower(child.Name)
+                        local childMatches = string.find(sName, query, 1, true) ~= nil
+                        
+                        local hasVisibleSectionChild = false
+                        local sContent = child:FindFirstChild("Content")
+                        if sContent then
+                            for _, sc in pairs(sContent:GetChildren()) do
+                                if sc:IsA("Frame") or sc:IsA("TextButton") then
+                                    local scMatches = string.find(string.lower(sc.Name), query, 1, true) ~= nil
+                                    if tabMatches or childMatches or scMatches then
+                                        sc.Visible = true
+                                        hasVisibleSectionChild = true
+                                    else
+                                        sc.Visible = false
+                                    end
+                                end
+                            end
+                        end
+                        if tabMatches or childMatches or hasVisibleSectionChild then
                             child.Visible = true
-                            anyVisible = true
+                            hasVisibleChild = true
                         else
                             child.Visible = false
                         end
                     else
-                        child.Visible = false
+                        local childMatches = string.find(string.lower(child.Name), query, 1, true) ~= nil
+                        if tabMatches or childMatches then
+                            child.Visible = true
+                            hasVisibleChild = true
+                        else
+                            child.Visible = false
+                        end
+                    end
+                end
+            end
+            
+            if tabMatches or hasVisibleChild then
+                matchedTabs[tab] = true
+                anyVisible = true
+                if not firstMatchTab then firstMatchTab = tab end
+            else
+                matchedTabs[tab] = false
+            end
+        end
+
+        -- 2. Update Sidebar Navigation
+        for _, child in pairs(navScroll:GetChildren()) do
+            if child:IsA("Frame") then
+                if child.Name:match("_Folder$") then
+                    local folderMatches = string.find(string.lower(child.Name), query, 1, true) ~= nil
+                    local hasMatchTab = false
+                    local filesContainer = child:FindFirstChild("Files")
+                    if filesContainer then
+                        for _, fileNode in pairs(filesContainer:GetChildren()) do
+                            if fileNode:IsA("Frame") then
+                                local cTab = nil
+                                for _, t in pairs(WindowObj.Tabs) do
+                                    if t.Btn == fileNode then cTab = t break end
+                                end
+                                if cTab and matchedTabs[cTab] then
+                                    hasMatchTab = true
+                                    fileNode.Visible = true
+                                elseif folderMatches and cTab then
+                                    -- Show tab if folder matches, but ensure we also mark its elements
+                                    -- Wait: elements are already filtered, but the tab button itself should show
+                                    fileNode.Visible = true
+                                    hasMatchTab = true
+                                    matchedTabs[cTab] = true
+                                else
+                                    fileNode.Visible = false
+                                end
+                            end
+                        end
+                    end
+                    child.Visible = folderMatches or hasMatchTab
+                else
+                    local cTab = nil
+                    for _, t in pairs(WindowObj.Tabs) do
+                        if t.Btn == child then cTab = t break end
+                    end
+                    if cTab then
+                        child.Visible = matchedTabs[cTab]
                     end
                 end
             end
         end
 
         noResultsFrame.Visible = not anyVisible
-        -- If we found results, show the tab of the first visible match
-        if anyVisible and WindowObj.CurrentTab then
-            WindowObj.CurrentTab.Page.Visible = true
+        
+        -- 3. Manage visible Pages
+        for _, tab in pairs(WindowObj.Tabs) do
+            tab.Page.Visible = false
+        end
+        if anyVisible then
+            if WindowObj.CurrentTab and matchedTabs[WindowObj.CurrentTab] then
+                WindowObj.CurrentTab.Page.Visible = true
+            elseif firstMatchTab then
+                firstMatchTab.Page.Visible = true
+            end
         end
     end
 
