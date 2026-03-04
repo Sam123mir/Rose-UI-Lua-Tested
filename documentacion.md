@@ -18,23 +18,23 @@ local Icons = loadstring(game:HttpGet("https://raw.githubusercontent.com/Sam123m
 La librería de iconos permite acceder a múltiples familias de diseño (Lucide, Solar, Craft, Geist, SF Symbols).
 
 **Obtener el ID de un Icono**
-Para usar un icono en RoseUI, simplemente llama a la función `Icons:Get` especificando la librería y el nombre del icono.
+Para usar un icono en RoseUI, simplemente llama a la función `Icons.GetIcon` especificando el nombre y, opcionalmente, la familia con prefijo.
 
 ```lua
--- Formato "Libreria", "NombreIcono"
-local lucideHome = Icons:Get("Lucide", "Home") -- Retorna rbxassetid://...
-local solarBolt = Icons:Get("Solar", "Bolt")
-local geistUser = Icons:Get("Geist", "User")
+-- Formato "Libreria:NombreIcono" o solo "NombreIcono" (por defecto Lucide)
+local lucideHome = Icons.GetIcon("Home") -- Retorna rbxassetid://...
+local solarBolt = Icons.GetIcon("solar:Bolt")
+local geistUser = Icons.GetIcon("geist:User")
 ```
 
-Las librerías disponibles son: `"Lucide"`, `"Solar"`, `"Craft"`, `"Geist"`, `"SFSymbols"`.
+Las librerías disponibles son: `lucide`, `solar`, `craft`, `geist`, `sfsymbols`.
 
 **Integración con RoseUI**
 Pasa el resultado directamente a los componentes de la interfaz:
 ```lua
 Window:AddFolder({ 
     Name = "Visuals", 
-    Icon = Icons:Get("Solar", "Eye") -- Así se pasan los iconos a la UI
+    Icon = Icons.GetIcon("solar:Eye") -- Así se pasan los iconos a la UI
 })
 ```
 
