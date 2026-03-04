@@ -14,75 +14,88 @@ function Slider:Add(parent, options, library)
     local default = options.Default or 50
     local cb = options.Callback or function() end
     local flag = options.Flag or options.Name
-    local theme = library.CurrentTheme or {
-        Header = Color3.fromRGB(255, 100, 130),
-        Sidebar = Color3.fromRGB(12, 18, 14),
-        Content = Color3.fromRGB(12, 18, 14),
-        Card = Color3.fromRGB(18, 26, 20),
-        Text = Color3.fromRGB(240, 255, 240)
-    }
+    local theme = library.CurrentTheme or import("Core/Themes")["Rose v2 (Premium)"]
 
-    local h = sDesc and 74 or 50
+    local h = sDesc and 60 or 52
     
     local sliderFrame = Instance.new("Frame")
-    sliderFrame.Size = UDim2.new(1, -10, 0, h)
-    sliderFrame.BackgroundColor3 = theme.Card
-    sliderFrame.ZIndex = 11
+    sliderFrame.Name = sName .. "_Slider"
+    sliderFrame.Size = UDim2.new(1, 0, 0, h)
+    sliderFrame.BackgroundTransparency = 1
     sliderFrame.Parent = parent
-    Instance.new("UICorner", sliderFrame).CornerRadius = UDim.new(0, 6)
     
+    local bg = Instance.new("Frame")
+    bg.Size = UDim2.new(1, 0, 1, 0)
+    bg.BackgroundColor3 = theme.Surface
+    bg.BackgroundTransparency = 0.3
+    bg.Parent = sliderFrame
+    Instance.new("UICorner", bg).CornerRadius = UDim.new(0, 8)
+    
+    local bgStroke = Instance.new("UIStroke")
+    bgStroke.Color = Color3.new(1,1,1)
+    bgStroke.Transparency = 0.95
+    bgStroke.Thickness = 1
+    bgStroke.Parent = bg
+
     local label = Instance.new("TextLabel")
-    label.Size = UDim2.new(1, -60, 0, sDesc and 30 or 25)
-    label.Position = UDim2.new(0, 15, 0, sDesc and -2 or 0)
+    label.Size = UDim2.new(1, -60, 0, sDesc and 24 or 30)
+    label.Position = UDim2.new(0, 12, 0, sDesc and 4 or 0)
     label.BackgroundTransparency = 1
     label.Text = sName
     label.TextColor3 = theme.Text
-    label.TextSize = 13
-    label.Font = Enum.Font.GothamSemibold
+    label.TextSize = 11
+    label.Font = Enum.Font.GothamBold
     label.TextXAlignment = Enum.TextXAlignment.Left
-    label.ZIndex = 12
-    label.Parent = sliderFrame
+    label.Parent = bg
 
-    local highlightBox = Instance.new("Frame")
-    highlightBox.Size = UDim2.new(0, 45, 0, 20)
-    highlightBox.Position = UDim2.new(1, -55, 0, sDesc and 12 or 5)
-    highlightBox.BackgroundColor3 = Color3.fromRGB(30, 15, 20)
-    highlightBox.ZIndex = 12
-    highlightBox.Parent = sliderFrame
-    Instance.new("UICorner", highlightBox).CornerRadius = UDim.new(0, 4)
+    if sDesc then
+        local descLabel = Instance.new("TextLabel")
+        descLabel.Size = UDim2.new(1, -60, 0, 14)
+        descLabel.Position = UDim2.new(0, 12, 0, 24)
+        descLabel.BackgroundTransparency = 1
+        descLabel.Text = sDesc
+        descLabel.TextColor3 = theme.SecondaryText
+        descLabel.Font = Enum.Font.Gotham
+        descLabel.TextSize = 9
+        descLabel.TextXAlignment = Enum.TextXAlignment.Left
+        descLabel.Parent = bg
+    end
 
     local valueLabel = Instance.new("TextLabel")
-    valueLabel.Size = UDim2.new(1, 0, 1, 0)
+    valueLabel.Size = UDim2.new(0, 40, 0, 20)
+    valueLabel.Position = UDim2.new(1, -52, 0, sDesc and 6 or 6)
     valueLabel.BackgroundTransparency = 1
     valueLabel.Text = tostring(default)
-    valueLabel.TextColor3 = theme.Header
-    valueLabel.TextSize = 12
-    valueLabel.Font = Enum.Font.GothamBold
-    valueLabel.ZIndex = 13
-    valueLabel.Parent = highlightBox
+    valueLabel.TextColor3 = theme.Primary
+    valueLabel.TextSize = 11
+    valueLabel.Font = Enum.Font.Code
+    valueLabel.TextXAlignment = Enum.TextXAlignment.Right
+    valueLabel.Parent = bg
 
     local slideBg = Instance.new("Frame")
-    slideBg.Size = UDim2.new(1, -30, 0, 6)
-    slideBg.Position = UDim2.new(0, 15, 0, sDesc and 54 or 32)
-    slideBg.BackgroundColor3 = Color3.fromRGB(30, 15, 20)
-    slideBg.ZIndex = 12
-    slideBg.Parent = sliderFrame
+    slideBg.Size = UDim2.new(1, -24, 0, 4)
+    slideBg.Position = UDim2.new(0, 12, 1, -12)
+    slideBg.BackgroundColor3 = theme.Background
+    slideBg.Parent = bg
     Instance.new("UICorner", slideBg).CornerRadius = UDim.new(1, 0)
 
     local slideInner = Instance.new("Frame")
     slideInner.Size = UDim2.new((default - min) / (max - min), 0, 1, 0)
-    slideInner.BackgroundColor3 = theme.Header
-    slideInner.ZIndex = 13
+    slideInner.BackgroundColor3 = theme.Primary
     slideInner.Parent = slideBg
     Instance.new("UICorner", slideInner).CornerRadius = UDim.new(1, 0)
 
     local knob = Instance.new("Frame")
-    knob.Size = UDim2.new(0, 14, 0, 14)
-    knob.Position = UDim2.new(1, -7, 0.5, -7)
-    knob.BackgroundColor3 = Color3.fromRGB(240, 240, 240)
-    knob.ZIndex = 14
+    knob.Size = UDim2.new(0, 10, 0, 10)
+    knob.Position = UDim2.new(1, -5, 0.5, -5)
+    knob.BackgroundColor3 = Color3.new(1,1,1)
     knob.Parent = slideInner
     Instance.new("UICorner", knob).CornerRadius = UDim.new(1, 0)
+    
+    local knobStroke = Instance.new("UIStroke")
+    knobStroke.Color = theme.Primary
+    knobStroke.Thickness = 1
+    knobStroke.Parent = knob
 
     local SliderObj = {
         Type = "Slider",
@@ -97,7 +110,7 @@ function Slider:Add(parent, options, library)
         SliderObj.Value = clamped
         valueLabel.Text = tostring(clamped)
         local percentage = (clamped - min) / (max - min)
-        TweenService:Create(slideInner, TweenInfo.new(0.08), {Size = UDim2.new(percentage, 0, 1, 0)}):Play()
+        TweenService:Create(slideInner, TweenInfo.new(0.08, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Size = UDim2.new(percentage, 0, 1, 0)}):Play()
         if library.Flags then library.Flags[flag] = clamped end
         cb(clamped)
     end
@@ -109,15 +122,14 @@ function Slider:Add(parent, options, library)
         SliderObj:Set(value)
     end
 
-    local slideBtn = Instance.new("TextButton")
-    slideBtn.Size = UDim2.new(1, 0, 1, 10)
-    slideBtn.Position = UDim2.new(0, 0, 0, -5)
-    slideBtn.BackgroundTransparency = 1
-    slideBtn.Text = ""
-    slideBtn.ZIndex = 15
-    slideBtn.Parent = slideBg
+    local trigger = Instance.new("TextButton")
+    trigger.Size = UDim2.new(1, 0, 0, 20)
+    trigger.Position = UDim2.new(0, 0, 1, -20)
+    trigger.BackgroundTransparency = 1
+    trigger.Text = ""
+    trigger.Parent = bg
 
-    slideBtn.InputBegan:Connect(function(input)
+    trigger.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
             SliderObj.Dragging = true
             updateSlider(input)
@@ -134,6 +146,15 @@ function Slider:Add(parent, options, library)
         if SliderObj.Dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
             updateSlider(input)
         end
+    end)
+
+    bg.MouseEnter:Connect(function() 
+        TweenService:Create(bg, TweenInfo.new(0.2), {BackgroundColor3 = theme.Accent, BackgroundTransparency = 0.1}):Play()
+        TweenService:Create(bgStroke, TweenInfo.new(0.2), {Transparency = 0.7, Color = theme.Primary}):Play()
+    end)
+    bg.MouseLeave:Connect(function() 
+        TweenService:Create(bg, TweenInfo.new(0.2), {BackgroundColor3 = theme.Surface, BackgroundTransparency = 0.3}):Play() 
+        TweenService:Create(bgStroke, TweenInfo.new(0.2), {Transparency = 0.95, Color = Color3.new(1,1,1)}):Play()
     end)
 
     if library.Flags then library.Flags[flag] = default end

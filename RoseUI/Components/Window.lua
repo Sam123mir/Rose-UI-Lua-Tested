@@ -10,14 +10,15 @@ local Lighting = Services.Lighting
 local Window = {}
 
 function Window:New(options, library)
-    local titleText = options.Name or "Rose Hub"
-    local hubType = options.HubType or "Rose Hub"
-    local theme = library.CurrentTheme or import("Core/Themes")["Dark Rose"]
+    local titleText = options.Name or "RoseUI"
+    local hubType = options.HubType or "v1.2.4 Premium"
+    local theme = library.CurrentTheme or import("Core/Themes")["Rose v2 (Premium)"]
+    local assets = library.Assets
     
     _G.RoseBase_ID = (_G.RoseBase_ID or 0) + 1
     local currentID = _G.RoseBase_ID
 
-    -- Purge old global event connections
+    -- Cleanup old connections
     if _G.RoseUI_Connections then
         for _, conn in pairs(_G.RoseUI_Connections) do
             if typeof(conn) == "RBXScriptConnection" then conn:Disconnect() end
@@ -25,12 +26,9 @@ function Window:New(options, library)
     end
     _G.RoseUI_Connections = {}
 
-    local success, targetContainer = pcall(function() return Services.CoreGui:FindFirstChild("RoseUI_Window") and Services.CoreGui or game.Players.LocalPlayer:WaitForChild("PlayerGui") end)
-    if not success then targetContainer = game.Players.LocalPlayer:WaitForChild("PlayerGui") end
-
-    if targetContainer:FindFirstChild("RoseUI_Window") then
-        targetContainer.RoseUI_Window:Destroy()
-    end
+    local targetContainer = Services.CoreGui:FindFirstChild("RoseUI_Window") and Services.CoreGui or game.Players.LocalPlayer:WaitForChild("PlayerGui")
+    
+    if targetContainer:FindFirstChild("RoseUI_Window") then targetContainer.RoseUI_Window:Destroy() end
     
     local screenGui = Instance.new("ScreenGui")
     screenGui.Name = "RoseUI_Window"
@@ -39,62 +37,47 @@ function Window:New(options, library)
     screenGui.IgnoreGuiInset = true
     screenGui.Parent = targetContainer
 
-    local openBtnGui = Instance.new("ScreenGui")
-    openBtnGui.Name = "RoseUI_OpenBtn"
-    openBtnGui.ResetOnSpawn = false
-    openBtnGui.Enabled = false
-    openBtnGui.ZIndexBehavior = Enum.ZIndexBehavior.Global
-    openBtnGui.Parent = targetContainer
-
-    local mobileOpenBtn = Instance.new("ImageButton")
-    mobileOpenBtn.Size = UDim2.new(0, 45, 0, 45)
-    mobileOpenBtn.Position = UDim2.new(1, -60, 0, 15)
-    mobileOpenBtn.BackgroundColor3 = theme.Card
-    mobileOpenBtn.Image = library.Assets.Icons.Logo
-    mobileOpenBtn.ZIndex = 100
-    mobileOpenBtn.Parent = openBtnGui
-    Instance.new("UICorner", mobileOpenBtn).CornerRadius = UDim.new(1, 0)
-    
-    local mbStroke = Instance.new("UIStroke")
-    mbStroke.Color = theme.Header
-    mbStroke.Thickness = 2
-    mbStroke.Parent = mobileOpenBtn
-
+    -- Main Container (Glass Panel)
     local viewportSize = workspace.CurrentCamera.ViewportSize
-    local finalWidth = math.clamp(Constants.DefaultSize.X.Offset, Constants.MinSize.Width, viewportSize.X - Constants.Padding)
-    local finalHeight = math.clamp(Constants.DefaultSize.Y.Offset, Constants.MinSize.Height, viewportSize.Y - Constants.Padding)
+    local finalWidth = 720
+    local finalHeight = 440
 
-    local dragFrame = Instance.new("Frame")
-    dragFrame.Name = "Main"
-    dragFrame.Size = UDim2.new(0, finalWidth, 0, finalHeight)
-    dragFrame.Position = UDim2.new(0.5, -finalWidth/2, 0.5, -finalHeight/2)
-    dragFrame.BackgroundColor3 = theme.Content
-    dragFrame.BackgroundTransparency = 0.15
-    dragFrame.Active = true
-    dragFrame.Parent = screenGui
-    Instance.new("UICorner", dragFrame).CornerRadius = UDim.new(0, 8)
+    local mainFrame = Instance.new("Frame")
+    mainFrame.Name = "Main"
+    mainFrame.Size = UDim2.new(0, finalWidth, 0, finalHeight)
+    mainFrame.Position = UDim2.new(0.5, -finalWidth/2, 0.5, -finalHeight/2)
+    mainFrame.BackgroundColor3 = theme.Background
+    mainFrame.BackgroundTransparency = 0.05
+    mainFrame.BorderSizePixel = 0
+    mainFrame.Active = true
+    mainFrame.Parent = screenGui
+    Instance.new("UICorner", mainFrame).CornerRadius = UDim.new(0, 12)
 
-    -- Acrylic Blur
+    local mainStroke = Instance.new("UIStroke")
+    mainStroke.Color = theme.Primary
+    mainStroke.Transparency = 0.8
+    mainStroke.Thickness = 1
+    mainStroke.Parent = mainFrame
+
+    -- Acrylic Blur Part
     local camera = workspace.CurrentCamera
     local blurPart = Instance.new("Part")
     blurPart.Name = "AcrylicBlur"
     blurPart.Material = Enum.Material.Glass
-    blurPart.Color = Color3.fromRGB(0, 0, 0)
-    blurPart.Transparency = 0.995
+    blurPart.Transparency = 0.99
     blurPart.Anchored = true
     blurPart.CanCollide = false
     blurPart.Parent = camera
     
     local blurConn = RunService.RenderStepped:Connect(function()
-        if not dragFrame or not dragFrame.Parent or not screenGui.Enabled then
+        if not mainFrame or not mainFrame.Parent or not screenGui.Enabled then
             blurPart.CFrame = CFrame.new(0, 9999, 0)
             return
         end
-        local insetX, insetY = 6, 10
-        local size = dragFrame.AbsoluteSize - Vector2.new(insetX * 2, insetY * 2)
-        local pos = dragFrame.AbsolutePosition + Vector2.new(insetX, insetY)
+        local size = mainFrame.AbsoluteSize
+        local pos = mainFrame.AbsolutePosition
         local topbarOffset = GuiService:GetGuiInset().Y
-        pos = Vector2.new(pos.X, pos.Y + topbarOffset - 4)
+        pos = Vector2.new(pos.X, pos.Y + topbarOffset)
         
         local z = 0.2
         local fov = math.rad(camera.FieldOfView)
@@ -106,189 +89,298 @@ function Window:New(options, library)
         local posX = (pos.X / camera.ViewportSize.X) * w - w / 2 + sizeX / 2
         local posY = -(pos.Y / camera.ViewportSize.Y) * h + h / 2 - sizeY / 2
         
-        blurPart.Size = Vector3.new(sizeX, sizeY, 0)
+        blurPart.Size = Vector3.new(sizeX, sizeY, 0.01)
         blurPart.CFrame = camera.CFrame * CFrame.new(posX, posY, -z)
     end)
     table.insert(_G.RoseUI_Connections, blurConn)
 
-    library.Utilities:MakeDraggable(dragFrame, dragFrame)
+    library.Utilities:MakeDraggable(mainFrame, mainFrame)
 
-    local mainStroke = Instance.new("UIStroke")
-    mainStroke.Color = theme.Header
-    mainStroke.Transparency = 0.5
-    mainStroke.Thickness = 2
-    mainStroke.Parent = dragFrame
+    -- Header (40px)
+    local header = Instance.new("Frame")
+    header.Name = "Header"
+    header.Size = UDim2.new(1, 0, 0, 40)
+    header.BackgroundColor3 = theme.Accent
+    header.BackgroundTransparency = 0.2
+    header.BorderSizePixel = 0
+    header.Parent = mainFrame
+    Instance.new("UICorner", header).CornerRadius = UDim.new(0, 12)
+    
+    local headerLine = Instance.new("Frame")
+    headerLine.Size = UDim2.new(1, 0, 0, 1)
+    headerLine.Position = UDim2.new(0, 0, 1, -1)
+    headerLine.BackgroundColor3 = Color3.new(1,1,1)
+    headerLine.BackgroundTransparency = 0.95
+    headerLine.BorderSizePixel = 0
+    headerLine.Parent = header
 
-    -- Header
-    local headerFrame = Instance.new("Frame")
-    headerFrame.Name = "Header"
-    headerFrame.Size = UDim2.new(1, 0, 0, 45)
-    headerFrame.BackgroundTransparency = 1
-    headerFrame.ZIndex = 5
-    headerFrame.Parent = dragFrame
-    
-    local headerLogo = Instance.new("ImageLabel")
-    headerLogo.Size = UDim2.new(0, 24, 0, 24)
-    headerLogo.Position = UDim2.new(0, 10, 0.5, -12)
-    headerLogo.BackgroundTransparency = 1
-    headerLogo.Image = library.Assets.Icons.Logo
-    headerLogo.ScaleType = Enum.ScaleType.Fit
-    headerLogo.ZIndex = 6
-    headerLogo.Parent = headerFrame
-    
+    local logoIcon = Instance.new("ImageLabel")
+    logoIcon.Size = UDim2.new(0, 20, 0, 20)
+    logoIcon.Position = UDim2.new(0, 12, 0.5, -10)
+    logoIcon.BackgroundTransparency = 1
+    logoIcon.Image = assets.Icons.Logo
+    logoIcon.ImageColor3 = theme.Primary
+    logoIcon.Parent = header
+
     local title = Instance.new("TextLabel")
-    title.Size = UDim2.new(1, -150, 1, 0)
-    title.Position = UDim2.new(0, 42, 0, 0)
+    title.Size = UDim2.new(0, 60, 1, 0)
+    title.Position = UDim2.new(0, 38, 0, 0)
     title.BackgroundTransparency = 1
-    title.Text = titleText
+    title.Text = "ROSEUI"
     title.TextColor3 = theme.Text
+    title.Font = Enum.Font.GothamBlack
     title.TextSize = 13
-    title.Font = Enum.Font.GothamMedium
     title.TextXAlignment = Enum.TextXAlignment.Left
-    title.ZIndex = 6
-    title.Parent = headerFrame
+    title.Parent = header
+
+    -- Stats Container
+    local statsFrame = Instance.new("Frame")
+    statsFrame.Size = UDim2.new(1, -250, 1, 0)
+    statsFrame.Position = UDim2.new(0, 110, 0, 0)
+    statsFrame.BackgroundTransparency = 1
+    statsFrame.Parent = header
+    
+    local statsLayout = Instance.new("UIListLayout")
+    statsLayout.FillDirection = Enum.FillDirection.Horizontal
+    statsLayout.VerticalAlignment = Enum.VerticalAlignment.Center
+    statsLayout.Padding = UDim.new(0, 0)
+    statsLayout.Parent = statsFrame
+
+    local function createStat(iconName, name, defaultVal)
+        local item = Instance.new("Frame")
+        item.Size = UDim2.new(0, 100, 1, 0)
+        item.BackgroundTransparency = 1
+        item.Parent = statsFrame
+        
+        local icon = Instance.new("ImageLabel")
+        icon.Size = UDim2.new(0, 14, 0, 14)
+        icon.Position = UDim2.new(0, 8, 0.5, -7)
+        icon.BackgroundTransparency = 1
+        icon.Image = assets.Icons[iconName] or ""
+        icon.ImageColor3 = theme.SecondaryText
+        icon.Parent = item
+        
+        local val = Instance.new("TextLabel")
+        val.Size = UDim2.new(1, -28, 1, 0)
+        val.Position = UDim2.new(0, 26, 0, 0)
+        val.BackgroundTransparency = 1
+        val.Text = defaultVal
+        val.TextColor3 = theme.Primary
+        val.Font = Enum.Font.Code
+        val.TextSize = 10
+        val.TextXAlignment = Enum.TextXAlignment.Left
+        val.Parent = item
+        
+        local separator = Instance.new("Frame")
+        separator.Size = UDim2.new(0, 1, 0, 16)
+        separator.Position = UDim2.new(1, -1, 0.5, -8)
+        separator.BackgroundColor3 = Color3.new(1,1,1)
+        separator.BackgroundTransparency = 0.9
+        separator.BorderSizePixel = 0
+        separator.Parent = item
+        
+        item.Size = UDim2.new(0, val.TextBounds.X + 40, 1, 0)
+        val:GetPropertyChangedSignal("Text"):Connect(function()
+            item.Size = UDim2.new(0, val.TextBounds.X + 40, 1, 0)
+        end)
+        
+        return val
+    end
+
+    local gameStat = createStat("Game", "Game", game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name or "Game")
+    local fpsStat = createStat("FPS", "FPS", "60")
+    local ramStat = createStat("RAM", "RAM", "0.0 GB")
+    local pingStat = createStat("Ping", "Ping", "0ms")
+    local timeStat = createStat("Time", "Time", "00:00")
+
+    -- Auto Stats Update
+    local lastTime = tick()
+    local frameCount = 0
+    local statsUpdateConn = RunService.RenderStepped:Connect(function()
+        frameCount = frameCount + 1
+        if tick() - lastTime >= 1 then
+            fpsStat.Text = tostring(frameCount)
+            frameCount = 0
+            lastTime = tick()
+            
+            -- Simple RAM/Ping estimation for showcase (can be refined)
+            ramStat.Text = string.format("%.1f GB", collectgarbage("count") / 1024 / 1024)
+            pingStat.Text = math.floor(Services.Players.LocalPlayer:GetNetworkPing() * 1000) .. "ms"
+            timeStat.Text = os.date("%H:%M")
+        end
+    end)
+    table.insert(_G.RoseUI_Connections, statsUpdateConn)
 
     -- Window Controls
-    local controlsFrame = Instance.new("Frame")
-    controlsFrame.Size = UDim2.new(0, 160, 1, 0)
-    controlsFrame.Position = UDim2.new(1, -175, 0, 0)
-    controlsFrame.BackgroundTransparency = 1
-    controlsFrame.ZIndex = 6
-    controlsFrame.Parent = headerFrame
+    local controls = Instance.new("Frame")
+    controls.Size = UDim2.new(0, 100, 1, 0)
+    controls.Position = UDim2.new(1, -100, 0, 0)
+    controls.BackgroundTransparency = 1
+    controls.Parent = header
     
-    local controlLayout = Instance.new("UIListLayout")
-    controlLayout.FillDirection = Enum.FillDirection.Horizontal
-    controlLayout.HorizontalAlignment = Enum.HorizontalAlignment.Right
-    controlLayout.VerticalAlignment = Enum.VerticalAlignment.Center
-    controlLayout.Padding = UDim.new(0, 8)
-    controlLayout.Parent = controlsFrame
+    local cLayout = Instance.new("UIListLayout")
+    cLayout.FillDirection = Enum.FillDirection.Horizontal
+    cLayout.HorizontalAlignment = Enum.HorizontalAlignment.Right
+    cLayout.VerticalAlignment = Enum.VerticalAlignment.Center
+    cLayout.Padding = UDim.new(0, 4)
+    cLayout.Parent = controls
 
-    local function createControlBtn(icon, order, imageIcon)
-        local btn = Instance.new("TextButton")
-        btn.Size = UDim2.new(0, 28, 0, 28)
+    local function createControl(iconName, callback)
+        local btn = Instance.new("ImageButton")
+        btn.Size = UDim2.new(0, 30, 0, 30)
         btn.BackgroundTransparency = 1
-        btn.Text = icon
-        btn.TextColor3 = Color3.fromRGB(255, 180, 190)
-        btn.TextSize = 18
-        btn.Font = Enum.Font.GothamBold
-        btn.LayoutOrder = order
-        btn.ZIndex = 6
-        btn.Parent = controlsFrame
+        btn.Image = assets.Icons[iconName]
+        btn.ImageColor3 = theme.SecondaryText
+        btn.ImageTransparency = 0.2
+        btn.Parent = controls
         
-        local img
-        if imageIcon then
-            img = Instance.new("ImageLabel")
-            img.Size = UDim2.new(0, 16, 0, 16)
-            img.Position = UDim2.new(0.5, -8, 0.5, -8)
-            img.BackgroundTransparency = 1
-            img.Image = imageIcon
-            img.ImageColor3 = Color3.fromRGB(255, 180, 190)
-            img.ScaleType = Enum.ScaleType.Fit
-            img.ZIndex = 6
-            img.Parent = btn
-        end
-
-        btn.MouseEnter:Connect(function() 
-            TweenService:Create(btn, TweenInfo.new(0.2), {TextColor3 = Color3.fromRGB(255, 255, 255)}):Play()
-            if img then TweenService:Create(img, TweenInfo.new(0.2), {ImageColor3 = Color3.fromRGB(255, 255, 255)}):Play() end
-        end)
-        btn.MouseLeave:Connect(function() 
-            TweenService:Create(btn, TweenInfo.new(0.2), {TextColor3 = Color3.fromRGB(255, 180, 190)}):Play()
-            if img then TweenService:Create(img, TweenInfo.new(0.2), {ImageColor3 = Color3.fromRGB(255, 180, 190)}):Play() end
-        end)
+        btn.MouseEnter:Connect(function() TweenService:Create(btn, TweenInfo.new(0.2), {ImageColor3 = theme.Primary, ImageTransparency = 0}):Play() end)
+        btn.MouseLeave:Connect(function() TweenService:Create(btn, TweenInfo.new(0.2), {ImageColor3 = theme.SecondaryText, ImageTransparency = 0.2}):Play() end)
+        btn.MouseButton1Click:Connect(callback)
         return btn
     end
 
-    local discordBtn = createControlBtn("", 0, library.Assets.Icons.Discord)
-    discordBtn.MouseButton1Click:Connect(function()
-        if setclipboard then
-            setclipboard("https://discord.gg/rosehub")
-            library:Notify({Title = "Discord", Text = "Copied Discord link to clipboard!", Duration = 3})
-        end
-    end)
+    createControl("Minimize", function() screenGui.Enabled = false end)
+    createControl("Close", function() screenGui:Destroy() end)
 
-    local minBtn = createControlBtn("-", 1)
-    minBtn.MouseButton1Click:Connect(function()
-        screenGui.Enabled = false
-        openBtnGui.Enabled = true
-        library:Notify({Title = "Rose Hub Minimized", Text = "Tap the logo at the top right or press Right Alt to reopen.", Duration = 4})
-    end)
-    mobileOpenBtn.MouseButton1Click:Connect(function()
-        screenGui.Enabled = true
-        openBtnGui.Enabled = false
-    end)
+    -- Body
+    local body = Instance.new("Frame")
+    body.Name = "Body"
+    body.Size = UDim2.new(1, 0, 1, -40)
+    body.Position = UDim2.new(0, 0, 0, 40)
+    body.BackgroundTransparency = 1
+    body.Parent = mainFrame
 
-    local maxBtn = createControlBtn("", 2, library.Assets.Icons.TabOut)
-    local closeBtn = createControlBtn("", 3, library.Assets.Icons.Cross)
-    closeBtn.MouseButton1Click:Connect(function()
-        pcall(function() blurPart:Destroy() end)
-        blurConn:Disconnect()
-        screenGui:Destroy()
-    end)
-
-    local bodyContainer = Instance.new("Frame")
-    bodyContainer.Name = "Body"
-    bodyContainer.Size = UDim2.new(1, 0, 1, -45)
-    bodyContainer.Position = UDim2.new(0, 0, 0, 45)
-    bodyContainer.BackgroundTransparency = 1
-    bodyContainer.ZIndex = 1
-    bodyContainer.Parent = dragFrame
-    bodyContainer.ClipsDescendants = true
-
-    local sidebarFrame = Instance.new("Frame")
-    sidebarFrame.Name = "Sidebar"
-    sidebarFrame.Size = UDim2.new(0, 160, 1, 0)
-    sidebarFrame.BackgroundTransparency = 1
-    sidebarFrame.Parent = bodyContainer
-
-    local tabScroll = Instance.new("ScrollingFrame")
-    tabScroll.Name = "ScrollingFrame"
-    tabScroll.Size = UDim2.new(1, 0, 1, -10)
-    tabScroll.Position = UDim2.new(0, 0, 0, 5)
-    tabScroll.BackgroundTransparency = 1
-    tabScroll.BorderSizePixel = 0
-    tabScroll.ScrollBarThickness = 2
-    tabScroll.ScrollBarImageColor3 = theme.Header
-    tabScroll.Parent = sidebarFrame
+    -- Sidebar (192px)
+    local sidebar = Instance.new("Frame")
+    sidebar.Name = "Sidebar"
+    sidebar.Size = UDim2.new(0, 192, 1, 0)
+    sidebar.BackgroundColor3 = theme.Accent
+    sidebar.BackgroundTransparency = 0.7
+    sidebar.BorderSizePixel = 0
+    sidebar.Parent = body
     
-    local tabLayout = Instance.new("UIListLayout")
-    tabLayout.Padding = UDim.new(0, 2)
-    tabLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-    tabLayout.Parent = tabScroll
+    local sidebarBorder = Instance.new("Frame")
+    sidebarBorder.Size = UDim2.new(0, 1, 1, 0)
+    sidebarBorder.Position = UDim2.new(1, -1, 0, 0)
+    sidebarBorder.BackgroundColor3 = Color3.new(1,1,1)
+    sidebarBorder.BackgroundTransparency = 0.95
+    sidebarBorder.BorderSizePixel = 0
+    sidebarBorder.Parent = sidebar
+
+    -- Profile Section
+    local profile = Instance.new("Frame")
+    profile.Size = UDim2.new(1, 0, 0, 70)
+    profile.BackgroundTransparency = 1
+    profile.Parent = sidebar
     
-    tabLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-        tabScroll.CanvasSize = UDim2.new(0, 0, 0, tabLayout.AbsoluteContentSize.Y)
-    end)
+    local avatarFrame = Instance.new("Frame")
+    avatarFrame.Size = UDim2.new(0, 40, 0, 40)
+    avatarFrame.Position = UDim2.new(0, 15, 0.5, -20)
+    avatarFrame.BackgroundColor3 = theme.DeepAccent
+    avatarFrame.Parent = profile
+    Instance.new("UICorner", avatarFrame).CornerRadius = UDim.new(1, 0)
+    Instance.new("UIStroke", avatarFrame).Color = theme.Primary
+    
+    local avatarImg = Instance.new("ImageLabel")
+    avatarImg.Size = UDim2.new(1, -4, 1, -4)
+    avatarImg.Position = UDim2.new(0, 2, 0, 2)
+    avatarImg.BackgroundTransparency = 1
+    avatarImg.Image = assets.Icons.User
+    avatarImg.ImageColor3 = theme.Primary
+    avatarImg.Parent = avatarFrame
+    Instance.new("UICorner", avatarImg).CornerRadius = UDim.new(1, 0)
+    
+    local userName = Instance.new("TextLabel")
+    userName.Size = UDim2.new(1, -70, 0, 14)
+    userName.Position = UDim2.new(0, 65, 0.5, -12)
+    userName.BackgroundTransparency = 1
+    userName.Text = Services.Players.LocalPlayer.Name
+    userName.TextColor3 = theme.Text
+    userName.Font = Enum.Font.GothamBold
+    userName.TextSize = 11
+    userName.TextXAlignment = Enum.TextXAlignment.Left
+    userName.Parent = profile
+    
+    local userStatus = Instance.new("TextLabel")
+    userStatus.Size = UDim2.new(1, -70, 0, 12)
+    userStatus.Position = UDim2.new(0, 65, 0.5, 2)
+    userStatus.BackgroundTransparency = 1
+    userStatus.Text = "ACTIVE NOW"
+    userStatus.TextColor3 = theme.SecondaryText
+    userStatus.Font = Enum.Font.GothamBold
+    userStatus.TextSize = 9
+    userStatus.TextXAlignment = Enum.TextXAlignment.Left
+    userStatus.Parent = profile
 
-    local contentFrame = Instance.new("Frame")
-    contentFrame.Name = "ContentArea"
-    contentFrame.Size = UDim2.new(1, -160, 1, 0)
-    contentFrame.Position = UDim2.new(0, 160, 0, 0)
-    contentFrame.BackgroundColor3 = theme.Content
-    contentFrame.BackgroundTransparency = 0.15
-    contentFrame.Parent = bodyContainer
-    Instance.new("UICorner", contentFrame).CornerRadius = UDim.new(0, 8)
+    -- Navigation
+    local navScroll = Instance.new("ScrollingFrame")
+    navScroll.Size = UDim2.new(1, 0, 1, -110)
+    navScroll.Position = UDim2.new(0, 0, 0, 70)
+    navScroll.BackgroundTransparency = 1
+    navScroll.BorderSizePixel = 0
+    navScroll.ScrollBarThickness = 2
+    navScroll.ScrollBarImageColor3 = theme.Primary
+    navScroll.Parent = sidebar
+    
+    local navLayout = Instance.new("UIListLayout")
+    navLayout.Padding = UDim.new(0, 4)
+    navLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+    navLayout.Parent = navScroll
 
+    -- Content Area
+    local content = Instance.new("Frame")
+    content.Name = "ContentArea"
+    content.Size = UDim2.new(1, -192, 1, 0)
+    content.Position = UDim2.new(0, 192, 0, 0)
+    content.BackgroundTransparency = 1
+    content.Parent = body
+    
     local pageContainer = Instance.new("Frame")
     pageContainer.Size = UDim2.new(1, 0, 1, 0)
     pageContainer.BackgroundTransparency = 1
-    pageContainer.ClipsDescendants = true
-    pageContainer.Parent = contentFrame
+    pageContainer.Parent = content
+
+    -- Footer
+    local footer = Instance.new("Frame")
+    footer.Size = UDim2.new(1, 0, 0, 30)
+    footer.Position = UDim2.new(0, 0, 1, -30)
+    footer.BackgroundTransparency = 1
+    footer.Parent = sidebar
+    
+    local versionLbl = Instance.new("TextLabel")
+    versionLbl.Size = UDim2.new(1, 0, 1, 0)
+    versionLbl.BackgroundTransparency = 1
+    versionLbl.Text = hubType
+    versionLbl.TextColor3 = theme.MutedText
+    versionLbl.Font = Enum.Font.GothamBold
+    versionLbl.TextSize = 9
+    versionLbl.Parent = footer
 
     local WindowObj = {
         Instance = screenGui,
+        MainFrame = mainFrame,
         CurrentTab = nil,
         Tabs = {},
         Elements = {},
         ID = currentID,
         Library = library,
         Theme = theme,
-        PageContainer = pageContainer
+        PageContainer = pageContainer,
+        NavScroll = navScroll
     }
 
     function WindowObj:MakeTab(tabOptions)
         return library.Tab:New(tabOptions, self)
     end
+
+    -- Toggle Hotkey
+    local toggleConn = UserInputService.InputBegan:Connect(function(input, gpe)
+        if not gpe and input.KeyCode == Enum.KeyCode.RightControl then
+            screenGui.Enabled = not screenGui.Enabled
+        end
+    end)
+    table.insert(_G.RoseUI_Connections, toggleConn)
 
     return WindowObj
 end

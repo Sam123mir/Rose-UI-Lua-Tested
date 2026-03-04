@@ -11,119 +11,162 @@ function ColorPicker:Add(parent, options, library)
     local default = options.Default or Color3.fromRGB(255, 255, 255)
     local cb = options.Callback or function() end
     local flag = options.Flag or options.Name
-    local theme = library.CurrentTheme or {
-        Header = Color3.fromRGB(255, 100, 130),
-        Sidebar = Color3.fromRGB(12, 18, 14),
-        Content = Color3.fromRGB(12, 18, 14),
-        Card = Color3.fromRGB(18, 26, 20),
-        Text = Color3.fromRGB(240, 255, 240)
-    }
-
-    _G.RoseUI_ZIndex = (_G.RoseUI_ZIndex or 100) + 10
-    local currentZ = _G.RoseUI_ZIndex
-
-    local cpFrame = Instance.new("Frame")
-    cpFrame.Size = UDim2.new(1, -10, 0, 42)
-    cpFrame.BackgroundColor3 = theme.Card
-    cpFrame.ZIndex = currentZ
-    cpFrame.Parent = parent
-    Instance.new("UICorner", cpFrame).CornerRadius = UDim.new(0, 6)
-    
-    local label = Instance.new("TextLabel")
-    label.Size = UDim2.new(0.6, 0, 1, 0)
-    label.Position = UDim2.new(0, 15, 0, 0)
-    label.BackgroundTransparency = 1
-    label.Text = cpName
-    label.TextColor3 = theme.Text
-    label.TextSize = 13
-    label.Font = Enum.Font.GothamSemibold
-    label.TextXAlignment = Enum.TextXAlignment.Left
-    label.ZIndex = currentZ + 1
-    label.Parent = cpFrame
-
-    local colorBtn = Instance.new("TextButton")
-    colorBtn.Size = UDim2.new(0, 40, 0, 24)
-    colorBtn.Position = UDim2.new(1, -55, 0.5, -12)
-    colorBtn.BackgroundColor3 = default
-    colorBtn.Text = ""
-    colorBtn.ZIndex = currentZ + 1
-    colorBtn.Parent = cpFrame
-    Instance.new("UICorner", colorBtn).CornerRadius = UDim.new(0, 6)
-    
-    local expandBg = Instance.new("Frame")
-    expandBg.Size = UDim2.new(1, 0, 0, 0) 
-    expandBg.Position = UDim2.new(0, 0, 1, 5)
-    expandBg.BackgroundColor3 = Color3.fromRGB(30, 15, 20)
-    expandBg.ClipsDescendants = true
-    expandBg.Visible = false
-    expandBg.ZIndex = currentZ + 3
-    expandBg.Parent = cpFrame
-    Instance.new("UICorner", expandBg).CornerRadius = UDim.new(0, 6)
+    local theme = library.CurrentTheme or import("Core/Themes")["Rose v2 (Premium)"]
 
     local h, s, v = default:ToHSV()
     local currentColor = default
+    local isOpen = false
 
-    local colorMap = Instance.new("TextButton")
-    colorMap.Size = UDim2.new(0, 100, 0, 100)
-    colorMap.Position = UDim2.new(0, 15, 0, 15)
-    colorMap.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    colorMap.Text = ""
-    colorMap.AutoButtonColor = false
-    colorMap.ZIndex = currentZ + 4
-    colorMap.Parent = expandBg
+    local cpFrame = Instance.new("Frame")
+    cpFrame.Name = cpName .. "_ColorPicker"
+    cpFrame.Size = UDim2.new(1, 0, 0, 42)
+    cpFrame.BackgroundTransparency = 1
+    cpFrame.Parent = parent
     
-    local hsvGrad = Instance.new("UIGradient")
-    hsvGrad.Color = ColorSequence.new({
-        ColorSequenceKeypoint.new(0.00, Color3.fromRGB(255, 0, 0)),
-        ColorSequenceKeypoint.new(0.166, Color3.fromRGB(255, 255, 0)),
-        ColorSequenceKeypoint.new(0.333, Color3.fromRGB(0, 255, 0)),
-        ColorSequenceKeypoint.new(0.500, Color3.fromRGB(0, 255, 255)),
-        ColorSequenceKeypoint.new(0.666, Color3.fromRGB(0, 0, 255)),
-        ColorSequenceKeypoint.new(0.833, Color3.fromRGB(255, 0, 255)),
-        ColorSequenceKeypoint.new(1.00, Color3.fromRGB(255, 0, 0))
-    })
-    hsvGrad.Parent = colorMap
+    local bg = Instance.new("Frame")
+    bg.Size = UDim2.new(1, 0, 1, 0)
+    bg.BackgroundColor3 = theme.Surface
+    bg.BackgroundTransparency = 0.3
+    bg.Parent = cpFrame
+    Instance.new("UICorner", bg).CornerRadius = UDim.new(0, 8)
+    
+    local bgStroke = Instance.new("UIStroke")
+    bgStroke.Color = Color3.new(1,1,1)
+    bgStroke.Transparency = 0.95
+    bgStroke.Thickness = 1
+    bgStroke.Parent = bg
 
-    local pickerRing = Instance.new("Frame")
-    pickerRing.Size = UDim2.new(0, 10, 0, 10)
-    pickerRing.AnchorPoint = Vector2.new(0.5, 0.5)
-    pickerRing.Position = UDim2.new(h, 0, 1 - s, 0)
-    pickerRing.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    pickerRing.ZIndex = currentZ + 7
-    pickerRing.Parent = colorMap
-    Instance.new("UICorner", pickerRing).CornerRadius = UDim.new(1, 0)
+    local label = Instance.new("TextLabel")
+    label.Size = UDim2.new(1, -120, 0, 42)
+    label.Position = UDim2.new(0, 12, 0, 0)
+    label.BackgroundTransparency = 1
+    label.Text = cpName
+    label.TextColor3 = theme.Text
+    label.TextSize = 11
+    label.Font = Enum.Font.GothamBold
+    label.TextXAlignment = Enum.TextXAlignment.Left
+    label.Parent = bg
+
+    local colorDisplay = Instance.new("Frame")
+    colorDisplay.Size = UDim2.new(0, 36, 0, 18)
+    colorDisplay.Position = UDim2.new(1, -48, 0.5, -9)
+    colorDisplay.BackgroundColor3 = default
+    colorDisplay.Parent = bg
+    Instance.new("UICorner", colorDisplay).CornerRadius = UDim.new(0, 4)
+    Instance.new("UIStroke", colorDisplay).Color = theme.Primary
+    
+    local trigger = Instance.new("TextButton")
+    trigger.Size = UDim2.new(1, 0, 1, 0)
+    trigger.BackgroundTransparency = 1
+    trigger.Text = ""
+    trigger.Parent = bg
+
+    local pickerFrame = Instance.new("Frame")
+    pickerFrame.Size = UDim2.new(1, -24, 0, 0)
+    pickerFrame.Position = UDim2.new(0, 12, 0, 42)
+    pickerFrame.BackgroundTransparency = 1
+    pickerFrame.ClipsDescendants = true
+    pickerFrame.Parent = bg
+
+    local satMap = Instance.new("ImageButton")
+    satMap.Size = UDim2.new(1, -40, 0, 100)
+    satMap.BackgroundColor3 = Color3.fromHSV(h, 1, 1)
+    satMap.Image = "rbxassetid://4155801252"
+    satMap.AutoButtonColor = false
+    satMap.Parent = pickerFrame
+    Instance.new("UICorner", satMap).CornerRadius = UDim.new(0, 6)
+
+    local mapCursor = Instance.new("Frame")
+    mapCursor.Size = UDim2.new(0, 8, 0, 8)
+    mapCursor.AnchorPoint = Vector2.new(0.5, 0.5)
+    mapCursor.Position = UDim2.new(s, 0, 1-v, 0)
+    mapCursor.BackgroundColor3 = Color3.new(1,1,1)
+    mapCursor.Parent = satMap
+    Instance.new("UICorner", mapCursor).CornerRadius = UDim.new(1, 0)
+    Instance.new("UIStroke", mapCursor).Thickness = 1
+
+    local hueSlider = Instance.new("ImageButton")
+    hueSlider.Size = UDim2.new(0, 20, 0, 100)
+    hueSlider.Position = UDim2.new(1, -25, 0, 0)
+    hueSlider.Image = "rbxassetid://4155801332"
+    hueSlider.AutoButtonColor = false
+    hueSlider.Parent = pickerFrame
+    Instance.new("UICorner", hueSlider).CornerRadius = UDim.new(0, 6)
+
+    local hueCursor = Instance.new("Frame")
+    hueCursor.Size = UDim2.new(1, 4, 0, 2)
+    hueCursor.Position = UDim2.new(0, -2, h, 0)
+    hueCursor.BackgroundColor3 = Color3.new(1,1,1)
+    hueCursor.Parent = hueSlider
+    Instance.new("UIStroke", hueCursor).Thickness = 1
 
     local ColorObj = {
         Type = "ColorPicker",
         Value = default,
-        Flag = flag,
-        IsOpen = false
+        Flag = flag
     }
+
+    local function updateColor()
+        currentColor = Color3.fromHSV(h, s, v)
+        colorDisplay.BackgroundColor3 = currentColor
+        satMap.BackgroundColor3 = Color3.fromHSV(h, 1, 1)
+        if library.Flags then library.Flags[flag] = currentColor end
+        cb(currentColor)
+    end
+
+    local draggingHue = false
+    hueSlider.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then draggingHue = true end
+    end)
+    UserInputService.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then draggingHue = false end
+    end)
+    UserInputService.InputChanged:Connect(function(input)
+        if draggingHue and input.UserInputType == Enum.UserInputType.MouseMovement then
+            h = 1 - math.clamp((input.Position.Y - hueSlider.AbsolutePosition.Y) / hueSlider.AbsoluteSize.Y, 0, 1)
+            hueCursor.Position = UDim2.new(0, -2, 1-h, 0)
+            updateColor()
+        end
+    end)
+
+    local draggingSat = false
+    satMap.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then draggingSat = true end
+    end)
+    UserInputService.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then draggingSat = false end
+    end)
+    UserInputService.InputChanged:Connect(function(input)
+        if draggingSat and input.UserInputType == Enum.UserInputType.MouseMovement then
+            s = math.clamp((input.Position.X - satMap.AbsolutePosition.X) / satMap.AbsoluteSize.X, 0, 1)
+            v = 1 - math.clamp((input.Position.Y - satMap.AbsolutePosition.Y) / satMap.AbsoluteSize.Y, 0, 1)
+            mapCursor.Position = UDim2.new(s, 0, 1-v, 0)
+            updateColor()
+        end
+    end)
 
     function ColorObj:Set(nc)
         h, s, v = nc:ToHSV()
-        ColorObj.Value = nc
-        colorBtn.BackgroundColor3 = nc
-        pickerRing.Position = UDim2.new(h, 0, 1 - s, 0)
-        if library.Flags then library.Flags[flag] = nc end
-        cb(nc)
+        hueCursor.Position = UDim2.new(0, -2, 1-h, 0)
+        mapCursor.Position = UDim2.new(s, 0, 1-v, 0)
+        updateColor()
     end
 
-    colorBtn.MouseButton1Click:Connect(function()
-        ColorObj.IsOpen = not ColorObj.IsOpen
-        if ColorObj.IsOpen then
-            expandBg.Visible = true
-            TweenService:Create(expandBg, TweenInfo.new(0.3), {Size = UDim2.new(1, 0, 0, 130)}):Play()
-            cpFrame.Size = UDim2.new(1, -10, 0, 180)
-        else
-            local t = TweenService:Create(expandBg, TweenInfo.new(0.2), {Size = UDim2.new(1, 0, 0, 0)})
-            t:Play()
-            t.Completed:Wait()
-            if not ColorObj.IsOpen then 
-                expandBg.Visible = false 
-                cpFrame.Size = UDim2.new(1, -10, 0, 42)
-            end
-        end
+    trigger.MouseButton1Click:Connect(function()
+        isOpen = not isOpen
+        local goalH = isOpen and 150 or 42
+        local goalPH = isOpen and 100 or 0
+        TweenService:Create(cpFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quart), {Size = UDim2.new(1, 0, 0, goalH)}):Play()
+        TweenService:Create(pickerFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quart), {Size = UDim2.new(1, -24, 0, goalPH)}):Play()
+    end)
+
+    bg.MouseEnter:Connect(function() 
+        TweenService:Create(bg, TweenInfo.new(0.2), {BackgroundColor3 = theme.Accent, BackgroundTransparency = 0.1}):Play()
+        TweenService:Create(bgStroke, TweenInfo.new(0.2), {Transparency = 0.7, Color = theme.Primary}):Play()
+    end)
+    bg.MouseLeave:Connect(function() 
+        TweenService:Create(bg, TweenInfo.new(0.2), {BackgroundColor3 = theme.Surface, BackgroundTransparency = 0.3}):Play() 
+        TweenService:Create(bgStroke, TweenInfo.new(0.2), {Transparency = 0.95, Color = Color3.new(1,1,1)}):Play()
     end)
 
     if library.Flags then library.Flags[flag] = default end

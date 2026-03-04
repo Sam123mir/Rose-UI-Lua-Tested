@@ -8,44 +8,63 @@ local Textbox = {}
 function Textbox:Add(parent, options, library)
     local tName = options.Name or "Textbox"
     local default = options.Default or ""
-    local placeholder = options.Placeholder or "Type here..."
+    local placeholder = options.Placeholder or "TYPE HERE..."
     local cb = options.Callback or function() end
-    local theme = library.CurrentTheme or {
-        Header = Color3.fromRGB(255, 100, 130),
-        Text = Color3.fromRGB(240, 255, 240),
-        Card = Color3.fromRGB(18, 26, 20)
-    }
+    local theme = library.CurrentTheme or import("Core/Themes")["Rose v2 (Premium)"]
 
+    local h = 42
+    
     local txtFrame = Instance.new("Frame")
-    txtFrame.Size = UDim2.new(1, -10, 0, 42)
-    txtFrame.BackgroundColor3 = theme.Card
+    txtFrame.Name = tName .. "_Textbox"
+    txtFrame.Size = UDim2.new(1, 0, 0, h)
+    txtFrame.BackgroundTransparency = 1
     txtFrame.Parent = parent
-    Instance.new("UICorner", txtFrame).CornerRadius = UDim.new(0, 6)
+    
+    local bg = Instance.new("Frame")
+    bg.Size = UDim2.new(1, 0, 1, 0)
+    bg.BackgroundColor3 = theme.Surface
+    bg.BackgroundTransparency = 0.3
+    bg.Parent = txtFrame
+    Instance.new("UICorner", bg).CornerRadius = UDim.new(0, 8)
+    
+    local bgStroke = Instance.new("UIStroke")
+    bgStroke.Color = Color3.new(1,1,1)
+    bgStroke.Transparency = 0.95
+    bgStroke.Thickness = 1
+    bgStroke.Parent = bg
 
     local label = Instance.new("TextLabel")
-    label.Size = UDim2.new(0.5, 0, 1, 0)
-    label.Position = UDim2.new(0, 15, 0, 0)
+    label.Size = UDim2.new(1, -120, 1, 0)
+    label.Position = UDim2.new(0, 12, 0, 0)
     label.BackgroundTransparency = 1
     label.Text = tName
     label.TextColor3 = theme.Text
-    label.Font = Enum.Font.GothamSemibold
-    label.TextSize = 13
+    label.TextSize = 11
+    label.Font = Enum.Font.GothamBold
     label.TextXAlignment = Enum.TextXAlignment.Left
-    label.Parent = txtFrame
+    label.Parent = bg
+
+    local boxBg = Instance.new("Frame")
+    boxBg.Size = UDim2.new(0.5, -12, 0, 26)
+    boxBg.Position = UDim2.new(0.5, 0, 0.5, -13)
+    boxBg.BackgroundColor3 = theme.Background
+    boxBg.BackgroundTransparency = 0.5
+    boxBg.Parent = bg
+    Instance.new("UICorner", boxBg).CornerRadius = UDim.new(0, 6)
 
     local box = Instance.new("TextBox")
-    box.Size = UDim2.new(0.4, 0, 0, 28)
-    box.Position = UDim2.new(1, -15, 0.5, -14)
-    box.AnchorPoint = Vector2.new(1, 0)
-    box.BackgroundColor3 = Color3.fromRGB(30, 15, 20)
+    box.Size = UDim2.new(1, -20, 1, 0)
+    box.Position = UDim2.new(0, 10, 0, 0)
+    box.BackgroundTransparency = 1
     box.Text = default
     box.PlaceholderText = placeholder
+    box.PlaceholderColor3 = theme.SecondaryText
     box.TextColor3 = theme.Text
     box.Font = Enum.Font.Gotham
-    box.TextSize = 12
+    box.TextSize = 10
+    box.TextXAlignment = Enum.TextXAlignment.Left
     box.ClearTextOnFocus = false
-    box.Parent = txtFrame
-    Instance.new("UICorner", box).CornerRadius = UDim.new(0, 4)
+    box.Parent = boxBg
 
     local boxObj = {
         Type = "Textbox",
@@ -55,6 +74,15 @@ function Textbox:Add(parent, options, library)
     box.FocusLost:Connect(function(enter)
         boxObj.Value = box.Text
         cb(box.Text)
+    end)
+
+    bg.MouseEnter:Connect(function() 
+        TweenService:Create(bg, TweenInfo.new(0.2), {BackgroundColor3 = theme.Accent, BackgroundTransparency = 0.1}):Play()
+        TweenService:Create(bgStroke, TweenInfo.new(0.2), {Transparency = 0.7, Color = theme.Primary}):Play()
+    end)
+    bg.MouseLeave:Connect(function() 
+        TweenService:Create(bg, TweenInfo.new(0.2), {BackgroundColor3 = theme.Surface, BackgroundTransparency = 0.3}):Play() 
+        TweenService:Create(bgStroke, TweenInfo.new(0.2), {Transparency = 0.95, Color = Color3.new(1,1,1)}):Play()
     end)
 
     return boxObj

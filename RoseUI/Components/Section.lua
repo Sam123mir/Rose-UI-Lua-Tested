@@ -10,32 +10,43 @@ function Section:New(sName, tab)
     local theme = window.Theme
 
     local sectionFrame = Instance.new("Frame")
-    sectionFrame.Size = UDim2.new(1, -10, 0, 30)
-    sectionFrame.BackgroundColor3 = Color3.fromRGB(30, 15, 20)
-    sectionFrame.BackgroundTransparency = 0.5
+    sectionFrame.Name = sName .. "_Section"
+    sectionFrame.Size = UDim2.new(1, 0, 0, 30)
+    sectionFrame.BackgroundTransparency = 1
     sectionFrame.Parent = tab.Page
-    Instance.new("UICorner", sectionFrame).CornerRadius = UDim.new(0, 6)
     
-    local sectionStroke = Instance.new("UIStroke")
-    sectionStroke.Color = theme.Header
-    sectionStroke.Transparency = 0.7
-    sectionStroke.Thickness = 1
-    sectionStroke.Parent = sectionFrame
-
+    local titleFrame = Instance.new("Frame")
+    titleFrame.Size = UDim2.new(1, 0, 0, 15)
+    titleFrame.BackgroundTransparency = 1
+    titleFrame.Parent = sectionFrame
+    
+    local accentBar = Instance.new("Frame")
+    accentBar.Size = UDim2.new(0, 2, 1, 0)
+    accentBar.BackgroundColor3 = theme.Primary
+    accentBar.BorderSizePixel = 0
+    accentBar.Parent = titleFrame
+    
     local sectionLabel = Instance.new("TextLabel")
-    sectionLabel.Size = UDim2.new(1, -30, 0, 30)
-    sectionLabel.Position = UDim2.new(0, 15, 0, 0)
+    sectionLabel.Size = UDim2.new(1, -10, 1, 0)
+    sectionLabel.Position = UDim2.new(0, 8, 0, 0)
     sectionLabel.BackgroundTransparency = 1
-    sectionLabel.Text = sName
-    sectionLabel.TextColor3 = theme.Header
-    sectionLabel.TextSize = 13
-    sectionLabel.Font = Enum.Font.GothamBold
+    sectionLabel.Text = sName:upper()
+    sectionLabel.TextColor3 = theme.Primary
+    sectionLabel.TextSize = 10
+    sectionLabel.Font = Enum.Font.GothamBlack
     sectionLabel.TextXAlignment = Enum.TextXAlignment.Left
-    sectionLabel.Parent = sectionFrame
+    sectionLabel.Parent = titleFrame
+    
+    -- Custom tracking simulation (Letter spacing)
+    sectionLabel.Text = ""
+    for i = 1, #sName do
+        sectionLabel.Text = sectionLabel.Text .. sName:sub(i,i):upper() .. " "
+    end
     
     local sectionContainer = Instance.new("Frame")
+    sectionContainer.Name = "Container"
     sectionContainer.Size = UDim2.new(1, 0, 0, 0)
-    sectionContainer.Position = UDim2.new(0, 0, 0, 35)
+    sectionContainer.Position = UDim2.new(0, 0, 0, 25)
     sectionContainer.BackgroundTransparency = 1
     sectionContainer.Parent = sectionFrame
     
@@ -46,7 +57,7 @@ function Section:New(sName, tab)
     
     secLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
         sectionContainer.Size = UDim2.new(1, 0, 0, secLayout.AbsoluteContentSize.Y)
-        sectionFrame.Size = UDim2.new(1, -10, 0, 45 + secLayout.AbsoluteContentSize.Y)
+        sectionFrame.Size = UDim2.new(1, 0, 0, 35 + secLayout.AbsoluteContentSize.Y)
     end)
     
     local SectionObj = {
@@ -54,7 +65,7 @@ function Section:New(sName, tab)
         Tab = tab
     }
 
-    -- Proxies para Elementos
+    -- Element Proxies
     function SectionObj:AddButton(options)
         return library.Elements.Button:Add(self.Container, options, library)
     end
