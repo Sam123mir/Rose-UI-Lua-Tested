@@ -8,7 +8,7 @@ local ColorPicker = {}
 
 function ColorPicker:Add(parent, options, library)
     local cpName = options.Name or "Color Picker"
-    local default = options.Default or Color3.fromRGB(255, 255, 255)
+    local default = options.Default or Color3.fromRGB(242, 13, 13)
     local cb = options.Callback or function() end
     local flag = options.Flag or options.Name
     local theme = library.CurrentTheme or import("Core/Themes")["Rose v2 (Premium)"]
@@ -28,7 +28,7 @@ function ColorPicker:Add(parent, options, library)
     bg.BackgroundColor3 = theme.Surface
     bg.BackgroundTransparency = 0.3
     bg.Parent = cpFrame
-    Instance.new("UICorner", bg).CornerRadius = UDim.new(0, 8)
+    Instance.new("UICorner", bg).CornerRadius = UDim.new(0, 10)
     
     local bgStroke = Instance.new("UIStroke")
     bgStroke.Color = Color3.new(1,1,1)
@@ -37,7 +37,7 @@ function ColorPicker:Add(parent, options, library)
     bgStroke.Parent = bg
 
     local label = Instance.new("TextLabel")
-    label.Size = UDim2.new(1, -120, 0, 42)
+    label.Size = UDim2.new(1, -120, 1, 0)
     label.Position = UDim2.new(0, 12, 0, 0)
     label.BackgroundTransparency = 1
     label.Text = cpName
@@ -47,13 +47,21 @@ function ColorPicker:Add(parent, options, library)
     label.TextXAlignment = Enum.TextXAlignment.Left
     label.Parent = bg
 
+    local colorDisplayContainer = Instance.new("Frame")
+    colorDisplayContainer.Size = UDim2.new(0, 40, 0, 20)
+    colorDisplayContainer.Position = UDim2.new(1, -50, 0.5, -10)
+    colorDisplayContainer.BackgroundColor3 = theme.Background
+    colorDisplayContainer.BackgroundTransparency = 0.3
+    colorDisplayContainer.Parent = bg
+    Instance.new("UICorner", colorDisplayContainer).CornerRadius = UDim.new(0, 6)
+    Instance.new("UIStroke", colorDisplayContainer).Color = theme.Primary
+    
     local colorDisplay = Instance.new("Frame")
-    colorDisplay.Size = UDim2.new(0, 36, 0, 18)
-    colorDisplay.Position = UDim2.new(1, -48, 0.5, -9)
+    colorDisplay.Size = UDim2.new(1, -4, 1, -4)
+    colorDisplay.Position = UDim2.new(0, 2, 0, 2)
     colorDisplay.BackgroundColor3 = default
-    colorDisplay.Parent = bg
+    colorDisplay.Parent = colorDisplayContainer
     Instance.new("UICorner", colorDisplay).CornerRadius = UDim.new(0, 4)
-    Instance.new("UIStroke", colorDisplay).Color = theme.Primary
     
     local trigger = Instance.new("TextButton")
     trigger.Size = UDim2.new(1, 0, 1, 0)
@@ -61,19 +69,27 @@ function ColorPicker:Add(parent, options, library)
     trigger.Text = ""
     trigger.Parent = bg
 
-    local pickerFrame = Instance.new("Frame")
-    pickerFrame.Size = UDim2.new(1, -24, 0, 0)
-    pickerFrame.Position = UDim2.new(0, 12, 0, 42)
-    pickerFrame.BackgroundTransparency = 1
-    pickerFrame.ClipsDescendants = true
-    pickerFrame.Parent = bg
+    -- POPUP PICKER (COMPACT)
+    local pickerPopup = Instance.new("Frame")
+    pickerPopup.Name = "ColorPopup"
+    pickerPopup.Size = UDim2.new(0, 180, 0, 160)
+    pickerPopup.BackgroundColor3 = theme.Surface
+    pickerPopup.BackgroundTransparency = 0.05
+    pickerPopup.Visible = false
+    pickerPopup.ZIndex = 1000
+    pickerPopup.Parent = cpFrame:FindFirstAncestor("Main") or parent
+    Instance.new("UICorner", pickerPopup).CornerRadius = UDim.new(0, 10)
+    local pickerStroke = Instance.new("UIStroke", pickerPopup)
+    pickerStroke.Color = theme.Primary
+    pickerStroke.Thickness = 1
 
     local satMap = Instance.new("ImageButton")
-    satMap.Size = UDim2.new(1, -40, 0, 100)
+    satMap.Size = UDim2.new(1, -30, 0, 120)
+    satMap.Position = UDim2.new(0, 10, 0, 10)
     satMap.BackgroundColor3 = Color3.fromHSV(h, 1, 1)
     satMap.Image = "rbxassetid://4155801252"
     satMap.AutoButtonColor = false
-    satMap.Parent = pickerFrame
+    satMap.Parent = pickerPopup
     Instance.new("UICorner", satMap).CornerRadius = UDim.new(0, 6)
 
     local mapCursor = Instance.new("Frame")
@@ -86,19 +102,29 @@ function ColorPicker:Add(parent, options, library)
     Instance.new("UIStroke", mapCursor).Thickness = 1
 
     local hueSlider = Instance.new("ImageButton")
-    hueSlider.Size = UDim2.new(0, 20, 0, 100)
-    hueSlider.Position = UDim2.new(1, -25, 0, 0)
+    hueSlider.Size = UDim2.new(0, 12, 0, 120)
+    hueSlider.Position = UDim2.new(1, -22, 0, 10)
     hueSlider.Image = "rbxassetid://4155801332"
     hueSlider.AutoButtonColor = false
-    hueSlider.Parent = pickerFrame
+    hueSlider.Parent = pickerPopup
     Instance.new("UICorner", hueSlider).CornerRadius = UDim.new(0, 6)
 
     local hueCursor = Instance.new("Frame")
     hueCursor.Size = UDim2.new(1, 4, 0, 2)
-    hueCursor.Position = UDim2.new(0, -2, h, 0)
+    hueCursor.Position = UDim2.new(0, -2, 1-h, 0)
     hueCursor.BackgroundColor3 = Color3.new(1,1,1)
     hueCursor.Parent = hueSlider
     Instance.new("UIStroke", hueCursor).Thickness = 1
+
+    local hexDisplay = Instance.new("TextLabel")
+    hexDisplay.Size = UDim2.new(1, -20, 0, 20)
+    hexDisplay.Position = UDim2.new(0, 10, 1, -25)
+    hexDisplay.BackgroundTransparency = 1
+    hexDisplay.Text = "#" .. default:ToHex():upper()
+    hexDisplay.TextColor3 = theme.SecondaryText
+    hexDisplay.Font = Enum.Font.Code
+    hexDisplay.TextSize = 10
+    hexDisplay.Parent = pickerPopup
 
     local ColorObj = {
         Type = "ColorPicker",
@@ -110,6 +136,7 @@ function ColorPicker:Add(parent, options, library)
         currentColor = Color3.fromHSV(h, s, v)
         colorDisplay.BackgroundColor3 = currentColor
         satMap.BackgroundColor3 = Color3.fromHSV(h, 1, 1)
+        hexDisplay.Text = "#" .. currentColor:ToHex():upper()
         if library.Flags then library.Flags[flag] = currentColor end
         cb(currentColor)
     end
@@ -145,19 +172,14 @@ function ColorPicker:Add(parent, options, library)
         end
     end)
 
-    function ColorObj:Set(nc)
-        h, s, v = nc:ToHSV()
-        hueCursor.Position = UDim2.new(0, -2, 1-h, 0)
-        mapCursor.Position = UDim2.new(s, 0, 1-v, 0)
-        updateColor()
-    end
-
     trigger.MouseButton1Click:Connect(function()
         isOpen = not isOpen
-        local goalH = isOpen and 150 or 42
-        local goalPH = isOpen and 100 or 0
-        TweenService:Create(cpFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quart), {Size = UDim2.new(1, 0, 0, goalH)}):Play()
-        TweenService:Create(pickerFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quart), {Size = UDim2.new(1, -24, 0, goalPH)}):Play()
+        pickerPopup.Visible = isOpen
+        if isOpen then
+            local absPos = colorDisplayContainer.AbsolutePosition
+            local contPos = pickerPopup.Parent.AbsolutePosition
+            pickerPopup.Position = UDim2.new(0, absPos.X - contPos.X - 140, 0, absPos.Y - contPos.Y + 25)
+        end
     end)
 
     bg.MouseEnter:Connect(function() 

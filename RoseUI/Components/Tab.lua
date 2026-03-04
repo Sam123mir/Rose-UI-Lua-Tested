@@ -8,6 +8,13 @@ local Tab = {}
 function Tab:New(tabOptions, window)
     local tabName = tabOptions.Name or "Tab"
     local tabIcon = tabOptions.Icon or (tabOptions.IsFile and "File" or "Dashboard")
+    -- Support for custom asset IDs
+    if tonumber(tabIcon) or string.find(tabIcon, "rbxassetid://") then
+        tabIcon = string.find(tabIcon, "rbxassetid://") and tabIcon or "rbxassetid://" .. tabIcon
+    else
+        tabIcon = library.Assets.Icons[tabIcon] or library.Assets.Icons.File
+    end
+
     local isSubTab = tabOptions.IsSubTab or tabOptions.IsFile or false
     local isFile = tabOptions.IsFile or false
     local parentOverride = tabOptions.ParentOverride
@@ -27,19 +34,24 @@ function Tab:New(tabOptions, window)
     btnTrigger.Text = ""
     btnTrigger.Parent = tabBtn
 
-    local contentFrame = Instance.new("Frame")
     contentFrame.Size = UDim2.new(1, isFile and -40 or (isSubTab and -30 or -20), 1, -4)
     contentFrame.Position = UDim2.new(0, isFile and 30 or (isSubTab and 25 or 10), 0, 2)
     contentFrame.BackgroundColor3 = theme.Primary
     contentFrame.BackgroundTransparency = 1
     contentFrame.Parent = tabBtn
-    Instance.new("UICorner", contentFrame).CornerRadius = UDim.new(0, 4)
+    Instance.new("UICorner", contentFrame).CornerRadius = UDim.new(0, isFile and 12 or 8)
+    
+    local contentStroke = Instance.new("UIStroke")
+    contentStroke.Color = theme.Primary
+    contentStroke.Transparency = 1
+    contentStroke.Thickness = 1
+    contentStroke.Parent = contentFrame
 
     local icon = Instance.new("ImageLabel")
-    icon.Size = UDim2.new(0, isSubTab and 14 or 18, 0, isSubTab and 14 or 18)
-    icon.Position = UDim2.new(0, 8, 0.5, isSubTab and -7 or -9)
+    icon.Size = UDim2.new(0, 18, 0, 18)
+    icon.Position = UDim2.new(0, 10, 0.5, -9)
     icon.BackgroundTransparency = 1
-    icon.Image = assets.Icons[tabIcon] or ""
+    icon.Image = tabIcon
     icon.ImageColor3 = theme.SecondaryText
     icon.Parent = contentFrame
 

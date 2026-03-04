@@ -136,10 +136,23 @@ function Window:New(options, library)
     -- Stats Container (Centered)
     local statsFrame = Instance.new("Frame")
     statsFrame.Size = UDim2.new(0, 420, 1, 0)
-    statsFrame.Position = UDim2.new(0.5, 40, 0, 0) -- Centered between Logo and Controls
+    statsFrame.Position = UDim2.new(0.5, 40, 0, 0)
     statsFrame.AnchorPoint = Vector2.new(0.5, 0)
     statsFrame.BackgroundTransparency = 1
     statsFrame.Parent = header
+
+    -- Bottom Glow (Refined Red)
+    local bottomGlow = Instance.new("ImageLabel")
+    bottomGlow.Name = "BottomGlow"
+    bottomGlow.Size = UDim2.new(1.2, 0, 0, 150)
+    bottomGlow.Position = UDim2.new(0.5, 0, 1, 0)
+    bottomGlow.AnchorPoint = Vector2.new(0.5, 0.5)
+    bottomGlow.BackgroundTransparency = 1
+    bottomGlow.Image = "rbxassetid://6015667101" -- Blur Circle
+    bottomGlow.ImageColor3 = theme.Primary
+    bottomGlow.ImageTransparency = 0.85
+    bottomGlow.ZIndex = 0
+    bottomGlow.Parent = mainFrame
     
     local statsLayout = Instance.new("UIListLayout")
     statsLayout.FillDirection = Enum.FillDirection.Horizontal
@@ -387,6 +400,19 @@ function Window:New(options, library)
         NavScroll = navScroll
     }
 
+    -- Window Resize Handler (Bottom-Right)
+    local resizeHandle = Instance.new("ImageButton")
+    resizeHandle.Name = "ResizeHandle"
+    resizeHandle.Size = UDim2.new(0, 20, 0, 20)
+    resizeHandle.Position = UDim2.new(1, -20, 1, -20)
+    resizeHandle.BackgroundTransparency = 1
+    resizeHandle.Image = "rbxassetid://10723415903" -- Small indicator
+    resizeHandle.ImageColor3 = theme.Primary
+    resizeHandle.ImageTransparency = 0.8
+    resizeHandle.ZIndex = 10
+    resizeHandle.Parent = mainFrame
+    
+    library.Utilities:MakeResizable(resizeHandle, mainFrame, Vector2.new(600, 400))
     function WindowObj:MakeTab(tabOptions)
         return library.Tab:New(tabOptions, self)
     end
@@ -395,8 +421,12 @@ function Window:New(options, library)
         return library.Folder:New(folderOptions, self)
     end
     
-    -- Auto Update Canvas Size
+    -- Auto Update Canvas Size & Layout Adjustments
     navLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+        navScroll.CanvasSize = UDim2.new(0, 0, 0, navLayout.AbsoluteContentSize.Y)
+    end)
+
+    mainFrame:GetPropertyChangedSignal("Size"):Connect(function()
         navScroll.CanvasSize = UDim2.new(0, 0, 0, navLayout.AbsoluteContentSize.Y)
     end)
 

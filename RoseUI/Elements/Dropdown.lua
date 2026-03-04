@@ -27,7 +27,7 @@ function Dropdown:Add(parent, options, library)
     bg.BackgroundColor3 = theme.Surface
     bg.BackgroundTransparency = 0.3
     bg.Parent = dropFrame
-    Instance.new("UICorner", bg).CornerRadius = UDim.new(0, 8)
+    Instance.new("UICorner", bg).CornerRadius = UDim.new(0, 10)
     
     local bgStroke = Instance.new("UIStroke")
     bgStroke.Color = Color3.new(1,1,1)
@@ -57,7 +57,7 @@ function Dropdown:Add(parent, options, library)
     dropBtn.TextSize = 10
     dropBtn.TextXAlignment = Enum.TextXAlignment.Left
     dropBtn.Parent = bg
-    Instance.new("UICorner", dropBtn).CornerRadius = UDim.new(0, 6)
+    Instance.new("UICorner", dropBtn).CornerRadius = UDim.new(0, 8)
     Instance.new("UIPadding", dropBtn).PaddingLeft = UDim.new(0, 10)
     
     local arrow = Instance.new("ImageLabel")
@@ -76,7 +76,7 @@ function Dropdown:Add(parent, options, library)
     dropMenuBg.Visible = false
     dropMenuBg.ClipsDescendants = true
     dropMenuBg.Parent = dropFrame:FindFirstAncestor("Main") or parent
-    Instance.new("UICorner", dropMenuBg).CornerRadius = UDim.new(0, 8)
+    Instance.new("UICorner", dropMenuBg).CornerRadius = UDim.new(0, 10)
     
     local dropMenuStroke = Instance.new("UIStroke")
     dropMenuStroke.Color = theme.Primary
@@ -143,7 +143,7 @@ function Dropdown:Add(parent, options, library)
         end
         for _, opt in pairs(newList) do
             local optBtn = Instance.new("TextButton")
-            optBtn.Size = UDim2.new(1, 0, 0, 26)
+            optBtn.Size = UDim2.new(1, 0, 0, 24)
             optBtn.BackgroundTransparency = 1
             optBtn.Text = tostring(opt)
             optBtn.TextColor3 = theme.Text
@@ -161,10 +161,10 @@ function Dropdown:Add(parent, options, library)
             
             optBtn.MouseButton1Click:Connect(function()
                 DropdownObj:Set(opt)
-                DropdownObj:Toggle()
+                DropdownObj:Toggle() -- Close automatically
             end)
         end
-        dropMenu.CanvasSize = UDim2.new(0, 0, 0, #newList * 28)
+        dropMenu.CanvasSize = UDim2.new(0, 0, 0, #newList * 26)
     end
 
     dropBtn.MouseButton1Click:Connect(function()

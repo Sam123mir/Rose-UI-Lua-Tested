@@ -51,4 +51,41 @@ function Utilities:MakeDraggable(dragFrame, parentFrame)
     return dragCon
 end
 
+function Utilities:MakeResizable(resizeBtn, parentFrame, minSize)
+    local minSize = minSize or Vector2.new(600, 400)
+    local dragging, dragInput, dragStart, startSize
+    
+    resizeBtn.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true
+            dragStart = input.Position
+            startSize = parentFrame.AbsoluteSize
+            
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragging = false
+                end
+            end)
+        end
+    end)
+
+    resizeBtn.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+            dragInput = input
+        end
+    end)
+
+    local resizeCon = UserInputService.InputChanged:Connect(function(input)
+        if input == dragInput and dragging then
+            local delta = input.Position - dragStart
+            local newSizeX = math.max(minSize.X, startSize.X + delta.X)
+            local newSizeY = math.max(minSize.Y, startSize.Y + delta.Y)
+            
+            parentFrame.Size = UDim2.new(0, newSizeX, 0, newSizeY)
+        end
+    end)
+    
+    return resizeCon
+end
+
 return Utilities
