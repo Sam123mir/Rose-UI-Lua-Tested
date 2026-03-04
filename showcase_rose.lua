@@ -1,139 +1,100 @@
--- [[ 🌹 RoseUI v2 Premium - Comprehensive Showcase 🌹 ]]
--- Este script es la prueba de fuego para la nueva estética "Redline" y la API modular.
+-- [[ 🌹 RoseUI v2.5 Premium Showcase 🌹 ]]
+-- Versión Unificada: https://github.com/Sam123mir/Rose-UI-Lua-Tested
 
--- Cargamos la librería desde el repositorio oficial para evitar errores de ruta en el ejecutor.
-local RoseUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/Sam123mir/Rose-UI-Lua-Tested/main/RoseUI/loader.lua"))()
+-- 1. Cargar Librería (Versión Dist para mejor rendimiento)
+local RoseUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/Sam123mir/Rose-UI-Lua-Tested/main/dist/roseui.lua"))()
 
--- OPCIÓN LOCAL (Solo si pones la carpeta 'RoseUI' dentro de la carpeta 'workspace' de tu ejecutor):
--- local RoseUI = loadstring(readfile("RoseUI/loader.lua"))()
+-- 2. Cargar Iconos (Repositorio Dedicado)
+local Icons = loadstring(game:HttpGet("https://raw.githubusercontent.com/Sam123mir/Icons-RoseV1/main/Main.lua"))()
 
--- 1. Notificación de Bienvenida (Estilo Toast)
+-- Notificación de Bienvenida
 RoseUI:Notify({
-    Title = "RoseUI v2 Premium",
-    Text = "Sistema cargado con éxito. Disfruta de la mejor experiencia visual.",
-    Icon = "Check",
+    Title = "RoseUI Cargado",
+    Text = "Sistema de Build y Iconos detectado. Bienvenido.",
     Duration = 5
 })
 
--- 2. Creación de la Ventana Principal
--- El nuevo sistema de Window ahora soporta perfiles de usuario y estadísticas automáticas.
+-- 3. Crear Ventana
 local Window = RoseUI:CreateWindow({
-    Name = "ROSE UI",
-    Tag = "V2 PREMIUM",
-    Logo = "Rose", -- Icono de la rosa en el header
-    LoadingText = "INICIALIZANDO SISTEMA...",
+    Name = "ROSE HUB",
+    Tag = "V2.5 STABLE",
+    Logo = "rbxassetid://10723343321", -- O puedes usar Icons.Rose si el repo lo tiene
+    LoadingText = "SINCRONIZANDO CON GITHUB...",
     Keybind = Enum.KeyCode.RightControl
 })
 
--- 3. Organización por Pestañas y Sub-pestañas
--- Combat Tab (Aimbot, Triggerbot)
--- 3. Organización Jerárquica (Carpetas y Archivos)
-
+-- 4. Estructura de Navegación (Carpetas y Archivos)
 -- CARPETA: COMBATE
-local CombatFolder = Window:AddFolder({ Name = "Combate", Icon = "Combat" })
-local AimbotTab = CombatFolder:AddFile({ Name = "Aimbot", Icon = "Crosshair" })
-local SilentTab = CombatFolder:AddFile({ Name = "Silent Aim", Icon = "Target" })
-
--- CARPETA: VISUALS
-local VisualsFolder = Window:AddFolder({ Name = "Visuals", Icon = "Visuals" })
-local PlayerTab = VisualsFolder:AddFile({ Name = "Players", Icon = "User" })
-local WorldTab = VisualsFolder:AddFile({ Name = "World", Icon = "Globe" })
+local CombatFolder = Window:AddFolder({ Name = "Combate", Icon = "Zap" })
+local MainTab = CombatFolder:AddFile({ Name = "Main", Icon = "Crosshair" })
+local MiscTab = CombatFolder:AddFile({ Name = "Miscellaneous", Icon = "Dashboard" })
 
 -- CARPETA: CONFIGURACIÓN
-local ConfigFolder = Window:AddFolder({ Name = "Settings", Icon = "Settings" })
-local MainSettingsTab = ConfigFolder:AddFile({ Name = "Main", Icon = "Sliders" })
+local ConfigFolder = Window:AddFolder({ Name = "Config", Icon = "Settings" })
+local ThemeTab = ConfigFolder:AddFile({ Name = "Visuals", Icon = "Eye" })
 
 -- ##########################################################################
--- COMBAT -> AIMBOT
+-- COMBATE -> MAIN
 -- ##########################################################################
-local AimMain = AimbotTab:AddSection("MAIN CONTROLS")
+local AimSection = MainTab:AddSection("AIMBOT CONTROLS")
 
-AimMain:AddToggle({
-    Name = "ENABLE AIMBOT",
-    Description = "Lock your camera onto target players automatically.",
+AimSection:AddToggle({
+    Name = "Silent Aim",
+    Description = "Automatically redirects your bullets to targets.",
     Default = false,
-    Flag = "AimEnabled",
-    Callback = function(v) print("Aimbot:", v) end
+    Flag = "SilentAim",
+    Callback = function(v) print("Silent Aim:", v) end
 })
 
-AimMain:AddKeybind({
-    Name = "AIMBOT KEYBIND",
-    Default = Enum.KeyCode.E,
-    Flag = "AimKey",
-    Callback = function(key) print("Aimbot Key set to:", key.Name) end
-})
-
-local AimConfig = AimbotTab:AddSection("CONFIGURATION")
-
-AimConfig:AddSlider({
-    Name = "FOV RADIUS",
-    Description = "Adjust the field of view for the aimbot.",
-    Min = 30,
-    Max = 800,
-    Default = 150,
-    Flag = "AimFOV",
-    Callback = function(v) print("FOV adjusted:", v) end
-})
-
-AimConfig:AddDropdown({
-    Name = "SMOOTHING METHOD",
-    Options = {"LINEAR", "QUART", "EXPONENTIAL", "ELASTIC"},
-    Default = "QUART",
-    Flag = "AimSmooth",
-    Callback = function(v) print("Smoothing changed to:", v) end
+AimSection:AddSlider({
+    Name = "Target Distance",
+    Min = 50,
+    Max = 1000,
+    Default = 500,
+    Flag = "Dist",
+    Callback = function(v) print("Distance:", v) end
 })
 
 -- ##########################################################################
--- VISUALS -> PLAYERS
+-- VISUALS (Dropdown & ColorPicker)
 -- ##########################################################################
-local EspMain = PlayerTab:AddSection("PLAYER ESP")
+local Appearance = ThemeTab:AddSection("INTERFACE STYLE")
 
-EspMain:AddToggle({
-    Name = "SHOW NAMES",
-    Default = true,
-    Flag = "EspNames"
-})
-
-EspMain:AddToggle({
-    Name = "SHOW DISTANCE",
-    Default = false,
-    Flag = "EspDistance"
-})
-
-EspMain:AddColorPicker({
-    Name = "ESP COLOR",
+Appearance:AddColorPicker({
+    Name = "Theme Accent",
     Default = Color3.fromRGB(242, 13, 13),
-    Flag = "EspColor"
+    Flag = "AccentColor",
+    Callback = function(c) print("New Color:", c) end
+})
+
+Appearance:AddDropdown({
+    Name = "ESP Type",
+    Options = {"Boxes", "Skeleton", "Tracer", "Highlights", "Head Circle"},
+    Default = "Boxes",
+    Flag = "EspType",
+    Callback = function(v) print("ESP:", v) end
 })
 
 -- ##########################################################################
--- SETTINGS -> MAIN
+-- MISC (Buscador y Utilidades)
 -- ##########################################################################
-local ConfigSection = MainSettingsTab:AddSection("UI CONFIGURATION")
+local Utils = MiscTab:AddSection("EXTRA FEATURES")
 
-ConfigSection:AddButton({
-    Name = "UNLOAD UI",
-    Description = "Safely remove the interface and stop all processes.",
+Utils:AddSearchDropdown({
+    Name = "Teleport Places",
+    Options = {"Prison Life", "Adopt Me", "Blox Fruits", "Arsenal", "Doors", "Brookhaven"},
+    Default = {"Arsenal"},
+    Flag = "TPs"
+})
+
+Utils:AddButton({
+    Name = "Force Unload",
+    Description = "Removes all RoseUI traces from game memory.",
     Callback = function()
-        RoseUI:Notify({ Title = "System", Text = "Unloading RoseUI..." })
-        task.wait(1)
-        local ui = game:GetService("CoreGui"):FindFirstChild("ROSE UI") or game:GetService("Players").LocalPlayer:FindFirstChild("PlayerGui"):FindFirstChild("ROSE UI")
+        local ui = game:GetService("CoreGui"):FindFirstChild("ROSE HUB")
         if ui then ui:Destroy() end
     end
 })
 
-ConfigSection:AddSearchDropdown({
-    Name = "FAVORITE GAMES",
-    Options = {"Adopt Me", "Blox Fruits", "Pet Simulator 99", "Brookhaven", "Doors"},
-    Default = {"Doors"},
-    Flag = "FavGames"
-})
-
-ConfigSection:AddTextbox({
-    Name = "CUSTOM TAG",
-    Placeholder = "NAME YOUR CONFIG...",
-    Callback = function(t) print("Config Name:", t) end
-})
-
--- Finalizar inicialización
-print("--- [ RoseUI v2 Showcase Ready ] ---")
+-- Mensaje en consola
+print("--- [ RoseUI v2.5 Showcase Loaded Successfully ] ---")

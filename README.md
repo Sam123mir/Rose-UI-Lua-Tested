@@ -1,46 +1,44 @@
-# 🌹 RoseUI Framework
+# 🌹 RoseUI Premium
 
-RoseUI es un framework de interfaz de usuario para Roblox potente, modular y con una estética premium. Diseñado para ser fácil de usar por desarrolladores de scripts y altamente mantenible gracias a su nueva arquitectura modular.
+Una librería de interfaz de usuario moderna, modular y de alto rendimiento para Roblox. Inspirada en estéticas oscuras y elegantes.
 
-## 🚀 Instalación y Carga
+## 🚀 Instalación (Carga Rápida)
 
-Puedes cargar RoseUI directamente desde GitHub usando `loadstring`. Este es el método recomendado para asegurar que siempre tengas la versión más reciente.
+Para cargar la versión oficial y unificada de RoseUI, usa el siguiente script en tu ejecutor:
 
 ```lua
-local RoseUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/Sam123mir/Rose-UI-Lua-Tested/main/RoseUI/loader.lua"))()
+local RoseUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/Sam123mir/Rose-UI-Lua-Tested/main/dist/roseui.lua"))()
+```
 
+## 🎨 Sistema de Iconos
+
+RoseUI utiliza un sistema de iconos dedicado. Puedes cargarlo e integrarlo de la siguiente manera:
+
+```lua
+local Icons = loadstring(game:HttpGet("https://raw.githubusercontent.com/Sam123mir/Icons-RoseV1/main/Main.lua"))()
+
+-- Ejemplo de uso con RoseUI
 local Window = RoseUI:CreateWindow({
-    Name = "Mi Script",
-    HubType = "Rose Hub"
+    Name = "ROSE UI",
+    Logo = Icons.Rose -- Uso de icono desde el repo
 })
 ```
 
-## ✨ Características
+## ✨ Características Principales
 
-- **Diseño Premium**: Bordes redondeados, efectos de cristal y animaciones suaves.
-- **Arquitectura Modular**: Código organizado por componentes para máxima estabilidad.
-- **Sistema de Flags**: Accede al estado de cualquier elemento (Toggle, Slider, etc.) mediante `RoseUI.Flags`.
-- **Carga Inteligente**: Sistema de importación de módulos recursivo.
-- **Widgets Avanzados**: ColorPickers, Search Dropdowns, Inventory Grids, y más.
+- **Bundling con Darklua**: Carga un solo archivo unificado de alto rendimiento.
+- **Barra de Búsqueda**: Navegación instantánea entre categorías y funciones.
+- **Widgets en Tiempo Real**: FPS, Ping, RAM Real y Hora Local precisa.
+- **Estética Redline**: Diseño premium con efectos de glassmorphism y animaciones fluidas.
+- **Selector de Color Avanzado**: Con presets, entrada HEX y controles precisos.
 
-## 📚 Documentación
+## 📖 Documentación
 
-Para una guía detallada sobre cómo usar cada elemento y configurar la API, consulta [documentacion.md](./documentacion.md).
+Puedes encontrar la guía completa de todos los componentes en [documentacion.md](./documentacion.md).
 
-## 🛠️ Ejemplo Rápido
+## 🚀 Ejemplo Rápido
 
-```lua
-local Window = RoseUI:CreateWindow({ Name = "Showcase" })
-local Tab = Window:MakeTab({ Name = "Principal" })
-local Section = Tab:AddSection("Interacción")
-
-Section:AddButton({
-    Name = "Saludar",
-    Callback = function()
-        RoseUI:Notify({ Title = "Hola", Text = "¡Gracias por usar RoseUI!" })
-    end
-})
-```
+Consulta el archivo [showcase_rose.lua](./showcase_rose.lua) para ver una implementación con todas las características activadas.
 
 ---
 *Desarrollado con ❤️ para la comunidad de Roblox.*

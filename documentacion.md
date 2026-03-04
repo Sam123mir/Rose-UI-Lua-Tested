@@ -1,88 +1,94 @@
-# 🌹 Documentación de RoseUI
+# 🌹 Documentación Completa de RoseUI
 
-Esta guía detalla el uso de todos los componentes y elementos disponibles en RoseUI.
+RoseUI está diseñada para ser intuitiva y personalizable. Aquí tienes la referencia completa de la API.
 
 ## 🛠️ Global API
 
-### `RoseUI:CreateWindow(options)`
-Crea la ventana principal.
-- `Name` (string): Título de la ventana.
-- `HubType` (string): Subtítulo o tipo de hub.
+### Carga del Sistema
+```lua
+local RoseUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/Sam123mir/Rose-UI-Lua-Tested/main/dist/roseui.lua"))()
+```
 
-### `RoseUI:Notify(options)`
-Envía una notificación al usuario.
-- `Title` (string): Título de la notificación.
-- `Text` (string): Mensaje.
-- `Duration` (number): Tiempo en pantalla.
+### Carga de Iconos
+```lua
+local Icons = loadstring(game:HttpGet("https://raw.githubusercontent.com/Sam123mir/Icons-RoseV1/main/Main.lua"))()
+```
+
+### `RoseUI:CreateWindow(options)`
+Configura la base de tu interfaz.
+- `Name` (string): Título principal.
+- `Tag` (string): Versión o tag pequeño al lado del título.
+- `Logo` (string/id): Asset ID o icono de la librería.
+- `Keybind` (Enum.KeyCode): Tecla para ocultar/mostrar (Default: RightControl).
 
 ---
 
-## 📑 Ventana y Navegación
+## 📑 Organización: Carpetas y Pestañas
 
-### `Window:MakeTab(options)`
-Crea una pestaña en la barra lateral.
-- `Name` (string): Nombre de la pestaña.
-- `Icon` (string/id): Icono (rbxassetid:// o nombre de archivo).
+### `Window:AddFolder(options)`
+Crea una categoría colapsable en la barra lateral.
+- `Name` (string): Nombre visible.
+- `Icon` (string): Icono de la librería.
+
+### `Folder:AddFile(options)` o `Window:MakeTab(options)`
+Crea una página de contenido.
+- `Name` (string): Nombre.
+- `Icon` (string): Icono.
+
+---
+
+## 🧱 Elementos y Componentes
 
 ### `Tab:AddSection(name)`
-Crea una sección para agrupar elementos dentro de una pestaña.
+Divide tu página en bloques lógicos.
 
----
-
-## 🧱 Elementos de Sección
-
-### `Section:AddButton(options)`
-- `Name` (string): Texto del botón.
-- `Description` (string): Descripción debajo del título.
-- `Callback` (function): Se ejecuta al hacer clic.
-
-### `Section:AddToggle(options)`
-- `Name` (string): Texto del interruptor.
-- `Default` (boolean): Estado inicial.
-- `Flag` (string): Identificador único en `RoseUI.Flags`.
-- `Callback` (function): Recibe el nuevo estado (`boolean`).
-
-### `Section:AddSlider(options)`
-- `Name` (string): Título.
-- `Min` / `Max` (number): Rango.
-- `Default` (number): Valor inicial.
-- `Flag` (string): Identificador único.
-- `Callback` (function): Recibe el valor actual.
-
-### `Section:AddDropdown(options)`
-- `Name` (string): Título.
-- `Options` (table): Lista de strings.
-- `Default` (string): Opción inicial.
-- `Flag` (string): Identificador único.
-- `Callback` (function): Recibe la opción seleccionada.
-
-### `Section:AddSearchDropdown(options)`
-Versión avanzada de Dropdown con buscador y selección múltiple.
-
-### `Section:AddColorPicker(options)`
-Abre un selector HSV.
-- `Default` (Color3): Color inicial.
-
-### `Section:AddKeybind(options)`
-Permite asignar una tecla.
-- `Default` (Enum.KeyCode): Tecla inicial.
-
-### `Section:AddTextbox(options)`
-Campo de entrada de texto.
-- `Placeholder` (string): Texto de guía.
-
----
-
-## 💾 Sistema de Flags
-
-Puedes leer el valor de cualquier elemento con una `Flag` configurada en cualquier momento:
-
+#### Botones
 ```lua
-local isAutoFarm = RoseUI.Flags.AutoFarm
-if isAutoFarm then
-    -- hacer algo
-end
+Section:AddButton({
+    Name = "Click Me",
+    Description = "Describe qué hace este botón",
+    Callback = function() print("Clicked!") end
+})
+```
+
+#### Toggles
+```lua
+Section:AddToggle({
+    Name = "Auto Farm",
+    Default = false,
+    Flag = "AutoFarm",
+    Callback = function(state) print("State:", state) end
+})
+```
+
+#### Sliders
+```lua
+Section:AddSlider({
+    Name = "Walk Speed",
+    Min = 16,
+    Max = 200,
+    Default = 16,
+    Flag = "ws",
+    Callback = function(v) game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = v end
+})
+```
+
+#### Selector de Color (Rediseñado)
+```lua
+Section:AddColorPicker({
+    Name = "Team Color",
+    Default = Color3.fromRGB(242, 13, 13),
+    Flag = "TeamColor",
+    Callback = function(color) print("Color changed") end
+})
 ```
 
 ---
-*Para soporte, únete a nuestro Discord: [discord.gg/rosehub](https://discord.gg/rosehub)*
+
+## 📊 Widgets y Búsqueda
+
+- **Búsqueda**: La barra de búsqueda en el sidebar filtra automáticamente todas las carpetas y archivos.
+- **Widgets**: Muestran automáticamente **FPS**, **Ping**, **RAM** y **Hora Local** en tiempo real.
+
+---
+*RoseUI v2.5.0 Premium Edition*
