@@ -65,7 +65,7 @@ function Window:New(options, library)
     local finalHeight = math.clamp(Constants.DefaultSize.Y.Offset, Constants.MinSize.Height, viewportSize.Y - Constants.Padding)
 
     local dragFrame = Instance.new("Frame")
-    dragFrame.Name = "DragBox"
+    dragFrame.Name = "Main"
     dragFrame.Size = UDim2.new(0, finalWidth, 0, finalHeight)
     dragFrame.Position = UDim2.new(0.5, -finalWidth/2, 0.5, -finalHeight/2)
     dragFrame.BackgroundColor3 = theme.Content
@@ -240,6 +240,25 @@ function Window:New(options, library)
     sidebarFrame.Size = UDim2.new(0, 160, 1, 0)
     sidebarFrame.BackgroundTransparency = 1
     sidebarFrame.Parent = bodyContainer
+
+    local tabScroll = Instance.new("ScrollingFrame")
+    tabScroll.Name = "ScrollingFrame"
+    tabScroll.Size = UDim2.new(1, 0, 1, -10)
+    tabScroll.Position = UDim2.new(0, 0, 0, 5)
+    tabScroll.BackgroundTransparency = 1
+    tabScroll.BorderSizePixel = 0
+    tabScroll.ScrollBarThickness = 2
+    tabScroll.ScrollBarImageColor3 = theme.Header
+    tabScroll.Parent = sidebarFrame
+    
+    local tabLayout = Instance.new("UIListLayout")
+    tabLayout.Padding = UDim.new(0, 2)
+    tabLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+    tabLayout.Parent = tabScroll
+    
+    tabLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+        tabScroll.CanvasSize = UDim2.new(0, 0, 0, tabLayout.AbsoluteContentSize.Y)
+    end)
 
     local contentFrame = Instance.new("Frame")
     contentFrame.Name = "ContentArea"

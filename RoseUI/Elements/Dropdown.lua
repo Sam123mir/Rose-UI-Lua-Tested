@@ -72,7 +72,7 @@ function Dropdown:Add(parent, options, library)
     dropMenuBg.ClipsDescendants = true
     dropMenuBg.Visible = false
     -- Simplified parent logic for the modular version
-    dropMenuBg.Parent = dropFrame:FindFirstAncestor("DragBox") or parent
+    dropMenuBg.Parent = dropFrame:FindFirstAncestor("Main") or parent
     Instance.new("UICorner", dropMenuBg).CornerRadius = UDim.new(0, 4)
     
     local dropMenuStroke = Instance.new("UIStroke")

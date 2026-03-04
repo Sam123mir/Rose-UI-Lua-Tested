@@ -59,7 +59,7 @@ function SearchDropdown:Add(parent, options, library)
     dropMenuBg.ZIndex = currentZ + 50
     dropMenuBg.ClipsDescendants = true
     dropMenuBg.Visible = false
-    dropMenuBg.Parent = dropFrame:FindFirstAncestor("DragBox") or parent
+    dropMenuBg.Parent = dropFrame:FindFirstAncestor("Main") or parent
     Instance.new("UICorner", dropMenuBg).CornerRadius = UDim.new(0, 4)
 
     local searchBox = Instance.new("TextBox")
