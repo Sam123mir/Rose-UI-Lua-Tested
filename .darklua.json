@@ -1,0 +1,19 @@
+{
+    "bundle": {
+        "require_mode": {
+            "name": "path",
+            "module_folder_name": "init",
+            "sources": {
+                "RoseUI": "./temp_build"
+            }
+        }
+    },
+    "rules": [
+        "remove_comments",
+        {
+            "rule": "convert_require",
+            "current": "path",
+            "target": "roblox"
+        }
+    ]
+}

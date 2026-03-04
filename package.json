@@ -1,0 +1,11 @@
+{
+    "name": "rose-ui",
+    "version": "1.0.0",
+    "description": "Premium Roblox UI Library",
+    "main": "dist/roseui.lua",
+    "scripts": {
+        "build": "node build/build.js"
+    },
+    "author": "RoseUI Team",
+    "license": "MIT"
+}
