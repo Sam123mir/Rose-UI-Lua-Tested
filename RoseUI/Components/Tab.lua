@@ -25,7 +25,7 @@ function Tab:New(tabOptions, window)
 
     local tabBtn = Instance.new("Frame")
     tabBtn.Name = tabName .. (isFile and "_File" or (isSubTab and "_Sub" or "_Main"))
-    tabBtn.Size = UDim2.new(1, 0, 0, (isFile or isSubTab) and 32 or 40)
+    tabBtn.Size = UDim2.new(1, 0, 0, (isFile or isSubTab) and 34 or 42)
     tabBtn.BackgroundTransparency = 1
     tabBtn.Parent = parentOverride or window.NavScroll
 
@@ -36,12 +36,12 @@ function Tab:New(tabOptions, window)
     btnTrigger.Parent = tabBtn
 
     local contentFrame = Instance.new("Frame")
-    contentFrame.Size = UDim2.new(1, isFile and -40 or (isSubTab and -30 or -20), 1, -4)
-    contentFrame.Position = UDim2.new(0, isFile and 30 or (isSubTab and 25 or 10), 0, 2)
+    contentFrame.Size = UDim2.new(1, isFile and -36 or (isSubTab and -26 or -16), 1, -4)
+    contentFrame.Position = UDim2.new(0, isFile and 28 or (isSubTab and 22 or 8), 0, 2)
     contentFrame.BackgroundColor3 = theme.Primary
     contentFrame.BackgroundTransparency = 1
     contentFrame.Parent = tabBtn
-    Instance.new("UICorner", contentFrame).CornerRadius = UDim.new(0, isFile and 12 or 8)
+    Instance.new("UICorner", contentFrame).CornerRadius = UDim.new(0, 10)
     
     local contentStroke = Instance.new("UIStroke")
     contentStroke.Color = theme.Primary
@@ -49,17 +49,28 @@ function Tab:New(tabOptions, window)
     contentStroke.Thickness = 1
     contentStroke.Parent = contentFrame
 
+    -- Active indicator bar (left side)
+    local activeIndicator = Instance.new("Frame")
+    activeIndicator.Size = UDim2.new(0, 3, 0, 0)
+    activeIndicator.Position = UDim2.new(0, 0, 0.5, 0)
+    activeIndicator.AnchorPoint = Vector2.new(0, 0.5)
+    activeIndicator.BackgroundColor3 = theme.Primary
+    activeIndicator.BackgroundTransparency = 1
+    activeIndicator.BorderSizePixel = 0
+    activeIndicator.Parent = contentFrame
+    Instance.new("UICorner", activeIndicator).CornerRadius = UDim.new(0, 2)
+
     local icon = Instance.new("ImageLabel")
-    icon.Size = UDim2.new(0, 18, 0, 18)
-    icon.Position = UDim2.new(0, 10, 0.5, -9)
+    icon.Size = UDim2.new(0, 16, 0, 16)
+    icon.Position = UDim2.new(0, 12, 0.5, -8)
     icon.BackgroundTransparency = 1
     icon.Image = tabIcon
     icon.ImageColor3 = theme.SecondaryText
     icon.Parent = contentFrame
 
     local label = Instance.new("TextLabel")
-    label.Size = UDim2.new(1, isSubTab and -32 or -36, 1, 0)
-    label.Position = UDim2.new(0, isSubTab and 28 or 34, 0, 0)
+    label.Size = UDim2.new(1, isSubTab and -34 or -38, 1, 0)
+    label.Position = UDim2.new(0, isSubTab and 32 or 36, 0, 0)
     label.BackgroundTransparency = 1
     label.Text = tabName
     label.TextColor3 = theme.SecondaryText
@@ -68,12 +79,13 @@ function Tab:New(tabOptions, window)
     label.TextXAlignment = Enum.TextXAlignment.Left
     label.Parent = contentFrame
 
+    -- Connector line for sub-items
     if isSubTab or isFile then
         local subLine = Instance.new("Frame")
         subLine.Size = UDim2.new(0, 1, 1, 0)
-        subLine.Position = UDim2.new(0, isFile and -15 or -10, 0, 0)
+        subLine.Position = UDim2.new(0, isFile and -14 or -8, 0, 0)
         subLine.BackgroundColor3 = theme.Primary
-        subLine.BackgroundTransparency = 0.8
+        subLine.BackgroundTransparency = 0.85
         subLine.BorderSizePixel = 0
         subLine.Parent = contentFrame
     end
@@ -111,14 +123,18 @@ function Tab:New(tabOptions, window)
     local function setActive(state)
         TabObj.Active = state
         if state then
-            TweenService:Create(contentFrame, TweenInfo.new(0.3), {BackgroundTransparency = 0, BackgroundColor3 = theme.Primary}):Play()
+            TweenService:Create(contentFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quart), {BackgroundTransparency = 0.1, BackgroundColor3 = theme.Primary}):Play()
+            TweenService:Create(contentStroke, TweenInfo.new(0.3), {Transparency = 0.6, Color = theme.Primary}):Play()
             TweenService:Create(label, TweenInfo.new(0.3), {TextColor3 = Color3.new(1,1,1)}):Play()
             TweenService:Create(icon, TweenInfo.new(0.3), {ImageColor3 = Color3.new(1,1,1)}):Play()
+            TweenService:Create(activeIndicator, TweenInfo.new(0.3, Enum.EasingStyle.Quart), {Size = UDim2.new(0, 3, 0, 16), BackgroundTransparency = 0}):Play()
             page.Visible = true
         else
-            TweenService:Create(contentFrame, TweenInfo.new(0.3), {BackgroundTransparency = 1}):Play()
+            TweenService:Create(contentFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quart), {BackgroundTransparency = 1}):Play()
+            TweenService:Create(contentStroke, TweenInfo.new(0.3), {Transparency = 1}):Play()
             TweenService:Create(label, TweenInfo.new(0.3), {TextColor3 = theme.SecondaryText}):Play()
             TweenService:Create(icon, TweenInfo.new(0.3), {ImageColor3 = theme.SecondaryText}):Play()
+            TweenService:Create(activeIndicator, TweenInfo.new(0.3, Enum.EasingStyle.Quart), {Size = UDim2.new(0, 3, 0, 0), BackgroundTransparency = 1}):Play()
             page.Visible = false
         end
     end
@@ -136,13 +152,17 @@ function Tab:New(tabOptions, window)
 
     btnTrigger.MouseEnter:Connect(function()
         if not TabObj.Active then
-            TweenService:Create(contentFrame, TweenInfo.new(0.2), {BackgroundTransparency = 0.9, BackgroundColor3 = Color3.new(1,1,1)}):Play()
+            TweenService:Create(contentFrame, TweenInfo.new(0.2), {BackgroundTransparency = 0.85, BackgroundColor3 = theme.Accent}):Play()
+            TweenService:Create(contentStroke, TweenInfo.new(0.2), {Transparency = 0.85, Color = theme.Primary}):Play()
+            TweenService:Create(label, TweenInfo.new(0.2), {TextColor3 = theme.Text}):Play()
         end
     end)
 
     btnTrigger.MouseLeave:Connect(function()
         if not TabObj.Active then
             TweenService:Create(contentFrame, TweenInfo.new(0.2), {BackgroundTransparency = 1}):Play()
+            TweenService:Create(contentStroke, TweenInfo.new(0.2), {Transparency = 1}):Play()
+            TweenService:Create(label, TweenInfo.new(0.2), {TextColor3 = theme.SecondaryText}):Play()
         end
     end)
 

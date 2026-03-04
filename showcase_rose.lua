@@ -1,155 +1,139 @@
--- [[ 🌹 RoseUI - Comprehensive Showcase Script 🌹 ]]
--- Este script demuestra todas las capacidades del framework modular RoseUI.
+-- [[ 🌹 RoseUI v2 Premium - Comprehensive Showcase 🌹 ]]
+-- Este script es la prueba de fuego para la nueva estética "Redline" y la API modular.
 
--- Carga desde GitHub (Recomendado)
+-- Cargamos la librería desde el repositorio oficial para evitar errores de ruta en el ejecutor.
 local RoseUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/Sam123mir/Rose-UI-Lua-Tested/main/RoseUI/loader.lua"))()
 
--- Local Fallback (Solo para desarrollo)
--- local RoseUI = loadstring(readfile("c:/Users/samir/OneDrive/Desktop/Update UI Rose/RoseUI/loader.lua"))()
+-- OPCIÓN LOCAL (Solo si pones la carpeta 'RoseUI' dentro de la carpeta 'workspace' de tu ejecutor):
+-- local RoseUI = loadstring(readfile("RoseUI/loader.lua"))()
 
--- 1. Notificación de Inicio
+-- 1. Notificación de Bienvenida (Estilo Toast)
 RoseUI:Notify({
-    Title = "RoseUI Showcase",
-    Text = "Cargando todos los módulos y elementos...",
+    Title = "RoseUI v2 Premium",
+    Text = "Sistema cargado con éxito. Disfruta de la mejor experiencia visual.",
+    Icon = "Check",
     Duration = 5
 })
 
 -- 2. Creación de la Ventana Principal
+-- El nuevo sistema de Window ahora soporta perfiles de usuario y estadísticas automáticas.
 local Window = RoseUI:CreateWindow({
-    Name = "RoseUI | Showcase Modular",
-    HubType = "Developer Edition"
+    Name = "ROSE UI",
+    Tag = "V2 PREMIUM",
+    Logo = "Rose", -- Icono de la rosa en el header
+    LoadingText = "INICIALIZANDO SISTEMA...",
+    Keybind = Enum.KeyCode.RightControl
 })
 
--- 3. Pestañas
-local GeneralTab = Window:MakeTab({ Name = "General", Icon = "rbxassetid://4483345998" })
-local AdvancedTab = Window:MakeTab({ Name = "Avanzado", Icon = "rbxassetid://4483345998" })
-local GameTab = Window:MakeTab({ Name = "Juego", Icon = "rbxassetid://4483345998" })
+-- 3. Organización por Pestañas y Sub-pestañas
+-- Combat Tab (Aimbot, Triggerbot)
+-- 3. Organización Jerárquica (Carpetas y Archivos)
+
+-- CARPETA: COMBATE
+local CombatFolder = Window:AddFolder({ Name = "Combate", Icon = "Combat" })
+local AimbotTab = CombatFolder:AddFile({ Name = "Aimbot", Icon = "Crosshair" })
+local SilentTab = CombatFolder:AddFile({ Name = "Silent Aim", Icon = "Target" })
+
+-- CARPETA: VISUALS
+local VisualsFolder = Window:AddFolder({ Name = "Visuals", Icon = "Visuals" })
+local PlayerTab = VisualsFolder:AddFile({ Name = "Players", Icon = "User" })
+local WorldTab = VisualsFolder:AddFile({ Name = "World", Icon = "Globe" })
+
+-- CARPETA: CONFIGURACIÓN
+local ConfigFolder = Window:AddFolder({ Name = "Settings", Icon = "Settings" })
+local MainSettingsTab = ConfigFolder:AddFile({ Name = "Main", Icon = "Sliders" })
 
 -- ##########################################################################
--- PESTAÑA GENERAL
+-- COMBAT -> AIMBOT
 -- ##########################################################################
-local Basics = GeneralTab:AddSection("Elementos Básicos")
+local AimMain = AimbotTab:AddSection("MAIN CONTROLS")
 
-Basics:AddButton({
-    Name = "Botón de Prueba",
-    Description = "Este botón imprime en consola y envía una notificación.",
-    Callback = function()
-        print("¡Botón presionado!")
-        RoseUI:Notify({ Title = "Interacción", Text = "Has presionado el botón correctamente." })
-    end
-})
-
-Basics:AddToggle({
-    Name = "Auto Farm",
+AimMain:AddToggle({
+    Name = "ENABLE AIMBOT",
+    Description = "Lock your camera onto target players automatically.",
     Default = false,
-    Flag = "AutoFarm",
-    Callback = function(v)
-        print("Auto Farm cambiado a:", v)
-    end
+    Flag = "AimEnabled",
+    Callback = function(v) print("Aimbot:", v) end
 })
 
-Basics:AddSlider({
-    Name = "Velocidad de Caminado",
-    Min = 16,
-    Max = 200,
-    Default = 16,
-    Flag = "WalkSpeed",
-    Callback = function(v)
-        print("Velocidad ajustada a:", v)
-    end
+AimMain:AddKeybind({
+    Name = "AIMBOT KEYBIND",
+    Default = Enum.KeyCode.E,
+    Flag = "AimKey",
+    Callback = function(key) print("Aimbot Key set to:", key.Name) end
 })
 
-Basics:AddTextbox({
-    Name = "Nombre de Usuario",
-    Placeholder = "Escribe tu nombre...",
-    Callback = function(t)
-        print("Texto ingresado:", t)
-    end
+local AimConfig = AimbotTab:AddSection("CONFIGURATION")
+
+AimConfig:AddSlider({
+    Name = "FOV RADIUS",
+    Description = "Adjust the field of view for the aimbot.",
+    Min = 30,
+    Max = 800,
+    Default = 150,
+    Flag = "AimFOV",
+    Callback = function(v) print("FOV adjusted:", v) end
+})
+
+AimConfig:AddDropdown({
+    Name = "SMOOTHING METHOD",
+    Options = {"LINEAR", "QUART", "EXPONENTIAL", "ELASTIC"},
+    Default = "QUART",
+    Flag = "AimSmooth",
+    Callback = function(v) print("Smoothing changed to:", v) end
 })
 
 -- ##########################################################################
--- PESTAÑA AVANZADA
+-- VISUALS -> PLAYERS
 -- ##########################################################################
-local Advanced = AdvancedTab:AddSection("Controles Avanzados")
+local EspMain = PlayerTab:AddSection("PLAYER ESP")
 
-Advanced:AddDropdown({
-    Name = "Seleccionar Tema",
-    Options = {"Dark Rose", "Midnight Blue", "Forest Green"},
-    Default = "Dark Rose",
-    Flag = "ThemeSelector",
-    Callback = function(v)
-        print("Tema seleccionado:", v)
-    end
+EspMain:AddToggle({
+    Name = "SHOW NAMES",
+    Default = true,
+    Flag = "EspNames"
 })
 
-Advanced:AddSearchDropdown({
-    Name = "Filtro de Jugadores (Multiselección)",
-    Options = {"Jugador 1", "Jugador 2", "Jugador 3", "Admin", "Moderador"},
-    Default = {"Admin"},
-    Flag = "TargetPlayers",
-    Callback = function(list)
-        print("Objetivos actuales:", table.concat(list, ", "))
-    end
+EspMain:AddToggle({
+    Name = "SHOW DISTANCE",
+    Default = false,
+    Flag = "EspDistance"
 })
 
-Advanced:AddColorPicker({
-    Name = "Color de la Interfaz",
-    Default = Color3.fromRGB(255, 100, 130),
-    Flag = "MainColor",
-    Callback = function(c)
-        print("Nuevo color seleccionado:", c)
-    end
+EspMain:AddColorPicker({
+    Name = "ESP COLOR",
+    Default = Color3.fromRGB(242, 13, 13),
+    Flag = "EspColor"
 })
 
-Advanced:AddKeybind({
-    Name = "Abrir/Cerrar Menú",
-    Default = Enum.KeyCode.RightControl,
+-- ##########################################################################
+-- SETTINGS -> MAIN
+-- ##########################################################################
+local ConfigSection = MainSettingsTab:AddSection("UI CONFIGURATION")
+
+ConfigSection:AddButton({
+    Name = "UNLOAD UI",
+    Description = "Safely remove the interface and stop all processes.",
     Callback = function()
-        print("¡Keybind ejecutado!")
+        RoseUI:Notify({ Title = "System", Text = "Unloading RoseUI..." })
+        task.wait(1)
+        local ui = game:GetService("CoreGui"):FindFirstChild("ROSE UI") or game:GetService("Players").LocalPlayer:FindFirstChild("PlayerGui"):FindFirstChild("ROSE UI")
+        if ui then ui:Destroy() end
     end
 })
 
--- ##########################################################################
--- PESTAÑA DE JUEGO (GRIDS Y LISTAS)
--- ##########################################################################
-local Lists = GameTab:AddSection("Gestión de Datos")
-
-local MyTargetList = Lists:AddTargetList({
-    Name = "Lista de Prioridades",
-    Options = {"Enemigo Alpha", "Jefe Final"},
-    Callback = function(newList)
-        print("Lista actualizada, total elementos:", #newList)
-    end
+ConfigSection:AddSearchDropdown({
+    Name = "FAVORITE GAMES",
+    Options = {"Adopt Me", "Blox Fruits", "Pet Simulator 99", "Brookhaven", "Doors"},
+    Default = {"Doors"},
+    Flag = "FavGames"
 })
 
-Lists:AddButton({
-    Name = "Agregar Item Aleatorio",
-    Callback = function()
-        table.insert(MyTargetList.Value, "Objetivo #" .. math.random(1, 100))
-        MyTargetList:Refresh()
-    end
+ConfigSection:AddTextbox({
+    Name = "CUSTOM TAG",
+    Placeholder = "NAME YOUR CONFIG...",
+    Callback = function(t) print("Config Name:", t) end
 })
 
-local InvGrid = Lists:AddInventoryGrid({
-    Name = "Inventario de Armas",
-    OnSell = function(item)
-        print("Vendiendo item:", item.Name)
-    end
-})
-
--- Llenar inventario de prueba
-InvGrid:Refresh({
-    {Name = "Espada de Madera", Value = 10, Rank = "Common"},
-    {Name = "Daga de Hierro", Value = 50, Rank = "Rare"},
-    {Name = "Excalibur", Value = 9999, Rank = "Divine"}
-})
-
--- ##########################################################################
--- FINALIZACIÓN
--- ##########################################################################
-
-print("--- [ RoseUI Showcase ] ---")
-print("Flags iniciales:")
-for flag, val in pairs(RoseUI.Flags) do
-    print(string.format("  [%s] = %s", tostring(flag), tostring(val)))
-end
+-- Finalizar inicialización
+print("--- [ RoseUI v2 Showcase Ready ] ---")

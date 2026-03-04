@@ -160,12 +160,13 @@ function Window:New(options, library)
     statsLayout.Padding = UDim.new(0, 0)
     statsLayout.Parent = statsFrame
 
-    local function createStat(iconName, name, defaultVal)
+    local function createStat(iconName, shortName, defaultVal)
         local item = Instance.new("Frame")
         item.Size = UDim2.new(0, 100, 1, 0)
         item.BackgroundTransparency = 1
         item.Parent = statsFrame
         
+        -- Icon (will show if asset is valid)
         local icon = Instance.new("ImageLabel")
         icon.Size = UDim2.new(0, 14, 0, 14)
         icon.Position = UDim2.new(0, 8, 0.5, -7)
@@ -173,6 +174,18 @@ function Window:New(options, library)
         icon.Image = assets.Icons[iconName] or ""
         icon.ImageColor3 = theme.SecondaryText
         icon.Parent = item
+
+        -- Text fallback label (always visible, shows short name when icon fails)
+        local fallbackLabel = Instance.new("TextLabel")
+        fallbackLabel.Size = UDim2.new(0, 14, 0, 14)
+        fallbackLabel.Position = UDim2.new(0, 8, 0.5, -7)
+        fallbackLabel.BackgroundTransparency = 1
+        fallbackLabel.Text = shortName
+        fallbackLabel.TextColor3 = theme.SecondaryText
+        fallbackLabel.Font = Enum.Font.GothamBlack
+        fallbackLabel.TextSize = 7
+        fallbackLabel.ZIndex = 2
+        fallbackLabel.Parent = item
         
         local val = Instance.new("TextLabel")
         val.Size = UDim2.new(1, -28, 1, 0)
@@ -201,11 +214,11 @@ function Window:New(options, library)
         return val
     end
 
-    local gameStat = createStat("Game", "Game", game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name or "Game")
-    local fpsStat = createStat("FPS", "FPS", "60")
-    local ramStat = createStat("RAM", "RAM", "0.0 GB")
-    local pingStat = createStat("Ping", "Ping", "0ms")
-    local timeStat = createStat("Time", "Time", "00:00")
+    local gameStat = createStat("Game", "G", game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name or "Game")
+    local fpsStat = createStat("FPS", "F", "60")
+    local ramStat = createStat("RAM", "R", "0.0 GB")
+    local pingStat = createStat("Ping", "P", "0ms")
+    local timeStat = createStat("Time", "T", "00:00")
 
     -- Auto Stats Update
     local lastTime = tick()
@@ -217,7 +230,6 @@ function Window:New(options, library)
             frameCount = 0
             lastTime = tick()
             
-            -- Simple RAM/Ping estimation for showcase (can be refined)
             ramStat.Text = string.format("%.1f GB", collectgarbage("count") / 1024 / 1024)
             pingStat.Text = math.floor(Services.Players.LocalPlayer:GetNetworkPing() * 1000) .. "ms"
             timeStat.Text = os.date("%H:%M")
@@ -225,10 +237,12 @@ function Window:New(options, library)
     end)
     table.insert(_G.RoseUI_Connections, statsUpdateConn)
 
-    -- Window Controls
+    -- ========================================================================
+    -- Window Controls (Text-based fallback for missing icons)
+    -- ========================================================================
     local controls = Instance.new("Frame")
-    controls.Size = UDim2.new(0, 100, 1, 0)
-    controls.Position = UDim2.new(1, -5, 0, 0)
+    controls.Size = UDim2.new(0, 110, 1, 0)
+    controls.Position = UDim2.new(1, -8, 0, 0)
     controls.AnchorPoint = Vector2.new(1, 0)
     controls.BackgroundTransparency = 1
     controls.Parent = header
@@ -237,29 +251,48 @@ function Window:New(options, library)
     cLayout.FillDirection = Enum.FillDirection.Horizontal
     cLayout.HorizontalAlignment = Enum.HorizontalAlignment.Right
     cLayout.VerticalAlignment = Enum.VerticalAlignment.Center
-    cLayout.Padding = UDim.new(0, 4)
+    cLayout.Padding = UDim.new(0, 6)
     cLayout.Parent = controls
 
-    local function createControl(iconName, callback)
-        local btn = Instance.new("ImageButton")
-        btn.Size = UDim2.new(0, 22, 0, 22)
-        btn.BackgroundTransparency = 1
-        btn.Image = assets.Icons[iconName]
-        btn.ImageColor3 = theme.SecondaryText
-        btn.ImageTransparency = 0.3
+    local function createControl(fallbackText, hoverColor, callback)
+        local btn = Instance.new("TextButton")
+        btn.Size = UDim2.new(0, 28, 0, 28)
+        btn.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+        btn.BackgroundTransparency = 0.95
+        btn.Text = ""
+        btn.AutoButtonColor = false
         btn.Parent = controls
+        Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 8)
         
-        btn.MouseEnter:Connect(function() TweenService:Create(btn, TweenInfo.new(0.2), {ImageColor3 = theme.Primary, ImageTransparency = 0}):Play() end)
-        btn.MouseLeave:Connect(function() TweenService:Create(btn, TweenInfo.new(0.2), {ImageColor3 = theme.SecondaryText, ImageTransparency = 0.2}):Play() end)
+        -- Text label for the control symbol
+        local symbolLabel = Instance.new("TextLabel")
+        symbolLabel.Size = UDim2.new(1, 0, 1, 0)
+        symbolLabel.BackgroundTransparency = 1
+        symbolLabel.Text = fallbackText
+        symbolLabel.TextColor3 = theme.SecondaryText
+        symbolLabel.Font = Enum.Font.GothamBold
+        symbolLabel.TextSize = 14
+        symbolLabel.Parent = btn
+        
+        btn.MouseEnter:Connect(function()
+            TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundTransparency = 0.7, BackgroundColor3 = hoverColor}):Play()
+            TweenService:Create(symbolLabel, TweenInfo.new(0.2), {TextColor3 = Color3.new(1,1,1)}):Play()
+        end)
+        btn.MouseLeave:Connect(function()
+            TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundTransparency = 0.95, BackgroundColor3 = Color3.fromRGB(255,255,255)}):Play()
+            TweenService:Create(symbolLabel, TweenInfo.new(0.2), {TextColor3 = theme.SecondaryText}):Play()
+        end)
         btn.MouseButton1Click:Connect(callback)
         return btn
     end
 
-    createControl("Minimize", function() screenGui.Enabled = false end)
-    createControl("Maximize", function() print("Toggle Size") end)
-    createControl("Close", function() screenGui:Destroy() end)
+    createControl("-", theme.Primary, function() screenGui.Enabled = false end) -- Minimize
+    createControl("□", theme.Primary, function() print("Toggle Size") end)       -- Maximize
+    createControl("×", Color3.fromRGB(220, 50, 50), function() screenGui:Destroy() end)  -- Close
 
+    -- ========================================================================
     -- Body
+    -- ========================================================================
     local body = Instance.new("Frame")
     body.Name = "Body"
     body.Size = UDim2.new(1, 0, 1, -40)
@@ -267,20 +300,35 @@ function Window:New(options, library)
     body.BackgroundTransparency = 1
     body.Parent = mainFrame
 
-    -- Sidebar (192px)
+    -- ========================================================================
+    -- Sidebar (192px) - Enhanced
+    -- ========================================================================
     local sidebar = Instance.new("Frame")
     sidebar.Name = "Sidebar"
     sidebar.Size = UDim2.new(0, 192, 1, 0)
     sidebar.BackgroundColor3 = theme.Accent
-    sidebar.BackgroundTransparency = 0.7
+    sidebar.BackgroundTransparency = 0.4
     sidebar.BorderSizePixel = 0
     sidebar.Parent = body
     
+    -- Sidebar subtle gradient overlay
+    local sidebarGradient = Instance.new("UIGradient")
+    sidebarGradient.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 255, 255)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(200, 200, 200))
+    })
+    sidebarGradient.Transparency = NumberSequence.new({
+        NumberSequenceKeypoint.new(0, 0.95),
+        NumberSequenceKeypoint.new(1, 1)
+    })
+    sidebarGradient.Rotation = 90
+    sidebarGradient.Parent = sidebar
+
     local sidebarBorder = Instance.new("Frame")
     sidebarBorder.Size = UDim2.new(0, 1, 1, 0)
     sidebarBorder.Position = UDim2.new(1, -1, 0, 0)
-    sidebarBorder.BackgroundColor3 = Color3.new(1,1,1)
-    sidebarBorder.BackgroundTransparency = 0.95
+    sidebarBorder.BackgroundColor3 = theme.Primary
+    sidebarBorder.BackgroundTransparency = 0.88
     sidebarBorder.BorderSizePixel = 0
     sidebarBorder.Parent = sidebar
 
@@ -296,7 +344,9 @@ function Window:New(options, library)
     avatarFrame.BackgroundColor3 = theme.DeepAccent
     avatarFrame.Parent = profile
     Instance.new("UICorner", avatarFrame).CornerRadius = UDim.new(1, 0)
-    Instance.new("UIStroke", avatarFrame).Color = theme.Primary
+    local avatarStroke = Instance.new("UIStroke", avatarFrame)
+    avatarStroke.Color = theme.Primary
+    avatarStroke.Thickness = 1.5
     
     local avatarImg = Instance.new("ImageLabel")
     avatarImg.Size = UDim2.new(1, -4, 1, -4)
@@ -309,7 +359,7 @@ function Window:New(options, library)
     local content, isReady = Services.Players:GetUserThumbnailAsync(userId, thumbType, thumbSize)
     
     avatarImg.Image = content or assets.Icons.User
-    avatarImg.ImageColor3 = Color3.new(1,1,1) -- No tint for real avatar
+    avatarImg.ImageColor3 = Color3.new(1,1,1)
     avatarImg.Parent = avatarFrame
     Instance.new("UICorner", avatarImg).CornerRadius = UDim.new(1, 0)
     
@@ -329,24 +379,84 @@ function Window:New(options, library)
     userStatus.Position = UDim2.new(0, 65, 0.5, 2)
     userStatus.BackgroundTransparency = 1
     userStatus.Text = "ACTIVE NOW"
-    userStatus.TextColor3 = theme.SecondaryText
+    userStatus.TextColor3 = Color3.fromRGB(80, 200, 80) -- Green for active
     userStatus.Font = Enum.Font.GothamBold
     userStatus.TextSize = 9
     userStatus.TextXAlignment = Enum.TextXAlignment.Left
     userStatus.Parent = profile
 
     local sep = Instance.new("Frame")
-    sep.Size = UDim2.new(1, -40, 0, 1)
-    sep.Position = UDim2.new(0, 20, 1, 0)
+    sep.Size = UDim2.new(1, -30, 0, 1)
+    sep.Position = UDim2.new(0, 15, 1, 0)
     sep.BackgroundColor3 = theme.Primary
-    sep.BackgroundTransparency = 0.8
+    sep.BackgroundTransparency = 0.75
     sep.BorderSizePixel = 0
     sep.Parent = profile
 
-    -- Navigation
+    -- ========================================================================
+    -- Search Bar (Between Profile and Navigation)
+    -- ========================================================================
+    local searchBarFrame = Instance.new("Frame")
+    searchBarFrame.Size = UDim2.new(1, -24, 0, 32)
+    searchBarFrame.Position = UDim2.new(0, 12, 0, 78)
+    searchBarFrame.BackgroundColor3 = theme.Surface
+    searchBarFrame.BackgroundTransparency = 0.3
+    searchBarFrame.Parent = sidebar
+    Instance.new("UICorner", searchBarFrame).CornerRadius = UDim.new(0, 10)
+    
+    local searchStroke = Instance.new("UIStroke")
+    searchStroke.Color = Color3.new(1,1,1)
+    searchStroke.Transparency = 0.92
+    searchStroke.Thickness = 1
+    searchStroke.Parent = searchBarFrame
+
+    -- Search icon (text fallback)
+    local searchIcon = Instance.new("TextLabel")
+    searchIcon.Size = UDim2.new(0, 20, 0, 20)
+    searchIcon.Position = UDim2.new(0, 8, 0.5, -10)
+    searchIcon.BackgroundTransparency = 1
+    searchIcon.Text = "🔍"
+    searchIcon.TextSize = 12
+    searchIcon.Parent = searchBarFrame
+
+    -- Also try image icon
+    local searchIconImg = Instance.new("ImageLabel")
+    searchIconImg.Size = UDim2.new(0, 14, 0, 14)
+    searchIconImg.Position = UDim2.new(0, 10, 0.5, -7)
+    searchIconImg.BackgroundTransparency = 1
+    searchIconImg.Image = assets.Icons.Search or ""
+    searchIconImg.ImageColor3 = theme.MutedText
+    searchIconImg.ZIndex = 3
+    searchIconImg.Parent = searchBarFrame
+
+    local searchTextbox = Instance.new("TextBox")
+    searchTextbox.Size = UDim2.new(1, -38, 1, 0)
+    searchTextbox.Position = UDim2.new(0, 30, 0, 0)
+    searchTextbox.BackgroundTransparency = 1
+    searchTextbox.Text = ""
+    searchTextbox.PlaceholderText = "Search..."
+    searchTextbox.PlaceholderColor3 = theme.MutedText
+    searchTextbox.TextColor3 = theme.Text
+    searchTextbox.Font = Enum.Font.Gotham
+    searchTextbox.TextSize = 10
+    searchTextbox.TextXAlignment = Enum.TextXAlignment.Left
+    searchTextbox.ClearTextOnFocus = false
+    searchTextbox.Parent = searchBarFrame
+
+    -- Focus effects
+    searchTextbox.Focused:Connect(function()
+        TweenService:Create(searchStroke, TweenInfo.new(0.2), {Color = theme.Primary, Transparency = 0.5}):Play()
+        TweenService:Create(searchBarFrame, TweenInfo.new(0.2), {BackgroundTransparency = 0.15}):Play()
+    end)
+    searchTextbox.FocusLost:Connect(function()
+        TweenService:Create(searchStroke, TweenInfo.new(0.2), {Color = Color3.new(1,1,1), Transparency = 0.92}):Play()
+        TweenService:Create(searchBarFrame, TweenInfo.new(0.2), {BackgroundTransparency = 0.3}):Play()
+    end)
+
+    -- Navigation (adjusted position to account for search bar)
     local navScroll = Instance.new("ScrollingFrame")
-    navScroll.Size = UDim2.new(1, 0, 1, -110)
-    navScroll.Position = UDim2.new(0, 0, 0, 70)
+    navScroll.Size = UDim2.new(1, 0, 1, -150)
+    navScroll.Position = UDim2.new(0, 0, 0, 118)
     navScroll.BackgroundTransparency = 1
     navScroll.BorderSizePixel = 0
     navScroll.ScrollBarThickness = 2
@@ -358,18 +468,49 @@ function Window:New(options, library)
     navLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
     navLayout.Parent = navScroll
 
+    -- ========================================================================
     -- Content Area
-    local content = Instance.new("Frame")
-    content.Name = "ContentArea"
-    content.Size = UDim2.new(1, -192, 1, 0)
-    content.Position = UDim2.new(0, 192, 0, 0)
-    content.BackgroundTransparency = 1
-    content.Parent = body
+    -- ========================================================================
+    local contentArea = Instance.new("Frame")
+    contentArea.Name = "ContentArea"
+    contentArea.Size = UDim2.new(1, -192, 1, 0)
+    contentArea.Position = UDim2.new(0, 192, 0, 0)
+    contentArea.BackgroundTransparency = 1
+    contentArea.Parent = body
     
     local pageContainer = Instance.new("Frame")
     pageContainer.Size = UDim2.new(1, 0, 1, 0)
     pageContainer.BackgroundTransparency = 1
-    pageContainer.Parent = content
+    pageContainer.Parent = contentArea
+
+    -- "No Results Found" Message (hidden by default)
+    local noResultsFrame = Instance.new("Frame")
+    noResultsFrame.Size = UDim2.new(1, 0, 1, 0)
+    noResultsFrame.BackgroundTransparency = 1
+    noResultsFrame.Visible = false
+    noResultsFrame.ZIndex = 50
+    noResultsFrame.Parent = contentArea
+
+    local noResultsLabel = Instance.new("TextLabel")
+    noResultsLabel.Size = UDim2.new(1, 0, 0, 30)
+    noResultsLabel.Position = UDim2.new(0, 0, 0.5, -40)
+    noResultsLabel.BackgroundTransparency = 1
+    noResultsLabel.Text = "No results found"
+    noResultsLabel.TextColor3 = theme.MutedText
+    noResultsLabel.Font = Enum.Font.GothamBold
+    noResultsLabel.TextSize = 16
+    noResultsLabel.Parent = noResultsFrame
+
+    local noResultsSub = Instance.new("TextLabel")
+    noResultsSub.Size = UDim2.new(1, 0, 0, 20)
+    noResultsSub.Position = UDim2.new(0, 0, 0.5, -8)
+    noResultsSub.BackgroundTransparency = 1
+    noResultsSub.Text = "Try a different search term"
+    noResultsSub.TextColor3 = theme.MutedText
+    noResultsSub.Font = Enum.Font.Gotham
+    noResultsSub.TextSize = 11
+    noResultsSub.TextTransparency = 0.4
+    noResultsSub.Parent = noResultsFrame
 
     -- Footer
     local footer = Instance.new("Frame")
@@ -387,6 +528,9 @@ function Window:New(options, library)
     versionLbl.TextSize = 9
     versionLbl.Parent = footer
 
+    -- ========================================================================
+    -- Window Object
+    -- ========================================================================
     local WindowObj = {
         Instance = screenGui,
         MainFrame = mainFrame,
@@ -397,8 +541,80 @@ function Window:New(options, library)
         Library = library,
         Theme = theme,
         PageContainer = pageContainer,
-        NavScroll = navScroll
+        NavScroll = navScroll,
+        NoResultsFrame = noResultsFrame
     }
+
+    -- ========================================================================
+    -- Search Filtering Logic
+    -- ========================================================================
+    local function performSearch(query)
+        query = string.lower(query)
+        local anyVisible = false
+
+        if query == "" then
+            -- Show everything
+            for _, child in pairs(navScroll:GetChildren()) do
+                if child:IsA("Frame") then
+                    child.Visible = true
+                end
+            end
+            noResultsFrame.Visible = false
+            -- Show current tab's page
+            if WindowObj.CurrentTab then
+                WindowObj.CurrentTab.Page.Visible = true
+            end
+            return
+        end
+
+        -- Hide all pages while searching
+        for _, tab in pairs(WindowObj.Tabs) do
+            tab.Page.Visible = false
+        end
+
+        for _, child in pairs(navScroll:GetChildren()) do
+            if child:IsA("Frame") then
+                local childName = string.lower(child.Name)
+                -- Check if the name contains the query
+                if string.find(childName, query, 1, true) then
+                    child.Visible = true
+                    anyVisible = true
+                else
+                    -- For folders, also check children (files inside)
+                    local filesContainer = child:FindFirstChild("Files")
+                    if filesContainer then
+                        local folderHasMatch = false
+                        for _, fileChild in pairs(filesContainer:GetChildren()) do
+                            if fileChild:IsA("Frame") then
+                                if string.find(string.lower(fileChild.Name), query, 1, true) then
+                                    folderHasMatch = true
+                                    break
+                                end
+                            end
+                        end
+                        if folderHasMatch then
+                            child.Visible = true
+                            anyVisible = true
+                        else
+                            child.Visible = false
+                        end
+                    else
+                        child.Visible = false
+                    end
+                end
+            end
+        end
+
+        noResultsFrame.Visible = not anyVisible
+        -- If we found results, show the tab of the first visible match
+        if anyVisible and WindowObj.CurrentTab then
+            WindowObj.CurrentTab.Page.Visible = true
+        end
+    end
+
+    searchTextbox:GetPropertyChangedSignal("Text"):Connect(function()
+        performSearch(searchTextbox.Text)
+    end)
 
     -- Window Resize Handler (Bottom-Right)
     local resizeHandle = Instance.new("ImageButton")
@@ -413,6 +629,7 @@ function Window:New(options, library)
     resizeHandle.Parent = mainFrame
     
     library.Utilities:MakeResizable(resizeHandle, mainFrame, Vector2.new(600, 400))
+
     function WindowObj:MakeTab(tabOptions)
         return library.Tab:New(tabOptions, self)
     end
