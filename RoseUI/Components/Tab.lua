@@ -13,10 +13,12 @@ function Tab:New(tabOptions, window)
 
     local tabIcon = tabOptions.Icon or (tabOptions.IsFile and "File" or "Dashboard")
     -- Support for custom asset IDs
-    if tonumber(tabIcon) or string.find(tabIcon, "rbxassetid://") then
-        tabIcon = string.find(tabIcon, "rbxassetid://") and tabIcon or "rbxassetid://" .. tabIcon
-    else
-        tabIcon = assets.Icons[tabIcon] or assets.Icons.File
+    if type(tabIcon) == "string" then
+        if tonumber(tabIcon) or string.find(tabIcon, "rbxassetid://") then
+            tabIcon = string.find(tabIcon, "rbxassetid://") and tabIcon or "rbxassetid://" .. tabIcon
+        else
+            tabIcon = assets.Icons[tabIcon] or assets.Icons.File
+        end
     end
 
     local isSubTab = tabOptions.IsSubTab or tabOptions.IsFile or false
@@ -64,7 +66,15 @@ function Tab:New(tabOptions, window)
     icon.Size = UDim2.new(0, 16, 0, 16)
     icon.Position = UDim2.new(0, 12, 0.5, -8)
     icon.BackgroundTransparency = 1
-    icon.Image = tabIcon
+    
+    if type(tabIcon) == "table" then
+        icon.Image = tabIcon.Image or ""
+        icon.ImageRectOffset = tabIcon.ImageRectOffset or Vector2.new(0,0)
+        icon.ImageRectSize = tabIcon.ImageRectSize or Vector2.new(0,0)
+    else
+        icon.Image = tabIcon
+    end
+    
     icon.ImageColor3 = theme.SecondaryText
     icon.Parent = contentFrame
 

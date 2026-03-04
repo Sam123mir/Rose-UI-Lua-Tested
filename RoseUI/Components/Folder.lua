@@ -58,13 +58,21 @@ function Folder:New(options, window)
 
     local folderIcon = options.Icon or "Folder"
     -- Support for custom asset IDs
-    if tonumber(folderIcon) or string.find(tostring(folderIcon), "rbxassetid://") then
-        folderIcon = string.find(tostring(folderIcon), "rbxassetid://") and folderIcon or "rbxassetid://" .. folderIcon
-    else
-        folderIcon = assets.Icons[folderIcon] or assets.Icons.Folder
+    if type(folderIcon) == "string" then
+        if tonumber(folderIcon) or string.find(tostring(folderIcon), "rbxassetid://") then
+            folderIcon = string.find(tostring(folderIcon), "rbxassetid://") and folderIcon or "rbxassetid://" .. folderIcon
+        else
+            folderIcon = assets.Icons[folderIcon] or assets.Icons.Folder
+        end
     end
     
-    iconImg.Image = folderIcon
+    if type(folderIcon) == "table" then
+        iconImg.Image = folderIcon.Image or ""
+        iconImg.ImageRectOffset = folderIcon.ImageRectOffset or Vector2.new(0,0)
+        iconImg.ImageRectSize = folderIcon.ImageRectSize or Vector2.new(0,0)
+    else
+        iconImg.Image = folderIcon
+    end
     
     local label = Instance.new("TextLabel")
     label.Size = UDim2.new(1, -60, 1, 0)

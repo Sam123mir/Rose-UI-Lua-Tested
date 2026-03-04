@@ -1,7 +1,7 @@
 --[[
     RoseUI v2.5.0
     Created by RoseUI Team
-    Build Date: 4/3/2026, 2:05:40 p. m.
+    Build Date: 4/3/2026, 2:12:32 p. m.
     
     This is a unified distribution file. 
 ]]
@@ -493,13 +493,21 @@ function Window:New(options, library)
     logoIcon.BackgroundTransparency = 1
     
     local finalLogo = options.Logo or "Logo"
-    if tonumber(finalLogo) or string.find(tostring(finalLogo), "rbxassetid://") then
-        finalLogo = string.find(tostring(finalLogo), "rbxassetid://") and finalLogo or "rbxassetid://" .. finalLogo
-    else
-        finalLogo = assets.Icons[finalLogo] or assets.Icons.Logo
+    if type(finalLogo) == "string" then
+        if tonumber(finalLogo) or string.find(tostring(finalLogo), "rbxassetid://") then
+            finalLogo = string.find(tostring(finalLogo), "rbxassetid://") and finalLogo or "rbxassetid://" .. finalLogo
+        else
+            finalLogo = assets.Icons[finalLogo] or assets.Icons.Logo
+        end
     end
     
-    logoIcon.Image = finalLogo
+    if type(finalLogo) == "table" then
+        logoIcon.Image = finalLogo.Image or ""
+        logoIcon.ImageRectOffset = finalLogo.ImageRectOffset or Vector2.new(0,0)
+        logoIcon.ImageRectSize = finalLogo.ImageRectSize or Vector2.new(0,0)
+    else
+        logoIcon.Image = finalLogo
+    end
     logoIcon.ImageColor3 = theme.Primary
     logoIcon.Parent = header
 
@@ -552,7 +560,15 @@ function Window:New(options, library)
         icon.Size = UDim2.new(0, 14, 0, 14)
         icon.Position = UDim2.new(0, 8, 0.5, -7)
         icon.BackgroundTransparency = 1
-        icon.Image = assets.Icons[iconName] or ""
+        
+        local iconAsset = assets.Icons[iconName] or ""
+        if type(iconAsset) == "table" then
+            icon.Image = iconAsset.Image or ""
+            icon.ImageRectOffset = iconAsset.ImageRectOffset or Vector2.new(0,0)
+            icon.ImageRectSize = iconAsset.ImageRectSize or Vector2.new(0,0)
+        else
+            icon.Image = iconAsset
+        end
         icon.ImageColor3 = theme.SecondaryText
         icon.Parent = item
 
@@ -566,6 +582,7 @@ function Window:New(options, library)
         fallbackLabel.Font = Enum.Font.GothamBlack
         fallbackLabel.TextSize = 7
         fallbackLabel.ZIndex = 2
+        fallbackLabel.Visible = (icon.Image == "")
         fallbackLabel.Parent = item
         
         local val = Instance.new("TextLabel")
@@ -645,7 +662,7 @@ function Window:New(options, library)
     cLayout.Padding = UDim.new(0, 6)
     cLayout.Parent = controls
 
-    local function createControl(fallbackText, hoverColor, callback)
+    local function createControl(iconName, fallbackText, hoverColor, callback)
         local btn = Instance.new("TextButton")
         btn.Size = UDim2.new(0, 28, 0, 28)
         btn.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
@@ -655,6 +672,21 @@ function Window:New(options, library)
         btn.Parent = controls
         Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 8)
         
+        local btnIcon = Instance.new("ImageLabel")
+        btnIcon.Size = UDim2.new(0, 14, 0, 14)
+        btnIcon.Position = UDim2.new(0.5, -7, 0.5, -7)
+        btnIcon.BackgroundTransparency = 1
+        local iAsset = assets.Icons[iconName] or ""
+        if type(iAsset) == "table" then
+            btnIcon.Image = iAsset.Image or ""
+            btnIcon.ImageRectOffset = iAsset.ImageRectOffset or Vector2.new(0,0)
+            btnIcon.ImageRectSize = iAsset.ImageRectSize or Vector2.new(0,0)
+        else
+            btnIcon.Image = iAsset
+        end
+        btnIcon.ImageColor3 = theme.SecondaryText
+        btnIcon.Parent = btn
+
         
         local symbolLabel = Instance.new("TextLabel")
         symbolLabel.Size = UDim2.new(1, 0, 1, 0)
@@ -663,15 +695,18 @@ function Window:New(options, library)
         symbolLabel.TextColor3 = theme.SecondaryText
         symbolLabel.Font = Enum.Font.GothamBold
         symbolLabel.TextSize = 14
+        symbolLabel.Visible = (btnIcon.Image == "")
         symbolLabel.Parent = btn
         
         btn.MouseEnter:Connect(function()
             TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundTransparency = 0.7, BackgroundColor3 = hoverColor}):Play()
             TweenService:Create(symbolLabel, TweenInfo.new(0.2), {TextColor3 = Color3.new(1,1,1)}):Play()
+            TweenService:Create(btnIcon, TweenInfo.new(0.2), {ImageColor3 = Color3.new(1,1,1)}):Play()
         end)
         btn.MouseLeave:Connect(function()
             TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundTransparency = 0.95, BackgroundColor3 = Color3.fromRGB(255,255,255)}):Play()
             TweenService:Create(symbolLabel, TweenInfo.new(0.2), {TextColor3 = theme.SecondaryText}):Play()
+            TweenService:Create(btnIcon, TweenInfo.new(0.2), {ImageColor3 = theme.SecondaryText}):Play()
         end)
         btn.MouseButton1Click:Connect(callback)
         return btn
@@ -738,7 +773,13 @@ function Window:New(options, library)
     minLogo.Size = UDim2.new(0, 18, 0, 18)
     minLogo.Position = UDim2.new(0, 12, 0.5, -9)
     minLogo.BackgroundTransparency = 1
-    minLogo.Image = finalLogo
+    if type(finalLogo) == "table" then
+        minLogo.Image = finalLogo.Image or ""
+        minLogo.ImageRectOffset = finalLogo.ImageRectOffset or Vector2.new(0,0)
+        minLogo.ImageRectSize = finalLogo.ImageRectSize or Vector2.new(0,0)
+    else
+        minLogo.Image = finalLogo
+    end
     minLogo.ImageColor3 = theme.Primary
     minLogo.Parent = restoreBtn
     
@@ -765,12 +806,34 @@ function Window:New(options, library)
         mainFrame.Visible = true
     end)
 
-    createControl("-", theme.Primary, function() 
+    local isMaximized = false
+    local prevSize = mainFrame.Size
+    local prevPos = mainFrame.Position
+
+    createControl("Minimize", "-", theme.Primary, function() 
         mainFrame.Visible = false
         minBar.Visible = true
-    end) 
-    createControl("□", theme.Primary, function() print("Toggle Size") end)       
-    createControl("×", Color3.fromRGB(220, 50, 50), function() screenGui:Destroy() end)  
+    end)
+    
+    createControl("Maximize", "□", theme.Primary, function() 
+        if not isMaximized then
+            prevSize = mainFrame.Size
+            prevPos = mainFrame.Position
+            TweenService:Create(mainFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quart), {
+                Size = UDim2.new(1, 0, 1, 36),
+                Position = UDim2.new(0.5, 0, 0.5, 18)
+            }):Play()
+            isMaximized = true
+        else
+            TweenService:Create(mainFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quart), {
+                Size = prevSize,
+                Position = prevPos
+            }):Play()
+            isMaximized = false
+        end
+    end)
+    
+    createControl("Close", "×", Color3.fromRGB(220, 50, 50), function() screenGui:Destroy() end)
 
     
     
@@ -1281,13 +1344,21 @@ function Folder:New(options, window)
 
     local folderIcon = options.Icon or "Folder"
     
-    if tonumber(folderIcon) or string.find(tostring(folderIcon), "rbxassetid://") then
-        folderIcon = string.find(tostring(folderIcon), "rbxassetid://") and folderIcon or "rbxassetid://" .. folderIcon
-    else
-        folderIcon = assets.Icons[folderIcon] or assets.Icons.Folder
+    if type(folderIcon) == "string" then
+        if tonumber(folderIcon) or string.find(tostring(folderIcon), "rbxassetid://") then
+            folderIcon = string.find(tostring(folderIcon), "rbxassetid://") and folderIcon or "rbxassetid://" .. folderIcon
+        else
+            folderIcon = assets.Icons[folderIcon] or assets.Icons.Folder
+        end
     end
     
-    iconImg.Image = folderIcon
+    if type(folderIcon) == "table" then
+        iconImg.Image = folderIcon.Image or ""
+        iconImg.ImageRectOffset = folderIcon.ImageRectOffset or Vector2.new(0,0)
+        iconImg.ImageRectSize = folderIcon.ImageRectSize or Vector2.new(0,0)
+    else
+        iconImg.Image = folderIcon
+    end
     
     local label = Instance.new("TextLabel")
     label.Size = UDim2.new(1, -60, 1, 0)
@@ -1398,10 +1469,12 @@ function Tab:New(tabOptions, window)
 
     local tabIcon = tabOptions.Icon or (tabOptions.IsFile and "File" or "Dashboard")
     
-    if tonumber(tabIcon) or string.find(tabIcon, "rbxassetid://") then
-        tabIcon = string.find(tabIcon, "rbxassetid://") and tabIcon or "rbxassetid://" .. tabIcon
-    else
-        tabIcon = assets.Icons[tabIcon] or assets.Icons.File
+    if type(tabIcon) == "string" then
+        if tonumber(tabIcon) or string.find(tabIcon, "rbxassetid://") then
+            tabIcon = string.find(tabIcon, "rbxassetid://") and tabIcon or "rbxassetid://" .. tabIcon
+        else
+            tabIcon = assets.Icons[tabIcon] or assets.Icons.File
+        end
     end
 
     local isSubTab = tabOptions.IsSubTab or tabOptions.IsFile or false
@@ -1449,7 +1522,15 @@ function Tab:New(tabOptions, window)
     icon.Size = UDim2.new(0, 16, 0, 16)
     icon.Position = UDim2.new(0, 12, 0.5, -8)
     icon.BackgroundTransparency = 1
-    icon.Image = tabIcon
+    
+    if type(tabIcon) == "table" then
+        icon.Image = tabIcon.Image or ""
+        icon.ImageRectOffset = tabIcon.ImageRectOffset or Vector2.new(0,0)
+        icon.ImageRectSize = tabIcon.ImageRectSize or Vector2.new(0,0)
+    else
+        icon.Image = tabIcon
+    end
+    
     icon.ImageColor3 = theme.SecondaryText
     icon.Parent = contentFrame
 
