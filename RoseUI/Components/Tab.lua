@@ -7,20 +7,21 @@ local Tab = {}
 
 function Tab:New(tabOptions, window)
     local tabName = tabOptions.Name or "Tab"
+    local library = window.Library
+    local theme = window.Theme
+    local assets = library.Assets
+
     local tabIcon = tabOptions.Icon or (tabOptions.IsFile and "File" or "Dashboard")
     -- Support for custom asset IDs
     if tonumber(tabIcon) or string.find(tabIcon, "rbxassetid://") then
         tabIcon = string.find(tabIcon, "rbxassetid://") and tabIcon or "rbxassetid://" .. tabIcon
     else
-        tabIcon = library.Assets.Icons[tabIcon] or library.Assets.Icons.File
+        tabIcon = assets.Icons[tabIcon] or assets.Icons.File
     end
 
     local isSubTab = tabOptions.IsSubTab or tabOptions.IsFile or false
     local isFile = tabOptions.IsFile or false
     local parentOverride = tabOptions.ParentOverride
-    local library = window.Library
-    local theme = window.Theme
-    local assets = library.Assets
 
     local tabBtn = Instance.new("Frame")
     tabBtn.Name = tabName .. (isFile and "_File" or (isSubTab and "_Sub" or "_Main"))
@@ -34,6 +35,7 @@ function Tab:New(tabOptions, window)
     btnTrigger.Text = ""
     btnTrigger.Parent = tabBtn
 
+    local contentFrame = Instance.new("Frame")
     contentFrame.Size = UDim2.new(1, isFile and -40 or (isSubTab and -30 or -20), 1, -4)
     contentFrame.Position = UDim2.new(0, isFile and 30 or (isSubTab and 25 or 10), 0, 2)
     contentFrame.BackgroundColor3 = theme.Primary
@@ -127,7 +129,7 @@ function Tab:New(tabOptions, window)
         if window.CurrentTab then
             window.CurrentTab:Deactivate()
         end
-
+ 
         window.CurrentTab = TabObj
         setActive(true)
     end)
