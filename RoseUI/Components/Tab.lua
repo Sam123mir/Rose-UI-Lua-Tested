@@ -142,6 +142,11 @@ function Tab:New(tabOptions, window)
 
     table.insert(window.Tabs, TabObj)
 
+    function TabObj:AddSubTab(subOptions)
+        subOptions.IsSubTab = true
+        return Tab:New(subOptions, self.Window)
+    end
+
     function TabObj:AddSection(sName)
         return library.Section:New(sName, self)
     end

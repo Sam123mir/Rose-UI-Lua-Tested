@@ -133,10 +133,11 @@ function Window:New(options, library)
     title.TextXAlignment = Enum.TextXAlignment.Left
     title.Parent = header
 
-    -- Stats Container
+    -- Stats Container (Centered)
     local statsFrame = Instance.new("Frame")
-    statsFrame.Size = UDim2.new(1, -250, 1, 0)
-    statsFrame.Position = UDim2.new(0, 110, 0, 0)
+    statsFrame.Size = UDim2.new(0, 400, 1, 0)
+    statsFrame.Position = UDim2.new(0.5, 0, 0, 0)
+    statsFrame.AnchorPoint = Vector2.new(0.5, 0)
     statsFrame.BackgroundTransparency = 1
     statsFrame.Parent = header
     
@@ -213,8 +214,8 @@ function Window:New(options, library)
 
     -- Window Controls
     local controls = Instance.new("Frame")
-    controls.Size = UDim2.new(0, 100, 1, 0)
-    controls.Position = UDim2.new(1, -100, 0, 0)
+    controls.Size = UDim2.new(0, 110, 1, 0)
+    controls.Position = UDim2.new(1, -110, 0, 0)
     controls.BackgroundTransparency = 1
     controls.Parent = header
     
@@ -241,6 +242,7 @@ function Window:New(options, library)
     end
 
     createControl("Minimize", function() screenGui.Enabled = false end)
+    createControl("Restore", function() print("Toggle Size") end) -- Placeholder for Maximize
     createControl("Close", function() screenGui:Destroy() end)
 
     -- Body
@@ -286,8 +288,14 @@ function Window:New(options, library)
     avatarImg.Size = UDim2.new(1, -4, 1, -4)
     avatarImg.Position = UDim2.new(0, 2, 0, 2)
     avatarImg.BackgroundTransparency = 1
-    avatarImg.Image = assets.Icons.User
-    avatarImg.ImageColor3 = theme.Primary
+    
+    local userId = Services.Players.LocalPlayer.UserId
+    local thumbType = Enum.ThumbnailType.HeadShot
+    local thumbSize = Enum.ThumbnailSize.Size420x420
+    local content, isReady = Services.Players:GetUserThumbnailAsync(userId, thumbType, thumbSize)
+    
+    avatarImg.Image = content or assets.Icons.User
+    avatarImg.ImageColor3 = Color3.new(1,1,1) -- No tint for real avatar
     avatarImg.Parent = avatarFrame
     Instance.new("UICorner", avatarImg).CornerRadius = UDim.new(1, 0)
     
@@ -312,6 +320,14 @@ function Window:New(options, library)
     userStatus.TextSize = 9
     userStatus.TextXAlignment = Enum.TextXAlignment.Left
     userStatus.Parent = profile
+
+    local sep = Instance.new("Frame")
+    sep.Size = UDim2.new(1, -30, 0, 1)
+    sep.Position = UDim2.new(0, 15, 1, 0)
+    sep.BackgroundColor3 = Color3.new(1,1,1)
+    sep.BackgroundTransparency = 0.95
+    sep.BorderSizePixel = 0
+    sep.Parent = profile
 
     -- Navigation
     local navScroll = Instance.new("ScrollingFrame")
