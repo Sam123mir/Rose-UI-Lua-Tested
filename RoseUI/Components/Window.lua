@@ -98,8 +98,8 @@ function Window:New(options, library)
 
     -- Main Container (Glass Panel)
     local viewportSize = workspace.CurrentCamera.ViewportSize
-    local finalWidth = 720
-    local finalHeight = 440
+    local finalWidth = 860
+    local finalHeight = 540
 
     local mainFrame = Instance.new("Frame")
     mainFrame.Name = "Main"
@@ -559,7 +559,7 @@ function Window:New(options, library)
     -- ========================================================================
     local sidebar = Instance.new("Frame")
     sidebar.Name = "Sidebar"
-    sidebar.Size = UDim2.new(0, 220, 1, 0)
+    sidebar.Size = UDim2.new(0, 240, 1, 0)
     sidebar.BackgroundColor3 = theme.Accent
     sidebar.BackgroundTransparency = 0.4
     sidebar.BorderSizePixel = 0
@@ -725,8 +725,8 @@ function Window:New(options, library)
     -- ========================================================================
     local contentArea = Instance.new("Frame")
     contentArea.Name = "ContentArea"
-    contentArea.Size = UDim2.new(1, -220, 1, 0)
-    contentArea.Position = UDim2.new(0, 220, 0, 0)
+    contentArea.Size = UDim2.new(1, -240, 1, 0)
+    contentArea.Position = UDim2.new(0, 240, 0, 0)
     contentArea.BackgroundTransparency = 1
     contentArea.Parent = body
     

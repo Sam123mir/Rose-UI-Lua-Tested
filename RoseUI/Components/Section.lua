@@ -53,14 +53,12 @@ function Section:New(sName, tab)
     local sectionContainer = Instance.new("Frame")
     sectionContainer.Name = "Container"
     sectionContainer.Size = UDim2.new(1, 0, 0, 0)
-    sectionContainer.Position = UDim2.new(0, 0, 0, 25)
-    sectionContainer.BackgroundTransparency = 1
-    sectionContainer.Parent = sectionFrame
-    
     local secLayout = Instance.new("UIListLayout")
-    secLayout.Padding = UDim.new(0, 8)
+    secLayout.Padding = UDim.new(0, 10)
     secLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
     secLayout.Parent = sectionContainer
+    
+    sectionContainer.Position = UDim2.new(0, 0, 0, 28)
     
     secLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
         sectionContainer.Size = UDim2.new(1, 0, 0, secLayout.AbsoluteContentSize.Y)

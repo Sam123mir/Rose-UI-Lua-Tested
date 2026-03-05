@@ -1,7 +1,7 @@
 --[[
     RoseUI v2.5.0
     Created by RoseUI Team
-    Build Date: 4/3/2026, 10:46:57 p. m.
+    Build Date: 4/3/2026, 11:00:37 p. m.
     
     This is a unified distribution file. 
 ]]
@@ -476,8 +476,8 @@ function Window:New(options, library)
 
     
     local viewportSize = workspace.CurrentCamera.ViewportSize
-    local finalWidth = 720
-    local finalHeight = 440
+    local finalWidth = 860
+    local finalHeight = 540
 
     local mainFrame = Instance.new("Frame")
     mainFrame.Name = "Main"
@@ -937,7 +937,7 @@ function Window:New(options, library)
     
     local sidebar = Instance.new("Frame")
     sidebar.Name = "Sidebar"
-    sidebar.Size = UDim2.new(0, 220, 1, 0)
+    sidebar.Size = UDim2.new(0, 240, 1, 0)
     sidebar.BackgroundColor3 = theme.Accent
     sidebar.BackgroundTransparency = 0.4
     sidebar.BorderSizePixel = 0
@@ -1103,8 +1103,8 @@ function Window:New(options, library)
     
     local contentArea = Instance.new("Frame")
     contentArea.Name = "ContentArea"
-    contentArea.Size = UDim2.new(1, -220, 1, 0)
-    contentArea.Position = UDim2.new(0, 220, 0, 0)
+    contentArea.Size = UDim2.new(1, -240, 1, 0)
+    contentArea.Position = UDim2.new(0, 240, 0, 0)
     contentArea.BackgroundTransparency = 1
     contentArea.Parent = body
     
@@ -2175,14 +2175,12 @@ function Section:New(sName, tab)
     local sectionContainer = Instance.new("Frame")
     sectionContainer.Name = "Container"
     sectionContainer.Size = UDim2.new(1, 0, 0, 0)
-    sectionContainer.Position = UDim2.new(0, 0, 0, 25)
-    sectionContainer.BackgroundTransparency = 1
-    sectionContainer.Parent = sectionFrame
-    
     local secLayout = Instance.new("UIListLayout")
-    secLayout.Padding = UDim.new(0, 8)
+    secLayout.Padding = UDim.new(0, 10)
     secLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
     secLayout.Parent = sectionContainer
+    
+    sectionContainer.Position = UDim2.new(0, 0, 0, 28)
     
     secLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
         sectionContainer.Size = UDim2.new(1, 0, 0, secLayout.AbsoluteContentSize.Y)
@@ -3331,7 +3329,7 @@ function ColorPicker:Add(parent, options, library)
     
     local cpFrame = Instance.new("Frame")
     cpFrame.Name = cpName .. "_ColorPicker"
-    cpFrame.Size = UDim2.new(1, 0, 0, 240)
+    cpFrame.Size = UDim2.new(1, 0, 0, 260) 
     cpFrame.BackgroundTransparency = 1
     cpFrame.Parent = parent
 
@@ -3381,7 +3379,7 @@ function ColorPicker:Add(parent, options, library)
     activeLbl.Size = UDim2.new(1, -20, 1, 0)
     activeLbl.Position = UDim2.new(0, 22, 0, 0)
     activeLbl.BackgroundTransparency = 1
-    activeLbl.Text = "ACTIVE"
+    activeLbl.Text = "ACTIVO"
     activeLbl.TextColor3 = theme.MutedText
     activeLbl.Font = Enum.Font.GothamBold
     activeLbl.TextSize = 9
@@ -3390,46 +3388,37 @@ function ColorPicker:Add(parent, options, library)
 
     
     local satMap = Instance.new("ImageButton")
-    satMap.Size = UDim2.new(1, -24, 0, 120)
+    satMap.Size = UDim2.new(1, -24, 0, 110)
     satMap.Position = UDim2.new(0, 12, 0, 36)
     satMap.BackgroundColor3 = Color3.fromHSV(h, 1, 1)
     satMap.Image = "rbxassetid://6980062489"
     satMap.AutoButtonColor = false
     satMap.Parent = bg
-    Instance.new("UICorner", satMap).CornerRadius = UDim.new(0, 8)
-    Instance.new("UIStroke", satMap).Transparency = 0.8
-    Instance.new("UIStroke", satMap).Color = Color3.new(1,1,1)
+    Instance.new("UICorner", satMap).CornerRadius = UDim.new(0, 6)
+    Instance.new("UIStroke", satMap).Transparency = 0.82
 
     local mapCursor = Instance.new("Frame")
-    mapCursor.Size = UDim2.new(0, 14, 0, 14)
+    mapCursor.Size = UDim2.new(0, 12, 0, 12)
     mapCursor.AnchorPoint = Vector2.new(0.5, 0.5)
     mapCursor.Position = UDim2.new(s, 0, 1-v, 0)
     mapCursor.BackgroundColor3 = Color3.new(1,1,1)
-    mapCursor.BackgroundTransparency = 0.2
     mapCursor.ZIndex = 2
     mapCursor.Parent = satMap
     Instance.new("UICorner", mapCursor).CornerRadius = UDim.new(1, 0)
     local mapCursorStroke = Instance.new("UIStroke", mapCursor)
-    mapCursorStroke.Thickness = 2
-    mapCursorStroke.Color = Color3.new(1,1,1)
-
-    local cursorDot = Instance.new("Frame")
-    cursorDot.Size = UDim2.new(0, 4, 0, 4)
-    cursorDot.Position = UDim2.new(0.5, -2, 0.5, -2)
-    cursorDot.BackgroundColor3 = currentColor
-    cursorDot.ZIndex = 3
-    cursorDot.Parent = mapCursor
-    Instance.new("UICorner", cursorDot).CornerRadius = UDim.new(1, 0)
+    mapCursorStroke.Thickness = 1.5
+    mapCursorStroke.Color = Color3.new(0,0,0)
 
     
     local hueFrame = Instance.new("TextButton")
-    hueFrame.Size = UDim2.new(1, -24, 0, 16)
-    hueFrame.Position = UDim2.new(0, 12, 0, 166)
+    hueFrame.Size = UDim2.new(1, -24, 0, 22) 
+    hueFrame.Position = UDim2.new(0, 12, 0, 154)
     hueFrame.AutoButtonColor = false
     hueFrame.Text = ""
     hueFrame.Parent = bg
-    Instance.new("UICorner", hueFrame).CornerRadius = UDim.new(0, 4)
+    Instance.new("UICorner", hueFrame).CornerRadius = UDim.new(0, 6)
     Instance.new("UIStroke", hueFrame).Transparency = 0.8
+    Instance.new("UIStroke", hueFrame).Color = Color3.new(1,1,1)
 
     local hueGradient = Instance.new("UIGradient")
     hueGradient.Color = ColorSequence.new({
@@ -3444,21 +3433,49 @@ function ColorPicker:Add(parent, options, library)
     hueGradient.Parent = hueFrame
 
     local hueCursor = Instance.new("Frame")
-    hueCursor.Size = UDim2.new(0, 6, 1, 4)
-    hueCursor.Position = UDim2.new(1-h, -3, 0, -2)
+    hueCursor.Size = UDim2.new(0, 4, 1, 4)
+    hueCursor.Position = UDim2.new(1-h, -2, 0, -2)
     hueCursor.BackgroundColor3 = Color3.new(1,1,1)
     hueCursor.Parent = hueFrame
-    Instance.new("UICorner", hueCursor).CornerRadius = UDim.new(0, 2)
+    Instance.new("UICorner", hueCursor).CornerRadius = UDim.new(1, 0)
+    Instance.new("UIStroke", hueCursor).Thickness = 1
     Instance.new("UIStroke", hueCursor).Color = Color3.new(0,0,0)
+
+    
+    local valFrame = Instance.new("TextButton")
+    valFrame.Size = UDim2.new(1, -24, 0, 12)
+    valFrame.Position = UDim2.new(0, 12, 0, 184)
+    valFrame.AutoButtonColor = false
+    valFrame.Text = ""
+    valFrame.Parent = bg
+    Instance.new("UICorner", valFrame).CornerRadius = UDim.new(0, 4)
+    
+    local valGradient = Instance.new("UIGradient")
+    local function updateValGradient()
+        valGradient.Color = ColorSequence.new({
+            ColorSequenceKeypoint.new(0, Color3.new(0, 0, 0)),
+            ColorSequenceKeypoint.new(1, Color3.fromHSV(h, s, 1))
+        })
+    end
+    valGradient.Parent = valFrame
+    updateValGradient()
+
+    local valCursor = Instance.new("Frame")
+    valCursor.Size = UDim2.new(0, 4, 1, 2)
+    valCursor.Position = UDim2.new(v, -2, 0, -1)
+    valCursor.BackgroundColor3 = Color3.new(1,1,1)
+    valCursor.Parent = valFrame
+    Instance.new("UICorner", valCursor).CornerRadius = UDim.new(1, 0)
+    Instance.new("UIStroke", valCursor).Color = Color3.new(0,0,0)
 
     
     local hexBg = Instance.new("Frame")
     hexBg.Size = UDim2.new(1, -24, 0, 32)
-    hexBg.Position = UDim2.new(0, 12, 0, 194)
+    hexBg.Position = UDim2.new(0, 12, 0, 212)
     hexBg.BackgroundColor3 = theme.Background
     hexBg.BackgroundTransparency = 0.4
     hexBg.Parent = bg
-    Instance.new("UICorner", hexBg).CornerRadius = UDim.new(0, 6)
+    Instance.new("UICorner", hexBg).CornerRadius = UDim.new(0, 8)
     local hexStroke = Instance.new("UIStroke", hexBg)
     hexStroke.Transparency = 0.85
     hexStroke.Color = Color3.new(1,1,1)
@@ -3486,13 +3503,16 @@ function ColorPicker:Add(parent, options, library)
     hexInput.ClearTextOnFocus = false
     hexInput.Parent = hexBg
 
-    local function updateColors()
+    local function updateColors(ignoreHex)
         currentColor = Color3.fromHSV(h, s, v)
         satMap.BackgroundColor3 = Color3.fromHSV(h, 1, 1)
         previewColor.BackgroundColor3 = currentColor
         prevStroke.Color = currentColor
-        cursorDot.BackgroundColor3 = currentColor
-        hexInput.Text = "#" .. currentColor:ToHex():upper()
+        updateValGradient()
+        
+        if not ignoreHex then
+            hexInput.Text = "#" .. currentColor:ToHex():upper()
+        end
         
         if library.Flags then library.Flags[flag] = currentColor end
         cb(currentColor)
@@ -3500,6 +3520,7 @@ function ColorPicker:Add(parent, options, library)
 
     local isDraggingSat = false
     local isDraggingHue = false
+    local isDraggingVal = false
 
     satMap.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
@@ -3509,6 +3530,7 @@ function ColorPicker:Add(parent, options, library)
             s = posX
             v = 1 - posY
             mapCursor.Position = UDim2.new(posX, 0, posY, 0)
+            valCursor.Position = UDim2.new(v, -2, 0, -1)
             updateColors()
         end
     end)
@@ -3518,7 +3540,18 @@ function ColorPicker:Add(parent, options, library)
             isDraggingHue = true
             local posX = math.clamp((input.Position.X - hueFrame.AbsolutePosition.X) / hueFrame.AbsoluteSize.X, 0, 1)
             h = 1 - posX
-            hueCursor.Position = UDim2.new(posX, -3, 0, -2)
+            hueCursor.Position = UDim2.new(posX, -2, 0, -2)
+            updateColors()
+        end
+    end)
+
+    valFrame.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            isDraggingVal = true
+            local posX = math.clamp((input.Position.X - valFrame.AbsolutePosition.X) / valFrame.AbsoluteSize.X, 0, 1)
+            v = posX
+            valCursor.Position = UDim2.new(posX, -2, 0, -1)
+            mapCursor.Position = UDim2.new(s, 0, 1-v, 0)
             updateColors()
         end
     end)
@@ -3531,11 +3564,18 @@ function ColorPicker:Add(parent, options, library)
                 s = posX
                 v = 1 - posY
                 mapCursor.Position = UDim2.new(posX, 0, posY, 0)
+                valCursor.Position = UDim2.new(v, -2, 0, -1)
                 updateColors()
             elseif isDraggingHue then
                 local posX = math.clamp((input.Position.X - hueFrame.AbsolutePosition.X) / hueFrame.AbsoluteSize.X, 0, 1)
                 h = 1 - posX
-                hueCursor.Position = UDim2.new(posX, -3, 0, -2)
+                hueCursor.Position = UDim2.new(posX, -2, 0, -2)
+                updateColors()
+            elseif isDraggingVal then
+                local posX = math.clamp((input.Position.X - valFrame.AbsolutePosition.X) / valFrame.AbsoluteSize.X, 0, 1)
+                v = posX
+                valCursor.Position = UDim2.new(posX, -2, 0, -1)
+                mapCursor.Position = UDim2.new(s, 0, 1-v, 0)
                 updateColors()
             end
         end
@@ -3545,32 +3585,45 @@ function ColorPicker:Add(parent, options, library)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
             isDraggingSat = false
             isDraggingHue = false
+            isDraggingVal = false
         end
     end)
 
-    hexInput.Focused:Connect(function()
-        TweenService:Create(hexStroke, TweenInfo.new(0.15), {Color = theme.Primary, Transparency = 0}):Play()
+    
+    local function setFromHex(hexStr)
+        local hex = hexStr:gsub("#", "")
+        
+        if #hex == 3 then
+            hex = hex:sub(1,1):rep(2) .. hex:sub(2,2):rep(2) .. hex:sub(3,3):rep(2)
+        elseif #hex == 1 then
+            hex = hex:rep(6)
+        end
+        
+        if #hex == 6 then
+            local r = tonumber(hex:sub(1,2), 16)
+            local g = tonumber(hex:sub(3,4), 16)
+            local b = tonumber(hex:sub(5,6), 16)
+            
+            if r and g and b then
+                currentColor = Color3.fromRGB(r, g, b)
+                h, s, v = currentColor:ToHSV()
+                mapCursor.Position = UDim2.new(s, 0, 1-v, 0)
+                hueCursor.Position = UDim2.new(1-h, -2, 0, -2)
+                valCursor.Position = UDim2.new(v, -2, 0, -1)
+                updateColors(true)
+            end
+        end
+    end
+
+    hexInput:GetPropertyChangedSignal("Text"):Connect(function()
+        if not hexInput:IsFocused() then return end
+        setFromHex(hexInput.Text)
     end)
 
     hexInput.FocusLost:Connect(function(enterPressed)
         TweenService:Create(hexStroke, TweenInfo.new(0.15), {Color = Color3.new(1,1,1), Transparency = 0.85}):Play()
-        if enterPressed then
-            local hex = hexInput.Text:gsub("#", "")
-            if #hex == 6 then
-                local ok, r, g, b = pcall(function()
-                    return tonumber(hex:sub(1,2), 16), tonumber(hex:sub(3,4), 16), tonumber(hex:sub(5,6), 16)
-                end)
-                if ok and r and g and b then
-                    currentColor = Color3.fromRGB(r, g, b)
-                    h, s, v = currentColor:ToHSV()
-                    mapCursor.Position = UDim2.new(s, 0, 1-v, 0)
-                    hueCursor.Position = UDim2.new(1-h, -3, 0, -2)
-                    updateColors()
-                end
-            end
-        else
-            hexInput.Text = "#" .. currentColor:ToHex():upper()
-        end
+        setFromHex(hexInput.Text)
+        hexInput.Text = "#" .. currentColor:ToHex():upper()
     end)
 
     if library.Flags then library.Flags[flag] = default end
@@ -3581,13 +3634,15 @@ function ColorPicker:Add(parent, options, library)
             currentColor = color
             h, s, v = currentColor:ToHSV()
             mapCursor.Position = UDim2.new(s, 0, 1-v, 0)
-            hueCursor.Position = UDim2.new(1-h, -3, 0, -2)
+            hueCursor.Position = UDim2.new(1-h, -2, 0, -2)
+            valCursor.Position = UDim2.new(v, -2, 0, -1)
             updateColors()
         end
     }
 end
 
 return ColorPicker
+
 end function __DARKLUA_BUNDLE_MODULES.q():typeof(__modImpl())local v=__DARKLUA_BUNDLE_MODULES.cache.q if not v then v={c=__modImpl()}__DARKLUA_BUNDLE_MODULES.cache.q=v end return v.c end end do local function __modImpl()
 local Constants = __DARKLUA_BUNDLE_MODULES.a()
 
