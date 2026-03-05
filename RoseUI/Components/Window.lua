@@ -11,12 +11,53 @@ local Window = {}
 
 function Window:New(options, library)
     local titleText = options.Name or "RoseUI"
-    local hubType = options.HubType or "v1.2.4 Premium"
-    local theme = library.CurrentTheme or import("Core/Themes")["Rose v2 (Premium)"]
-    local assets = library.Assets
-    
     _G.RoseBase_ID = (_G.RoseBase_ID or 0) + 1
     local currentID = _G.RoseBase_ID
+
+    local language = options.Language or "en"
+    local locales = {
+        en = {
+            searchFeatures = "Type to search features...",
+            noFeatures = "No features found",
+            inText = "in",
+            activeNow = "ACTIVE NOW",
+            dialogConfirm = "Confirm",
+            dialogCancel = "Cancel",
+            confirmExit = "Are you sure you want to close the UI? You can reopen it by running the script again.",
+            exitTitle = "Confirm Exit"
+        },
+        es = {
+            searchFeatures = "Buscar funciones...",
+            noFeatures = "No se encontraron funciones",
+            inText = "en",
+            activeNow = "ACTIVO AHORA",
+            dialogConfirm = "Confirmar",
+            dialogCancel = "Cancelar",
+            confirmExit = "¿Estás seguro de que deseas cerrar la UI? Podrás volver a abrirla ejecutando el script.",
+            exitTitle = "Confirmar Cierre"
+        },
+        br = {
+            searchFeatures = "Pesquisar funções...",
+            noFeatures = "Nenhuma função encontrada",
+            inText = "em",
+            activeNow = "ATIVO AGORA",
+            dialogConfirm = "Confirmar",
+            dialogCancel = "Cancelar",
+            confirmExit = "Tem certeza que deseja fechar a UI? Você pode reabri-la executando o script novamente.",
+            exitTitle = "Confirmar Fechadura"
+        },
+        fr = {
+            searchFeatures = "Rechercher...",
+            noFeatures = "Aucune fonction trouvée",
+            inText = "dans",
+            activeNow = "ACTIF",
+            dialogConfirm = "Confirmer",
+            dialogCancel = "Annuler",
+            confirmExit = "Êtes-vous sûr de vouloir fermer l'interface ? Vous pourrez la rouvrir en exécutant le script.",
+            exitTitle = "Confirmer la Fermeture"
+        }
+    }
+    local langData = locales[language] or locales["en"]
 
     -- Cleanup old connections
     if _G.RoseUI_Connections then
@@ -465,7 +506,21 @@ function Window:New(options, library)
         end
     end)
     
-    createControl("Close", "×", Color3.fromRGB(220, 50, 50), function() screenGui:Destroy() end)
+    createControl("Close", "×", Color3.fromRGB(220, 50, 50), function() 
+        if WindowObj.ShowDialog then
+            WindowObj:ShowDialog({
+                Title = langData.exitTitle,
+                Message = langData.confirmExit,
+                ConfirmText = langData.dialogConfirm,
+                CancelText = langData.dialogCancel,
+                OnConfirm = function()
+                    screenGui:Destroy()
+                end
+            })
+        else
+            screenGui:Destroy()
+        end
+    end)
 
     -- ========================================================================
     -- Body
@@ -555,7 +610,7 @@ function Window:New(options, library)
     userStatus.Size = UDim2.new(1, -70, 0, 12)
     userStatus.Position = UDim2.new(0, 65, 0.5, 2)
     userStatus.BackgroundTransparency = 1
-    userStatus.Text = "ACTIVE NOW"
+    userStatus.Text = langData.activeNow
     userStatus.TextColor3 = Color3.fromRGB(80, 200, 80) -- Green for active
     userStatus.Font = Enum.Font.GothamBold
     userStatus.TextSize = 9
@@ -603,7 +658,7 @@ function Window:New(options, library)
     searchFakeText.Size = UDim2.new(1, -38, 1, 0)
     searchFakeText.Position = UDim2.new(0, 30, 0, 0)
     searchFakeText.BackgroundTransparency = 1
-    searchFakeText.Text = "Search features..."
+    searchFakeText.Text = langData.searchFeatures
     searchFakeText.TextColor3 = theme.MutedText
     searchFakeText.Font = Enum.Font.Gotham
     searchFakeText.TextSize = 10
@@ -697,15 +752,15 @@ function Window:New(options, library)
     searchModal.Parent = screenGui
     
     local modalContainer = Instance.new("Frame")
-    modalContainer.Size = UDim2.new(0, 420, 0, 340)
-    modalContainer.Position = UDim2.new(0.5, 0, 0.45, 0)
+    modalContainer.Size = UDim2.new(0, 340, 0, 260)
+    modalContainer.Position = UDim2.new(0.5, 0, 0.5, 0)
     modalContainer.AnchorPoint = Vector2.new(0.5, 0.5)
     modalContainer.BackgroundColor3 = theme.Background
     modalContainer.BackgroundTransparency = 1
     modalContainer.ZIndex = 101
     modalContainer.ClipsDescendants = true
     modalContainer.Parent = searchModal
-    Instance.new("UICorner", modalContainer).CornerRadius = UDim.new(0, 12)
+    Instance.new("UICorner", modalContainer).CornerRadius = UDim.new(0, 16)
     
     local modalStroke = Instance.new("UIStroke")
     modalStroke.Color = theme.Primary
@@ -736,7 +791,7 @@ function Window:New(options, library)
     modalInput.Position = UDim2.new(0, 36, 0, 0)
     modalInput.BackgroundTransparency = 1
     modalInput.Text = ""
-    modalInput.PlaceholderText = "Type to search features..."
+    modalInput.PlaceholderText = langData.searchFeatures
     modalInput.PlaceholderColor3 = theme.MutedText
     modalInput.TextColor3 = theme.Text
     modalInput.Font = Enum.Font.Gotham
@@ -764,7 +819,7 @@ function Window:New(options, library)
     local mNoResults = Instance.new("TextLabel")
     mNoResults.Size = UDim2.new(1, 0, 1, 0)
     mNoResults.BackgroundTransparency = 1
-    mNoResults.Text = "No features found"
+    mNoResults.Text = langData.noFeatures
     mNoResults.TextColor3 = theme.MutedText
     mNoResults.Font = Enum.Font.GothamBold
     mNoResults.TextSize = 13
@@ -849,7 +904,7 @@ function Window:New(options, library)
         sub.Size = UDim2.new(1, -40, 0, 12)
         sub.Position = UDim2.new(0, 36, 0, 22)
         sub.BackgroundTransparency = 1
-        sub.Text = "in " .. parentName
+        sub.Text = langData.inText .. " " .. parentName
         sub.TextColor3 = theme.Primary
         sub.Font = Enum.Font.Gotham
         sub.TextSize = 9
@@ -984,6 +1039,135 @@ function Window:New(options, library)
         end
     end)
     table.insert(_G.RoseUI_Connections, toggleConn)
+
+    function WindowObj:ShowDialog(config)
+        local title = config.Title or "Dialog"
+        local message = config.Message or "Are you sure?"
+        local confirmText = config.ConfirmText or langData.dialogConfirm
+        local cancelText = config.CancelText or langData.dialogCancel
+
+        local overlay = Instance.new("TextButton")
+        overlay.Size = UDim2.new(1, 0, 1, 0)
+        overlay.BackgroundColor3 = Color3.new(0,0,0)
+        overlay.BackgroundTransparency = 1
+        overlay.Text = ""
+        overlay.AutoButtonColor = false
+        overlay.ZIndex = 200
+        overlay.Parent = screenGui
+
+        local dBox = Instance.new("Frame")
+        dBox.Size = UDim2.new(0, 320, 0, 160)
+        dBox.Position = UDim2.new(0.5, 0, 0.5, 0)
+        dBox.AnchorPoint = Vector2.new(0.5, 0.5)
+        dBox.BackgroundColor3 = theme.Background
+        dBox.BackgroundTransparency = 1
+        dBox.ZIndex = 201
+        dBox.Parent = overlay
+        Instance.new("UICorner", dBox).CornerRadius = UDim.new(0, 12)
+
+        local dStroke = Instance.new("UIStroke")
+        dStroke.Color = theme.Primary
+        dStroke.Transparency = 1
+        dStroke.Thickness = 1
+        dStroke.Parent = dBox
+
+        local dTitle = Instance.new("TextLabel")
+        dTitle.Size = UDim2.new(1, -40, 0, 40)
+        dTitle.Position = UDim2.new(0, 20, 0, 10)
+        dTitle.BackgroundTransparency = 1
+        dTitle.Text = title
+        dTitle.TextColor3 = theme.Text
+        dTitle.Font = Enum.Font.GothamBold
+        dTitle.TextSize = 14
+        dTitle.TextXAlignment = Enum.TextXAlignment.Left
+        dTitle.TextTransparency = 1
+        dTitle.ZIndex = 202
+        dTitle.Parent = dBox
+
+        local dMessage = Instance.new("TextLabel")
+        dMessage.Size = UDim2.new(1, -40, 0, 50)
+        dMessage.Position = UDim2.new(0, 20, 0, 45)
+        dMessage.BackgroundTransparency = 1
+        dMessage.Text = message
+        dMessage.TextColor3 = theme.SecondaryText
+        dMessage.Font = Enum.Font.Gotham
+        dMessage.TextSize = 12
+        dMessage.TextXAlignment = Enum.TextXAlignment.Left
+        dMessage.TextWrapped = true
+        dMessage.TextTransparency = 1
+        dMessage.ZIndex = 202
+        dMessage.Parent = dBox
+
+        -- Cancel (Encendido/Rojo como pidió el usuario)
+        local btnCancel = Instance.new("TextButton")
+        btnCancel.Size = UDim2.new(0, 120, 0, 32)
+        btnCancel.Position = UDim2.new(1, -140, 1, -45)
+        btnCancel.BackgroundColor3 = Color3.fromRGB(220, 50, 50)
+        btnCancel.BackgroundTransparency = 1
+        btnCancel.Text = cancelText
+        btnCancel.TextColor3 = Color3.new(1,1,1)
+        btnCancel.Font = Enum.Font.GothamBold
+        btnCancel.TextSize = 12
+        btnCancel.TextTransparency = 1
+        btnCancel.ZIndex = 202
+        btnCancel.Parent = dBox
+        Instance.new("UICorner", btnCancel).CornerRadius = UDim.new(0, 6)
+
+        -- Confirm (Apagado como pidió el usuario)
+        local btnConfirm = Instance.new("TextButton")
+        btnConfirm.Size = UDim2.new(0, 120, 0, 32)
+        btnConfirm.Position = UDim2.new(1, -270, 1, -45)
+        btnConfirm.BackgroundColor3 = theme.Surface
+        btnConfirm.BackgroundTransparency = 1
+        btnConfirm.Text = confirmText
+        btnConfirm.TextColor3 = theme.Text
+        btnConfirm.Font = Enum.Font.GothamBold
+        btnConfirm.TextSize = 12
+        btnConfirm.TextTransparency = 1
+        btnConfirm.ZIndex = 202
+        btnConfirm.Parent = dBox
+        Instance.new("UICorner", btnConfirm).CornerRadius = UDim.new(0, 6)
+
+        local btnConfirmStroke = Instance.new("UIStroke")
+        btnConfirmStroke.Color = theme.Primary
+        btnConfirmStroke.Transparency = 1
+        btnConfirmStroke.Thickness = 1
+        btnConfirmStroke.Parent = btnConfirm
+
+        local function closeDialog()
+            TweenService:Create(overlay, TweenInfo.new(0.2), {BackgroundTransparency = 1}):Play()
+            TweenService:Create(dBox, TweenInfo.new(0.2), {BackgroundTransparency = 1}):Play()
+            TweenService:Create(dStroke, TweenInfo.new(0.2), {Transparency = 1}):Play()
+            TweenService:Create(dTitle, TweenInfo.new(0.2), {TextTransparency = 1}):Play()
+            TweenService:Create(dMessage, TweenInfo.new(0.2), {TextTransparency = 1}):Play()
+            TweenService:Create(btnCancel, TweenInfo.new(0.2), {BackgroundTransparency = 1, TextTransparency = 1}):Play()
+            TweenService:Create(btnConfirm, TweenInfo.new(0.2), {BackgroundTransparency = 1, TextTransparency = 1}):Play()
+            local t = TweenService:Create(btnConfirmStroke, TweenInfo.new(0.2), {Transparency = 1})
+            t:Play()
+            t.Completed:Connect(function()
+                overlay:Destroy()
+            end)
+        end
+
+        btnCancel.MouseButton1Click:Connect(function()
+            closeDialog()
+            if config.OnCancel then config.OnCancel() end
+        end)
+
+        btnConfirm.MouseButton1Click:Connect(function()
+            closeDialog()
+            if config.OnConfirm then config.OnConfirm() end
+        end)
+
+        TweenService:Create(overlay, TweenInfo.new(0.3), {BackgroundTransparency = 0.5}):Play()
+        TweenService:Create(dBox, TweenInfo.new(0.3), {BackgroundTransparency = 0}):Play()
+        TweenService:Create(dStroke, TweenInfo.new(0.3), {Transparency = 0}):Play()
+        TweenService:Create(dTitle, TweenInfo.new(0.3), {TextTransparency = 0}):Play()
+        TweenService:Create(dMessage, TweenInfo.new(0.3), {TextTransparency = 0}):Play()
+        TweenService:Create(btnCancel, TweenInfo.new(0.3), {BackgroundTransparency = 0, TextTransparency = 0}):Play()
+        TweenService:Create(btnConfirm, TweenInfo.new(0.3), {BackgroundTransparency = 0, TextTransparency = 0}):Play()
+        TweenService:Create(btnConfirmStroke, TweenInfo.new(0.3), {Transparency = 0}):Play()
+    end
 
     return WindowObj
 end

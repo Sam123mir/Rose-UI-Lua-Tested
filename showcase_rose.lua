@@ -17,9 +17,10 @@ RoseUI:Notify({
 -- 3. Crear Ventana
 local Window = RoseUI:CreateWindow({
     Name = "ROSE HUB",
-    Tag = "V2.5 STABLE",
+    Tag = "V2.6 STABLE",
     Logo = Icons.GetIcon("solar:bolt"), -- Usando icono de Solar
     LoadingText = "SINCRONIZANDO CON GITHUB...",
+    Language = "es", -- Multi-Language Support (en, es, br, fr)
     Keybind = Enum.KeyCode.RightControl
 })
 
@@ -30,21 +31,21 @@ local CombatFolder = Window:AddFolder({
     Icon = Icons.GetIcon("lucide:zap") -- Usando Lucide
 })
 local MainTab = CombatFolder:AddFile({ 
-    Name = "Main", 
-    Icon = Icons.GetIcon("geist:target") -- Usando Geist
+    Name = "Principal", 
+    Icon = Icons.GetIcon("lucide:target") -- Icons repair
 })
 local MiscTab = CombatFolder:AddFile({ 
-    Name = "Miscellaneous", 
-    Icon = Icons.GetIcon("solar:widget") -- Usando Solar
+    Name = "Misceláneo", 
+    Icon = Icons.GetIcon("lucide:box") 
 })
 
 -- CARPETA: CONFIGURACIÓN
 local ConfigFolder = Window:AddFolder({ 
     Name = "Config", 
-    Icon = Icons.GetIcon("solar:settings") 
+    Icon = Icons.GetIcon("lucide:settings") 
 })
 local ThemeTab = ConfigFolder:AddFile({ 
-    Name = "Visuals", 
+    Name = "Visuales", 
     Icon = Icons.GetIcon("lucide:eye") 
 })
 
@@ -112,4 +113,4 @@ Utils:AddButton({
 })
 
 -- Mensaje en consola
-print("--- [ RoseUI v2.5 Showcase Loaded Successfully ] ---")
+print("--- [ RoseUI v2.6 Showcase Loaded Successfully ] ---")
