@@ -150,7 +150,7 @@ function ColorPicker:Add(parent, options, library)
     satMap.Size = UDim2.new(1, -42, 0, 130)
     satMap.Position = UDim2.new(0, 10, 0, 38)
     satMap.BackgroundColor3 = Color3.fromHSV(h, 1, 1)
-    satMap.Image = "rbxassetid://4155801252"
+    satMap.Image = "rbxassetid://6980062489"
     satMap.AutoButtonColor = false
     satMap.ZIndex = 1001
     satMap.Parent = pickerPopup
@@ -185,15 +185,29 @@ function ColorPicker:Add(parent, options, library)
     Instance.new("UICorner", cursorDot).CornerRadius = UDim.new(1, 0)
 
     -- Hue Slider (Vertical)
-    local hueSlider = Instance.new("ImageButton")
+    local hueSlider = Instance.new("TextButton")
     hueSlider.Size = UDim2.new(0, 18, 0, 130)
     hueSlider.Position = UDim2.new(1, -28, 0, 38)
-    hueSlider.Image = "rbxassetid://4155801332"
+    hueSlider.BackgroundColor3 = Color3.new(1, 1, 1)
+    hueSlider.Text = ""
     hueSlider.AutoButtonColor = false
     hueSlider.ZIndex = 1001
     hueSlider.Parent = pickerPopup
     Instance.new("UICorner", hueSlider).CornerRadius = UDim.new(0, 8)
     Instance.new("UIStroke", hueSlider).Transparency = 0.9
+
+    local hueGradient = Instance.new("UIGradient")
+    hueGradient.Rotation = 90
+    hueGradient.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 0, 0)),
+        ColorSequenceKeypoint.new(0.167, Color3.fromRGB(255, 255, 0)),
+        ColorSequenceKeypoint.new(0.333, Color3.fromRGB(0, 255, 0)),
+        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(0, 255, 255)),
+        ColorSequenceKeypoint.new(0.667, Color3.fromRGB(0, 0, 255)),
+        ColorSequenceKeypoint.new(0.833, Color3.fromRGB(255, 0, 255)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 0, 0))
+    })
+    hueGradient.Parent = hueSlider
 
     local hueCursor = Instance.new("Frame")
     hueCursor.Size = UDim2.new(1, 6, 0, 6)

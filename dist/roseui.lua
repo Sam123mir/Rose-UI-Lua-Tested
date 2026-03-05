@@ -1,7 +1,7 @@
 --[[
     RoseUI v2.5.0
     Created by RoseUI Team
-    Build Date: 4/3/2026, 7:32:30 p. m.
+    Build Date: 4/3/2026, 7:55:26 p. m.
     
     This is a unified distribution file. 
 ]]
@@ -796,7 +796,15 @@ function Window:New(options, library)
     minGrip.Size = UDim2.new(0, 16, 0, 16)
     minGrip.Position = UDim2.new(0.5, -8, 0.5, -8)
     minGrip.BackgroundTransparency = 1
-    minGrip.Image = assets.Icons.Sliders or "rbxassetid://10734914191"
+    
+    local safeMinGrip = library.Icons and library.Icons.GetIcon("grip-vertical") or assets.Icons.Sliders or ""
+    if type(safeMinGrip) == "table" then
+        minGrip.Image = safeMinGrip.Image or ""
+        minGrip.ImageRectOffset = safeMinGrip.ImageRectOffset or Vector2.new(0,0)
+        minGrip.ImageRectSize = safeMinGrip.ImageRectSize or Vector2.new(0,0)
+    else
+        minGrip.Image = safeMinGrip
+    end
     minGrip.ImageColor3 = theme.SecondaryText
     minGrip.Parent = minGripHitbox
     
@@ -859,6 +867,22 @@ function Window:New(options, library)
     local isMaximized = false
     local prevSize = mainFrame.Size
     local prevPos = mainFrame.Position
+
+    createControl("Close", "×", Color3.fromRGB(220, 50, 50), function() 
+        if WindowObj.ShowDialog then
+            WindowObj:ShowDialog({
+                Title = langData.exitTitle,
+                Message = langData.confirmExit,
+                ConfirmText = langData.dialogConfirm,
+                CancelText = langData.dialogCancel,
+                OnConfirm = function()
+                    screenGui:Destroy()
+                end
+            })
+        else
+            screenGui:Destroy()
+        end
+    end)
 
     createControl("Minimize", "-", theme.Primary, function() 
         mainFrame.Visible = false
@@ -1131,7 +1155,7 @@ function Window:New(options, library)
     searchModal.ZIndex = 100
     searchModal.Visible = false
     searchModal.Active = true
-    searchModal.Parent = screenGui
+    searchModal.Parent = mainFrame 
     
     local modalContainer = Instance.new("Frame")
     modalContainer.Size = UDim2.new(0, 340, 0, 260)
@@ -3238,7 +3262,7 @@ function ColorPicker:Add(parent, options, library)
     satMap.Size = UDim2.new(1, -42, 0, 130)
     satMap.Position = UDim2.new(0, 10, 0, 38)
     satMap.BackgroundColor3 = Color3.fromHSV(h, 1, 1)
-    satMap.Image = "rbxassetid://4155801252"
+    satMap.Image = "rbxassetid://6980062489"
     satMap.AutoButtonColor = false
     satMap.ZIndex = 1001
     satMap.Parent = pickerPopup
@@ -3273,15 +3297,29 @@ function ColorPicker:Add(parent, options, library)
     Instance.new("UICorner", cursorDot).CornerRadius = UDim.new(1, 0)
 
     
-    local hueSlider = Instance.new("ImageButton")
+    local hueSlider = Instance.new("TextButton")
     hueSlider.Size = UDim2.new(0, 18, 0, 130)
     hueSlider.Position = UDim2.new(1, -28, 0, 38)
-    hueSlider.Image = "rbxassetid://4155801332"
+    hueSlider.BackgroundColor3 = Color3.new(1, 1, 1)
+    hueSlider.Text = ""
     hueSlider.AutoButtonColor = false
     hueSlider.ZIndex = 1001
     hueSlider.Parent = pickerPopup
     Instance.new("UICorner", hueSlider).CornerRadius = UDim.new(0, 8)
     Instance.new("UIStroke", hueSlider).Transparency = 0.9
+
+    local hueGradient = Instance.new("UIGradient")
+    hueGradient.Rotation = 90
+    hueGradient.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 0, 0)),
+        ColorSequenceKeypoint.new(0.167, Color3.fromRGB(255, 255, 0)),
+        ColorSequenceKeypoint.new(0.333, Color3.fromRGB(0, 255, 0)),
+        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(0, 255, 255)),
+        ColorSequenceKeypoint.new(0.667, Color3.fromRGB(0, 0, 255)),
+        ColorSequenceKeypoint.new(0.833, Color3.fromRGB(255, 0, 255)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 0, 0))
+    })
+    hueGradient.Parent = hueSlider
 
     local hueCursor = Instance.new("Frame")
     hueCursor.Size = UDim2.new(1, 6, 0, 6)

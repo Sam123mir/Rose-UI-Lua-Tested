@@ -418,7 +418,15 @@ function Window:New(options, library)
     minGrip.Size = UDim2.new(0, 16, 0, 16)
     minGrip.Position = UDim2.new(0.5, -8, 0.5, -8)
     minGrip.BackgroundTransparency = 1
-    minGrip.Image = assets.Icons.Sliders or "rbxassetid://10734914191"
+    
+    local safeMinGrip = library.Icons and library.Icons.GetIcon("grip-vertical") or assets.Icons.Sliders or ""
+    if type(safeMinGrip) == "table" then
+        minGrip.Image = safeMinGrip.Image or ""
+        minGrip.ImageRectOffset = safeMinGrip.ImageRectOffset or Vector2.new(0,0)
+        minGrip.ImageRectSize = safeMinGrip.ImageRectSize or Vector2.new(0,0)
+    else
+        minGrip.Image = safeMinGrip
+    end
     minGrip.ImageColor3 = theme.SecondaryText
     minGrip.Parent = minGripHitbox
     
@@ -481,6 +489,22 @@ function Window:New(options, library)
     local isMaximized = false
     local prevSize = mainFrame.Size
     local prevPos = mainFrame.Position
+
+    createControl("Close", "×", Color3.fromRGB(220, 50, 50), function() 
+        if WindowObj.ShowDialog then
+            WindowObj:ShowDialog({
+                Title = langData.exitTitle,
+                Message = langData.confirmExit,
+                ConfirmText = langData.dialogConfirm,
+                CancelText = langData.dialogCancel,
+                OnConfirm = function()
+                    screenGui:Destroy()
+                end
+            })
+        else
+            screenGui:Destroy()
+        end
+    end)
 
     createControl("Minimize", "-", theme.Primary, function() 
         mainFrame.Visible = false
@@ -753,7 +777,7 @@ function Window:New(options, library)
     searchModal.ZIndex = 100
     searchModal.Visible = false
     searchModal.Active = true
-    searchModal.Parent = screenGui
+    searchModal.Parent = mainFrame -- Fijo a la ventana para que se mueva con ella
     
     local modalContainer = Instance.new("Frame")
     modalContainer.Size = UDim2.new(0, 340, 0, 260)
