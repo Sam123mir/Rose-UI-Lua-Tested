@@ -21,7 +21,8 @@ local Window = RoseUI:CreateWindow({
     Logo = Icons.GetIcon("solar:bolt"), -- Usando icono de Solar
     LoadingText = "SINCRONIZANDO CON GITHUB...",
     Language = "es", -- Multi-Language Support (en, es, br, fr)
-    Keybind = Enum.KeyCode.RightControl
+    Keybind = Enum.KeyCode.RightControl,
+    Icons = Icons -- Inyectando la API de iconos al Core
 })
 
 -- 4. Estructura de Navegación (Carpetas y Archivos)

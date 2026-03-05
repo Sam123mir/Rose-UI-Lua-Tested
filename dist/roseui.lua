@@ -1,7 +1,7 @@
 --[[
     RoseUI v2.5.0
     Created by RoseUI Team
-    Build Date: 4/3/2026, 7:55:26 p. m.
+    Build Date: 4/3/2026, 8:10:42 p. m.
     
     This is a unified distribution file. 
 ]]
@@ -79,47 +79,47 @@ end function __DARKLUA_BUNDLE_MODULES.b():typeof(__modImpl())local v=__DARKLUA_B
 local Assets = {
     Icons = {
         
-        Logo = "rbxassetid://10723343321",        
+        Logo = "lucide:flower",
         
         
-        Dashboard = "rbxassetid://10723389516",   
-        Combat = "rbxassetid://10723315808",      
-        Visuals = "rbxassetid://10723377953",     
-        Movement = "rbxassetid://10723348121",    
-        Settings = "rbxassetid://10723416417",    
-        SubTab = "rbxassetid://10723389516",      
+        Dashboard = "lucide:layout-grid",
+        Combat = "lucide:zap",
+        Visuals = "lucide:eye", 
+        Movement = "lucide:wind",
+        Settings = "lucide:settings",
+        SubTab = "lucide:chevron-right",
         
         
-        Zap = "rbxassetid://10723315808",
-        Crosshair = "rbxassetid://10723351984",
-        Target = "rbxassetid://10723351984",
-        Eye = "rbxassetid://10723377953",
-        Globe = "rbxassetid://10723377953",       
-        Sliders = "rbxassetid://10734914191",     
-        Folder = "rbxassetid://10723405364",      
-        File = "rbxassetid://10723406524",        
+        Zap = "lucide:zap",
+        Crosshair = "lucide:crosshair",
+        Target = "lucide:target",
+        Eye = "lucide:eye",
+        Globe = "lucide:globe",
+        Sliders = "lucide:sliders-horizontal",
+        Folder = "lucide:folder",
+        File = "lucide:file",
         
         
-        Game = "rbxassetid://10723374431",        
-        FPS = "rbxassetid://10734898192",         
-        RAM = "rbxassetid://10723312017",         
-        Ping = "rbxassetid://10723402488",        
-        Time = "rbxassetid://10723343321",        
+        Game = "lucide:gamepad-2",
+        FPS = "lucide:gauge",
+        RAM = "lucide:cpu",
+        Ping = "lucide:wifi",
+        Time = "lucide:clock",
         
         
-        User = "rbxassetid://10723311681",        
+        User = "lucide:user",
         
         
-        Close = "rbxassetid://10723415535",       
-        Minimize = "rbxassetid://10723415903",    
-        Maximize = "rbxassetid://10723414515",    
-        Restore = "rbxassetid://10723414515",     
+        Close = "lucide:x",
+        Minimize = "lucide:minus",
+        Maximize = "lucide:square",
+        Restore = "lucide:copy",
         
         
-        Save = "rbxassetid://10723401508",        
-        Expand = "rbxassetid://10734942364",      
-        Check = "rbxassetid://10723376188",       
-        Search = "rbxassetid://10723393430",      
+        Save = "lucide:save",
+        Expand = "lucide:chevron-down",
+        Check = "lucide:check",
+        Search = "lucide:search",
     }
 }
 
@@ -392,6 +392,18 @@ function Window:New(options, library)
     local theme = library.CurrentTheme or __DARKLUA_BUNDLE_MODULES.b()
 ["Rose v2 (Premium)"]
     local assets = library.Assets
+    local iconAPI = options.Icons
+
+    local function resolveIcon(iconAsset)
+        if not iconAsset or iconAsset == "" then return "" end
+        if type(iconAsset) == "table" then return iconAsset end
+        
+        if iconAPI and type(iconAsset) == "string" and string.find(iconAsset, ":") then
+            local resolved = iconAPI.GetIcon(iconAsset)
+            if resolved then return resolved end
+        end
+        return iconAsset
+    end
 
     _G.RoseBase_ID = (_G.RoseBase_ID or 0) + 1
     local currentID = _G.RoseBase_ID
@@ -547,7 +559,7 @@ function Window:New(options, library)
         if tonumber(finalLogo) or string.find(tostring(finalLogo), "rbxassetid://") then
             finalLogo = string.find(tostring(finalLogo), "rbxassetid://") and finalLogo or "rbxassetid://" .. finalLogo
         else
-            finalLogo = assets.Icons[finalLogo] or assets.Icons.Logo
+            finalLogo = resolveIcon(assets.Icons[finalLogo] or assets.Icons.Logo)
         end
     end
     
@@ -611,7 +623,7 @@ function Window:New(options, library)
         icon.Position = UDim2.new(0, 8, 0.5, -7)
         icon.BackgroundTransparency = 1
         
-        local iconAsset = assets.Icons[iconName] or ""
+        local iconAsset = resolveIcon(assets.Icons[iconName] or "")
         if type(iconAsset) == "table" then
             icon.Image = iconAsset.Image or ""
             icon.ImageRectOffset = iconAsset.ImageRectOffset or Vector2.new(0,0)
@@ -726,7 +738,7 @@ function Window:New(options, library)
         btnIcon.Size = UDim2.new(0, 14, 0, 14)
         btnIcon.Position = UDim2.new(0.5, -7, 0.5, -7)
         btnIcon.BackgroundTransparency = 1
-        local iAsset = assets.Icons[iconName] or ""
+        local iAsset = resolveIcon(assets.Icons[iconName] or "")
         if type(iAsset) == "table" then
             btnIcon.Image = iAsset.Image or ""
             btnIcon.ImageRectOffset = iAsset.ImageRectOffset or Vector2.new(0,0)
@@ -797,13 +809,13 @@ function Window:New(options, library)
     minGrip.Position = UDim2.new(0.5, -8, 0.5, -8)
     minGrip.BackgroundTransparency = 1
     
-    local safeMinGrip = library.Icons and library.Icons.GetIcon("grip-vertical") or assets.Icons.Sliders or ""
+    local safeMinGrip = resolveIcon(options.MiniGripIcon or "lucide:grip-vertical")
     if type(safeMinGrip) == "table" then
         minGrip.Image = safeMinGrip.Image or ""
         minGrip.ImageRectOffset = safeMinGrip.ImageRectOffset or Vector2.new(0,0)
         minGrip.ImageRectSize = safeMinGrip.ImageRectSize or Vector2.new(0,0)
     else
-        minGrip.Image = safeMinGrip
+        minGrip.Image = safeMinGrip or ""
     end
     minGrip.ImageColor3 = theme.SecondaryText
     minGrip.Parent = minGripHitbox
@@ -1043,40 +1055,48 @@ function Window:New(options, library)
     searchBarFrame.AutoButtonColor = false
     searchBarFrame.Text = ""
     searchBarFrame.Parent = sidebar
-    Instance.new("UICorner", searchBarFrame).CornerRadius = UDim.new(0, 10)
+    Instance.new("UICorner", searchBarFrame).CornerRadius = UDim.new(1, 0)
     
     local searchStroke = Instance.new("UIStroke")
-    searchStroke.Color = Color3.new(1,1,1)
-    searchStroke.Transparency = 0.92
+    searchStroke.Color = theme.Primary
+    searchStroke.Transparency = 0.5
     searchStroke.Thickness = 1
     searchStroke.Parent = searchBarFrame
 
     local searchIconImg = Instance.new("ImageLabel")
     searchIconImg.Size = UDim2.new(0, 14, 0, 14)
-    searchIconImg.Position = UDim2.new(0, 10, 0.5, -7)
+    searchIconImg.Position = UDim2.new(0, 12, 0.5, -7)
     searchIconImg.BackgroundTransparency = 1
-    searchIconImg.Image = assets.Icons.Search or ""
-    searchIconImg.ImageColor3 = theme.MutedText
+    
+    local resolvedSearch = resolveIcon(assets.Icons.Search)
+    if type(resolvedSearch) == "table" then
+        searchIconImg.Image = resolvedSearch.Image or ""
+        searchIconImg.ImageRectOffset = resolvedSearch.ImageRectOffset or Vector2.new(0,0)
+        searchIconImg.ImageRectSize = resolvedSearch.ImageRectSize or Vector2.new(0,0)
+    else
+        searchIconImg.Image = resolvedSearch or ""
+    end
+    searchIconImg.ImageColor3 = theme.Primary
     searchIconImg.ZIndex = 3
     searchIconImg.Parent = searchBarFrame
 
     local searchFakeText = Instance.new("TextLabel")
-    searchFakeText.Size = UDim2.new(1, -38, 1, 0)
-    searchFakeText.Position = UDim2.new(0, 30, 0, 0)
+    searchFakeText.Size = UDim2.new(1, -40, 1, 0)
+    searchFakeText.Position = UDim2.new(0, 32, 0, 0)
     searchFakeText.BackgroundTransparency = 1
     searchFakeText.Text = langData.searchFeatures
-    searchFakeText.TextColor3 = theme.MutedText
+    searchFakeText.TextColor3 = theme.Text
     searchFakeText.Font = Enum.Font.Gotham
     searchFakeText.TextSize = 10
     searchFakeText.TextXAlignment = Enum.TextXAlignment.Left
     searchFakeText.Parent = searchBarFrame
 
     searchBarFrame.MouseEnter:Connect(function()
-        TweenService:Create(searchStroke, TweenInfo.new(0.2), {Color = theme.Primary, Transparency = 0.5}):Play()
+        TweenService:Create(searchStroke, TweenInfo.new(0.2), {Transparency = 0}):Play()
         TweenService:Create(searchBarFrame, TweenInfo.new(0.2), {BackgroundTransparency = 0.15}):Play()
     end)
     searchBarFrame.MouseLeave:Connect(function()
-        TweenService:Create(searchStroke, TweenInfo.new(0.2), {Color = Color3.new(1,1,1), Transparency = 0.92}):Play()
+        TweenService:Create(searchStroke, TweenInfo.new(0.2), {Transparency = 0.5}):Play()
         TweenService:Create(searchBarFrame, TweenInfo.new(0.2), {BackgroundTransparency = 0.3}):Play()
     end)
 
@@ -1187,7 +1207,15 @@ function Window:New(options, library)
     modalSearchIcon.Size = UDim2.new(0, 16, 0, 16)
     modalSearchIcon.Position = UDim2.new(0, 12, 0.5, -8)
     modalSearchIcon.BackgroundTransparency = 1
-    modalSearchIcon.Image = assets.Icons.Search or ""
+    
+    local resolvedModalSearch = resolveIcon(assets.Icons.Search)
+    if type(resolvedModalSearch) == "table" then
+        modalSearchIcon.Image = resolvedModalSearch.Image or ""
+        modalSearchIcon.ImageRectOffset = resolvedModalSearch.ImageRectOffset or Vector2.new(0,0)
+        modalSearchIcon.ImageRectSize = resolvedModalSearch.ImageRectSize or Vector2.new(0,0)
+    else
+        modalSearchIcon.Image = resolvedModalSearch or ""
+    end
     modalSearchIcon.ImageColor3 = theme.Primary
     modalSearchIcon.ZIndex = 103
     modalSearchIcon.Parent = modalInputFrame
@@ -1289,7 +1317,15 @@ function Window:New(options, library)
         icon.Size = UDim2.new(0, 16, 0, 16)
         icon.Position = UDim2.new(0, 12, 0.5, -8)
         icon.BackgroundTransparency = 1
-        icon.Image = isSection and (assets.Icons.Folder or "rbxassetid://10723405364") or (assets.Icons.SubTab or "rbxassetid://10723389516")
+        
+        local resIcon = isSection and resolveIcon(assets.Icons.Folder) or resolveIcon(assets.Icons.SubTab)
+        if type(resIcon) == "table" then
+            icon.Image = resIcon.Image or ""
+            icon.ImageRectOffset = resIcon.ImageRectOffset or Vector2.new(0,0)
+            icon.ImageRectSize = resIcon.ImageRectSize or Vector2.new(0,0)
+        else
+            icon.Image = resIcon or ""
+        end
         icon.ImageColor3 = theme.SecondaryText
         icon.ZIndex = 103
         icon.Parent = btn
