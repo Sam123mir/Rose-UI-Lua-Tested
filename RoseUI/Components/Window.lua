@@ -74,6 +74,8 @@ function Window:New(options, library)
         }
     }
     local langData = locales[language] or locales["en"]
+    
+    local WindowObj = {} -- Forward declaration para que todo el stack de UI tenga alcance
 
     -- Cleanup old connections
     if _G.RoseUI_Connections then
@@ -502,22 +504,6 @@ function Window:New(options, library)
     local prevSize = mainFrame.Size
     local prevPos = mainFrame.Position
 
-    createControl("Close", "×", Color3.fromRGB(220, 50, 50), function() 
-        if WindowObj.ShowDialog then
-            WindowObj:ShowDialog({
-                Title = langData.exitTitle,
-                Message = langData.confirmExit,
-                ConfirmText = langData.dialogConfirm,
-                CancelText = langData.dialogCancel,
-                OnConfirm = function()
-                    screenGui:Destroy()
-                end
-            })
-        else
-            screenGui:Destroy()
-        end
-    end)
-
     createControl("Minimize", "-", theme.Primary, function() 
         mainFrame.Visible = false
         minBar.Visible = true
@@ -545,7 +531,7 @@ function Window:New(options, library)
             isMaximized = false
         end
     end)
-    
+
     createControl("Close", "×", Color3.fromRGB(220, 50, 50), function() 
         if WindowObj.ShowDialog then
             WindowObj:ShowDialog({
@@ -773,7 +759,7 @@ function Window:New(options, library)
     -- ========================================================================
     -- Window Object
     -- ========================================================================
-    local WindowObj = {
+    WindowObj = {
         Instance = screenGui,
         MainFrame = mainFrame,
         CurrentTab = nil,

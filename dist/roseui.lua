@@ -1,7 +1,7 @@
 --[[
     RoseUI v2.5.0
     Created by RoseUI Team
-    Build Date: 4/3/2026, 8:10:42 p. m.
+    Build Date: 4/3/2026, 8:28:52 p. m.
     
     This is a unified distribution file. 
 ]]
@@ -452,6 +452,8 @@ function Window:New(options, library)
         }
     }
     local langData = locales[language] or locales["en"]
+    
+    local WindowObj = {} 
 
     
     if _G.RoseUI_Connections then
@@ -880,22 +882,6 @@ function Window:New(options, library)
     local prevSize = mainFrame.Size
     local prevPos = mainFrame.Position
 
-    createControl("Close", "×", Color3.fromRGB(220, 50, 50), function() 
-        if WindowObj.ShowDialog then
-            WindowObj:ShowDialog({
-                Title = langData.exitTitle,
-                Message = langData.confirmExit,
-                ConfirmText = langData.dialogConfirm,
-                CancelText = langData.dialogCancel,
-                OnConfirm = function()
-                    screenGui:Destroy()
-                end
-            })
-        else
-            screenGui:Destroy()
-        end
-    end)
-
     createControl("Minimize", "-", theme.Primary, function() 
         mainFrame.Visible = false
         minBar.Visible = true
@@ -923,7 +909,7 @@ function Window:New(options, library)
             isMaximized = false
         end
     end)
-    
+
     createControl("Close", "×", Color3.fromRGB(220, 50, 50), function() 
         if WindowObj.ShowDialog then
             WindowObj:ShowDialog({
@@ -1151,7 +1137,7 @@ function Window:New(options, library)
     
     
     
-    local WindowObj = {
+    WindowObj = {
         Instance = screenGui,
         MainFrame = mainFrame,
         CurrentTab = nil,
