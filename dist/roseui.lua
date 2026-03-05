@@ -1,7 +1,7 @@
 --[[
     RoseUI v2.5.0
     Created by RoseUI Team
-    Build Date: 4/3/2026, 10:31:09 p. m.
+    Build Date: 4/3/2026, 10:42:36 p. m.
     
     This is a unified distribution file. 
 ]]
@@ -4031,7 +4031,7 @@ function Documentation:AddDescription(parent, options, library)
     descLabel.Font = Enum.Font.Gotham
     descLabel.TextSize = 11
     descLabel.TextXAlignment = Enum.TextXAlignment.Left
-    descLabel.TextYAlignment = Enum.TextXAlignment.Top
+    descLabel.TextYAlignment = Enum.TextYAlignment.Top
     descLabel.TextWrapped = true
     descLabel.Parent = parent
     
@@ -4087,7 +4087,7 @@ function Documentation:AddCard(parent, options, library)
     descLbl.Font = Enum.Font.Gotham
     descLbl.TextSize = 10
     descLbl.TextXAlignment = Enum.TextXAlignment.Left
-    descLbl.TextYAlignment = Enum.TextXAlignment.Top
+    descLbl.TextYAlignment = Enum.TextYAlignment.Top
     descLbl.TextWrapped = true
     descLbl.Parent = cardFrame
     
@@ -4154,7 +4154,7 @@ function Documentation:AddVersionCard(parent, options, library)
     descLbl.Font = Enum.Font.Gotham
     descLbl.TextSize = 10
     descLbl.TextXAlignment = Enum.TextXAlignment.Left
-    descLbl.TextYAlignment = Enum.TextXAlignment.Top
+    descLbl.TextYAlignment = Enum.TextYAlignment.Top
     descLbl.TextWrapped = true
     descLbl.Parent = cardFrame
     

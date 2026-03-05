@@ -50,7 +50,7 @@ function Documentation:AddDescription(parent, options, library)
     descLabel.Font = Enum.Font.Gotham
     descLabel.TextSize = 11
     descLabel.TextXAlignment = Enum.TextXAlignment.Left
-    descLabel.TextYAlignment = Enum.TextXAlignment.Top
+    descLabel.TextYAlignment = Enum.TextYAlignment.Top
     descLabel.TextWrapped = true
     descLabel.Parent = parent
     
@@ -106,7 +106,7 @@ function Documentation:AddCard(parent, options, library)
     descLbl.Font = Enum.Font.Gotham
     descLbl.TextSize = 10
     descLbl.TextXAlignment = Enum.TextXAlignment.Left
-    descLbl.TextYAlignment = Enum.TextXAlignment.Top
+    descLbl.TextYAlignment = Enum.TextYAlignment.Top
     descLbl.TextWrapped = true
     descLbl.Parent = cardFrame
     
@@ -173,7 +173,7 @@ function Documentation:AddVersionCard(parent, options, library)
     descLbl.Font = Enum.Font.Gotham
     descLbl.TextSize = 10
     descLbl.TextXAlignment = Enum.TextXAlignment.Left
-    descLbl.TextYAlignment = Enum.TextXAlignment.Top
+    descLbl.TextYAlignment = Enum.TextYAlignment.Top
     descLbl.TextWrapped = true
     descLbl.Parent = cardFrame
     
