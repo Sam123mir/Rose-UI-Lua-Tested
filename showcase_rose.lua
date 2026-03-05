@@ -113,5 +113,46 @@ Utils:AddButton({
     end
 })
 
+Utils:AddParagraph({
+    Name = "Notice",
+    Text = "This UI library was built with performance and modern aesthetics in mind."
+})
+
+Utils:AddLabel({
+    Name = "Status: Undetected"
+})
+
+local ExtraFields = MiscTab:AddSection("INPUT FIELDS")
+
+ExtraFields:AddTextbox({
+    Name = "Target Username",
+    Default = "Player1",
+    Placeholder = "Enter name here...",
+    Flag = "TargetUser",
+    Callback = function(v) print("Target Set:", v) end
+})
+
+ExtraFields:AddKeybind({
+    Name = "Toggle Menu Bind",
+    Default = Enum.KeyCode.RightControl,
+    Flag = "MenuBind",
+    Callback = function(key) 
+        print("Menu bind changed to:", key)
+    end
+})
+
+ExtraFields:AddButton({
+    Name = "Test Notification",
+    Description = "Spawns a custom test notification.",
+    Callback = function()
+        RoseUI:Notify({
+            Title = "Test Alert",
+            Text = "Notifications are fully working now!",
+            Icon = Icons.GetIcon("lucide:bell-ring") or "rbxassetid://10723376188",
+            Duration = 4
+        })
+    end
+})
+
 -- Mensaje en consola
 print("--- [ RoseUI v2.6 Showcase Loaded Successfully ] ---")

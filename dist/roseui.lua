@@ -1,7 +1,7 @@
 --[[
     RoseUI v2.5.0
     Created by RoseUI Team
-    Build Date: 4/3/2026, 8:28:52 p. m.
+    Build Date: 4/3/2026, 9:18:59 p. m.
     
     This is a unified distribution file. 
 ]]
@@ -2398,8 +2398,8 @@ function Slider:Add(parent, options, library)
     valueLabel.Parent = bg
 
     local slideBg = Instance.new("Frame")
-    slideBg.Size = UDim2.new(1, -24, 0, 4)
-    slideBg.Position = UDim2.new(0, 12, 1, -12)
+    slideBg.Size = UDim2.new(1, -24, 0, 6)
+    slideBg.Position = UDim2.new(0, 12, 1, -14)
     slideBg.BackgroundColor3 = theme.Background
     slideBg.Parent = bg
     Instance.new("UICorner", slideBg).CornerRadius = UDim.new(1, 0)
@@ -2411,14 +2411,15 @@ function Slider:Add(parent, options, library)
     Instance.new("UICorner", slideInner).CornerRadius = UDim.new(1, 0)
 
     local knob = Instance.new("Frame")
-    knob.Size = UDim2.new(0, 10, 0, 10)
-    knob.Position = UDim2.new(1, -5, 0.5, -5)
+    knob.Size = UDim2.new(0, 6, 0, 14)
+    knob.Position = UDim2.new(1, -3, 0.5, -7)
     knob.BackgroundColor3 = Color3.new(1,1,1)
     knob.Parent = slideInner
     Instance.new("UICorner", knob).CornerRadius = UDim.new(1, 0)
     
     local knobStroke = Instance.new("UIStroke")
     knobStroke.Color = theme.Primary
+    knobStroke.Transparency = 0.5
     knobStroke.Thickness = 1
     knobStroke.Parent = knob
 
