@@ -176,9 +176,10 @@ function Window:New(options, library)
     logoIcon.Position = UDim2.new(0, 12, 0.5, -10)
     logoIcon.BackgroundTransparency = 1
     
-    local finalLogo = options.Logo or "Logo"
     if type(finalLogo) == "string" then
-        if tonumber(finalLogo) or string.find(tostring(finalLogo), "rbxassetid://") then
+        if finalLogo:find("http") then
+            finalLogo = library.Utilities:GetExternalAsset(finalLogo)
+        elseif tonumber(finalLogo) or string.find(tostring(finalLogo), "rbxassetid://") then
             finalLogo = string.find(tostring(finalLogo), "rbxassetid://") and finalLogo or "rbxassetid://" .. finalLogo
         else
             finalLogo = resolveIcon(assets.Icons[finalLogo] or assets.Icons.Logo)
@@ -197,7 +198,7 @@ function Window:New(options, library)
 
     local title = Instance.new("TextLabel")
     title.Size = UDim2.new(0, 70, 1, 0)
-    title.Position = UDim2.new(0, 38, 0, 0)
+    title.Position = UDim2.new(0, 42, 0, 0)
     title.BackgroundTransparency = 1
     title.Text = "ROSEUI"
     title.TextColor3 = theme.Text

@@ -1,7 +1,7 @@
 --[[
     RoseUI v2.5.0
     Created by RoseUI Team
-    Build Date: 4/3/2026, 11:54:57 p. m.
+    Build Date: 5/3/2026, 12:06:56 p. m.
     
     This is a unified distribution file. 
 ]]
@@ -218,6 +218,31 @@ function Utilities:MakeResizable(resizeBtn, parentFrame, minSize, maxSize)
     end)
     
     return resizeCon
+end
+
+function Utilities:GetExternalAsset(url)
+    if not isfile or not writefile or not getcustomasset then return url end
+    
+    local fileName = "RoseUI_" .. game:GetService("HttpService"):GenerateGUID(false):sub(1,8) .. ".png"
+    if url:find("ibb.co") and not url:find("i.ibb.co") then
+        
+        
+    end
+
+    local success, response = pcall(function()
+        return game:HttpGet(url)
+    end)
+
+    if success and response then
+        local filePath = "RoseUI/Cache/" .. fileName
+        if not isfolder("RoseUI") then makefolder("RoseUI") end
+        if not isfolder("RoseUI/Cache") then makefolder("RoseUI/Cache") end
+        
+        writefile(filePath, response)
+        return getcustomasset(filePath)
+    end
+
+    return url
 end
 
 return Utilities
@@ -554,9 +579,10 @@ function Window:New(options, library)
     logoIcon.Position = UDim2.new(0, 12, 0.5, -10)
     logoIcon.BackgroundTransparency = 1
     
-    local finalLogo = options.Logo or "Logo"
     if type(finalLogo) == "string" then
-        if tonumber(finalLogo) or string.find(tostring(finalLogo), "rbxassetid://") then
+        if finalLogo:find("http") then
+            finalLogo = library.Utilities:GetExternalAsset(finalLogo)
+        elseif tonumber(finalLogo) or string.find(tostring(finalLogo), "rbxassetid://") then
             finalLogo = string.find(tostring(finalLogo), "rbxassetid://") and finalLogo or "rbxassetid://" .. finalLogo
         else
             finalLogo = resolveIcon(assets.Icons[finalLogo] or assets.Icons.Logo)
@@ -575,7 +601,7 @@ function Window:New(options, library)
 
     local title = Instance.new("TextLabel")
     title.Size = UDim2.new(0, 70, 1, 0)
-    title.Position = UDim2.new(0, 38, 0, 0)
+    title.Position = UDim2.new(0, 42, 0, 0)
     title.BackgroundTransparency = 1
     title.Text = "ROSEUI"
     title.TextColor3 = theme.Text

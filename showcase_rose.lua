@@ -16,13 +16,10 @@ RoseUI:Notify({
 
 -- 3. Crear Ventana
 local Window = RoseUI:CreateWindow({
-    Name = "ROSE HUB",
-    Tag = "V2.6 STABLE",
-    Logo = Icons.GetIcon("solar:bolt"), -- Usando icono de Solar
-    LoadingText = "SYNCING WITH GITHUB...",
-    Language = "en", -- Multi-Language Support (en, es, br, fr)
-    Keybind = Enum.KeyCode.RightControl,
-    Icons = Icons -- Inyectando la API de iconos al Core
+    Name = "ROSE UI",
+    Tag = "V1.2.4",
+    Logo = "https://i.ibb.co/TqKyDDyq/rose-emoji.webp", -- Official high-quality link
+    Keybind = Enum.KeyCode.RightControl
 })
 
 -- 4. Estructura de Navegación (Carpetas y Archivos)

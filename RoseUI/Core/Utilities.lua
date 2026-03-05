@@ -93,4 +93,29 @@ function Utilities:MakeResizable(resizeBtn, parentFrame, minSize, maxSize)
     return resizeCon
 end
 
+function Utilities:GetExternalAsset(url)
+    if not isfile or not writefile or not getcustomasset then return url end
+    
+    local fileName = "RoseUI_" .. game:GetService("HttpService"):GenerateGUID(false):sub(1,8) .. ".png"
+    if url:find("ibb.co") and not url:find("i.ibb.co") then
+        -- This is a partial fix, ideally we'd need a direct link, but let's assume the user provides a direct-ish link or handled it.
+        -- We'll try to fetch it if it's a URL.
+    end
+
+    local success, response = pcall(function()
+        return game:HttpGet(url)
+    end)
+
+    if success and response then
+        local filePath = "RoseUI/Cache/" .. fileName
+        if not isfolder("RoseUI") then makefolder("RoseUI") end
+        if not isfolder("RoseUI/Cache") then makefolder("RoseUI/Cache") end
+        
+        writefile(filePath, response)
+        return getcustomasset(filePath)
+    end
+
+    return url
+end
+
 return Utilities
