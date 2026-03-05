@@ -1,7 +1,7 @@
 --[[
     RoseUI v2.5.0
     Created by RoseUI Team
-    Build Date: 4/3/2026, 11:08:47 p. m.
+    Build Date: 4/3/2026, 11:20:09 p. m.
     
     This is a unified distribution file. 
 ]]
@@ -579,8 +579,8 @@ function Window:New(options, library)
     title.BackgroundTransparency = 1
     title.Text = "ROSEUI"
     title.TextColor3 = theme.Text
-    title.Font = Enum.Font.GothamBlack
-    title.TextSize = 13
+    title.Font = Enum.Font.Inter
+    title.TextSize = 14
     title.TextXAlignment = Enum.TextXAlignment.Left
     title.Parent = header
     
@@ -643,8 +643,8 @@ function Window:New(options, library)
         fallbackLabel.BackgroundTransparency = 1
         fallbackLabel.Text = shortName
         fallbackLabel.TextColor3 = theme.SecondaryText
-        fallbackLabel.Font = Enum.Font.GothamBlack
-        fallbackLabel.TextSize = 7
+        fallbackLabel.Font = Enum.Font.Inter
+        fallbackLabel.TextSize = 8
         fallbackLabel.ZIndex = 2
         fallbackLabel.Visible = (icon.Image == "")
         fallbackLabel.Parent = item
@@ -655,8 +655,8 @@ function Window:New(options, library)
         val.BackgroundTransparency = 1
         val.Text = defaultVal
         val.TextColor3 = theme.Primary
-        val.Font = Enum.Font.Code
-        val.TextSize = 10
+        val.Font = Enum.Font.Inter
+        val.TextSize = 11
         val.TextXAlignment = Enum.TextXAlignment.Left
         val.Parent = item
         
@@ -1923,8 +1923,8 @@ function Tab:New(tabOptions, window)
     label.BackgroundTransparency = 1
     label.Text = tabName
     label.TextColor3 = theme.SecondaryText
-    label.Font = isSubTab and Enum.Font.GothamSemibold or Enum.Font.GothamBold
-    label.TextSize = isSubTab and 10 or 11
+    label.Font = isSubTab and Enum.Font.Inter or Enum.Font.Inter
+    label.TextSize = isSubTab and 11 or 12
     label.TextXAlignment = Enum.TextXAlignment.Left
     label.Parent = contentFrame
 
@@ -2162,7 +2162,8 @@ function Section:New(sName, tab)
     sectionLabel.Text = sName:upper()
     sectionLabel.TextColor3 = theme.Primary
     sectionLabel.TextSize = 10
-    sectionLabel.Font = Enum.Font.GothamBlack
+    sectionLabel.Font = Enum.Font.Inter
+    sectionLabel.TextSize = 11
     sectionLabel.TextXAlignment = Enum.TextXAlignment.Left
     sectionLabel.Parent = titleFrame
     
@@ -2175,12 +2176,14 @@ function Section:New(sName, tab)
     local sectionContainer = Instance.new("Frame")
     sectionContainer.Name = "Container"
     sectionContainer.Size = UDim2.new(1, 0, 0, 0)
+    sectionContainer.Position = UDim2.new(0, 0, 0, 28)
+    sectionContainer.BackgroundTransparency = 1
+    sectionContainer.Parent = sectionFrame
+    
     local secLayout = Instance.new("UIListLayout")
     secLayout.Padding = UDim.new(0, 10)
     secLayout.HorizontalAlignment = Enum.HorizontalAlignment.Left
     secLayout.Parent = sectionContainer
-    
-    sectionContainer.Position = UDim2.new(0, 0, 0, 28)
     
     secLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
         sectionContainer.Size = UDim2.new(1, 0, 0, secLayout.AbsoluteContentSize.Y)

@@ -40,7 +40,8 @@ function Section:New(sName, tab)
     sectionLabel.Text = sName:upper()
     sectionLabel.TextColor3 = theme.Primary
     sectionLabel.TextSize = 10
-    sectionLabel.Font = Enum.Font.GothamBlack
+    sectionLabel.Font = Enum.Font.Inter
+    sectionLabel.TextSize = 11
     sectionLabel.TextXAlignment = Enum.TextXAlignment.Left
     sectionLabel.Parent = titleFrame
     
@@ -53,12 +54,14 @@ function Section:New(sName, tab)
     local sectionContainer = Instance.new("Frame")
     sectionContainer.Name = "Container"
     sectionContainer.Size = UDim2.new(1, 0, 0, 0)
+    sectionContainer.Position = UDim2.new(0, 0, 0, 28)
+    sectionContainer.BackgroundTransparency = 1
+    sectionContainer.Parent = sectionFrame
+    
     local secLayout = Instance.new("UIListLayout")
     secLayout.Padding = UDim.new(0, 10)
     secLayout.HorizontalAlignment = Enum.HorizontalAlignment.Left
     secLayout.Parent = sectionContainer
-    
-    sectionContainer.Position = UDim2.new(0, 0, 0, 28)
     
     secLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
         sectionContainer.Size = UDim2.new(1, 0, 0, secLayout.AbsoluteContentSize.Y)

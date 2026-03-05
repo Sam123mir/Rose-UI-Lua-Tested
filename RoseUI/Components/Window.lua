@@ -201,8 +201,8 @@ function Window:New(options, library)
     title.BackgroundTransparency = 1
     title.Text = "ROSEUI"
     title.TextColor3 = theme.Text
-    title.Font = Enum.Font.GothamBlack
-    title.TextSize = 13
+    title.Font = Enum.Font.Inter
+    title.TextSize = 14
     title.TextXAlignment = Enum.TextXAlignment.Left
     title.Parent = header
     
@@ -265,8 +265,8 @@ function Window:New(options, library)
         fallbackLabel.BackgroundTransparency = 1
         fallbackLabel.Text = shortName
         fallbackLabel.TextColor3 = theme.SecondaryText
-        fallbackLabel.Font = Enum.Font.GothamBlack
-        fallbackLabel.TextSize = 7
+        fallbackLabel.Font = Enum.Font.Inter
+        fallbackLabel.TextSize = 8
         fallbackLabel.ZIndex = 2
         fallbackLabel.Visible = (icon.Image == "")
         fallbackLabel.Parent = item
@@ -277,8 +277,8 @@ function Window:New(options, library)
         val.BackgroundTransparency = 1
         val.Text = defaultVal
         val.TextColor3 = theme.Primary
-        val.Font = Enum.Font.Code
-        val.TextSize = 10
+        val.Font = Enum.Font.Inter
+        val.TextSize = 11
         val.TextXAlignment = Enum.TextXAlignment.Left
         val.Parent = item
         
