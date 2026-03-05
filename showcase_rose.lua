@@ -19,8 +19,8 @@ local Window = RoseUI:CreateWindow({
     Name = "ROSE HUB",
     Tag = "V2.6 STABLE",
     Logo = Icons.GetIcon("solar:bolt"), -- Usando icono de Solar
-    LoadingText = "SINCRONIZANDO CON GITHUB...",
-    Language = "es", -- Multi-Language Support (en, es, br, fr)
+    LoadingText = "SYNCING WITH GITHUB...",
+    Language = "en", -- Multi-Language Support (en, es, br, fr)
     Keybind = Enum.KeyCode.RightControl,
     Icons = Icons -- Inyectando la API de iconos al Core
 })
