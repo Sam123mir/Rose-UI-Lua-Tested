@@ -1,7 +1,7 @@
 --[[
     RoseUI v2.5.0
     Created by RoseUI Team
-    Build Date: 4/3/2026, 7:22:07 p. m.
+    Build Date: 4/3/2026, 7:32:30 p. m.
     
     This is a unified distribution file. 
 ]]
@@ -388,6 +388,11 @@ local Window = {}
 
 function Window:New(options, library)
     local titleText = options.Name or "RoseUI"
+    local hubType = options.HubType or "v1.2.4 Premium"
+    local theme = library.CurrentTheme or __DARKLUA_BUNDLE_MODULES.b()
+["Rose v2 (Premium)"]
+    local assets = library.Assets
+
     _G.RoseBase_ID = (_G.RoseBase_ID or 0) + 1
     local currentID = _G.RoseBase_ID
 
@@ -1551,7 +1556,6 @@ end
 
 return Window
 end function __DARKLUA_BUNDLE_MODULES.f():typeof(__modImpl())local v=__DARKLUA_BUNDLE_MODULES.cache.f if not v then v={c=__modImpl()}__DARKLUA_BUNDLE_MODULES.cache.f=v end return v.c end end do local function __modImpl()
-
 local Constants = __DARKLUA_BUNDLE_MODULES.a()
 local Services = Constants.Services
 local TweenService = Services.TweenService

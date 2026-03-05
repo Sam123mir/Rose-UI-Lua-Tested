@@ -11,6 +11,10 @@ local Window = {}
 
 function Window:New(options, library)
     local titleText = options.Name or "RoseUI"
+    local hubType = options.HubType or "v1.2.4 Premium"
+    local theme = library.CurrentTheme or import("Core/Themes")["Rose v2 (Premium)"]
+    local assets = library.Assets
+
     _G.RoseBase_ID = (_G.RoseBase_ID or 0) + 1
     local currentID = _G.RoseBase_ID
 
