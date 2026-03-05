@@ -1,16 +1,16 @@
 # 🌹 Icons-RoseV1
 
-Librería de iconos universal para RoseUI y otros proyectos de UI en Roblox.  
-Estructura compatible con [Footagesus/Icons](https://github.com/Footagesus/Icons).
+Universal icon library for RoseUI and other UI projects on Roblox.  
+Structure compatible with [Footagesus/Icons](https://github.com/Footagesus/Icons).
 
 ---
 
-## 📂 Estructura
+## 📂 Structure
 
 ```
 Icons-RoseV1/
-├── Main.lua              ← Cargador universal (loadstring)
-├── lucide/dist/Icons.lua ← Lucide Icons (IDs verificados)
+├── Main.lua              ← Universal loader (loadstring)
+├── lucide/dist/Icons.lua ← Lucide Icons (Verified IDs)
 ├── solar/dist/Icons.lua  ← Solar Icons
 ├── craft/dist/Icons.lua  ← Craft Icons
 ├── geist/dist/Icons.lua  ← Geist Icons
@@ -20,27 +20,27 @@ Icons-RoseV1/
 
 ---
 
-## 🚀 Uso Rápido
+## 🚀 Quick Start
 
 ```lua
--- 1. Cargar la librería
+-- 1. Load the library
 local Icons = loadstring(game:HttpGet(
     "https://raw.githubusercontent.com/Sam123mir/Icons-RoseV1/main/Main.lua"
 ))()
 
--- 2. Obtener un icono (por defecto usa Lucide)
+-- 2. Get an icon (uses Lucide by default)
 local eyeIcon = Icons.GetIcon("eye")
--- Resultado: "rbxassetid://10723377953"
+-- Result: "rbxassetid://10723377953"
 
--- 3. Cambiar la familia de iconos
+-- 3. Change icon family
 Icons.SetIconsType("solar")
 local homeIcon = Icons.GetIcon("home")
 
--- 4. Usar sintaxis "tipo:nombre" para mezclar familias
+-- 4. Use "type:name" syntax to mix families
 local geistIcon = Icons.GetIcon("geist:accessibility")
 local lucideIcon = Icons.GetIcon("lucide:settings")
 
--- 5. Crear un ImageLabel automáticamente
+-- 5. Create an ImageLabel automatically
 local icon = Icons.Image({
     Icon = "lucide:eye",
     Color = Color3.fromRGB(242, 13, 13),
@@ -48,19 +48,19 @@ local icon = Icons.Image({
 })
 icon.IconFrame.Parent = myFrame
 
--- 6. Añadir tus propios iconos personalizados
+-- 6. Add your own custom icons
 Icons.AddIcons("custom", {
     ["my-logo"] = "rbxassetid://123456789",
-    ["my-star"] = 987654321, -- Acepta números también
+    ["my-star"] = 987654321, -- Also accepts numbers
 })
 local myLogo = Icons.GetIcon("custom:my-logo")
 ```
 
 ---
 
-## 🎨 Familias Disponibles
+## 🎨 Available Families
 
-| Familia | Clave | Créditos |
+| Family | Key | Credits |
 |---------|-------|----------|
 | Lucide Icons | `lucide` | [lucide.dev](https://lucide.dev) |
 | Solar Icons | `solar` | [icones.js.org/solar](https://icones.js.org/collection/solar) |
@@ -72,31 +72,31 @@ local myLogo = Icons.GetIcon("custom:my-logo")
 
 ## 🔧 API
 
-| Método | Descripción |
+| Method | Description |
 |--------|-------------|
-| `Icons.GetIcon(name, type?)` | Devuelve el `rbxassetid://` del icono |
-| `Icons.SetIconsType(type)` | Cambia la familia por defecto |
-| `Icons.Image(config)` | Crea un `ImageLabel` listo para usar |
-| `Icons.AddIcons(pack, data)` | Registra iconos personalizados |
-| `Icons.Init(New, Tag)` | Integración con sistemas de temas |
+| `Icons.GetIcon(name, type?)` | Returns the `rbxassetid://` of the icon |
+| `Icons.SetIconsType(type)` | Changes the default family |
+| `Icons.Image(config)` | Creates a ready-to-use `ImageLabel` |
+| `Icons.AddIcons(pack, data)` | Registers custom icons |
+| `Icons.Init(New, Tag)` | Integration with theme systems |
 
 ---
 
-## 📋 Integración con RoseUI
+## 📋 Integration with RoseUI
 
 ```lua
--- En tu script de RoseUI:
+-- In your RoseUI script:
 local Icons = loadstring(game:HttpGet(
     "https://raw.githubusercontent.com/Sam123mir/Icons-RoseV1/main/Main.lua"
 ))()
 
--- Usar un icono Lucide en una carpeta
+-- Use a Lucide icon in a folder
 Window:AddFolder({ 
-    Name = "Combate", 
-    Icon = Icons.GetIcon("zap") -- rbxassetid directo
+    Name = "Combat", 
+    Icon = Icons.GetIcon("zap") -- direct rbxassetid
 })
 
--- Usar un icono Solar en un archivo
+-- Use a Solar icon in a file
 Folder:AddFile({ 
     Name = "Players", 
     Icon = Icons.GetIcon("solar:user") 
@@ -105,10 +105,10 @@ Folder:AddFile({
 
 ---
 
-## 📜 Licencia
+## 📜 License
 
-MIT License - Libre para uso personal y comercial.
+MIT License - Free for personal and commercial use.
 
 ---
 
-Hecho con ❤️ por **RoseUI Team**
+Made with ❤️ by **RoseUI Team**
