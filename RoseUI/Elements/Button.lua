@@ -39,7 +39,7 @@ function Button:Add(parent, options, library)
     titleLbl.BackgroundTransparency = 1
     titleLbl.Text = bName
     titleLbl.TextColor3 = theme.Text
-    titleLbl.Font = Enum.Font.Inter
+    titleLbl.Font = Enum.Font.Montserrat
     titleLbl.TextSize = 12
     titleLbl.TextXAlignment = Enum.TextXAlignment.Left
     titleLbl.Parent = btn
@@ -51,7 +51,7 @@ function Button:Add(parent, options, library)
         descLbl.BackgroundTransparency = 1
         descLbl.Text = bDesc
         descLbl.TextColor3 = theme.SecondaryText
-        descLbl.Font = Enum.Font.Inter
+        descLbl.Font = Enum.Font.Montserrat
         descLbl.TextSize = 10
         descLbl.TextXAlignment = Enum.TextXAlignment.Left
         descLbl.TextWrapped = true

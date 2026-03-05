@@ -42,7 +42,7 @@ function Dropdown:Add(parent, options, library)
     label.Text = dName
     label.TextColor3 = theme.Text
     label.TextSize = 12
-    label.Font = Enum.Font.Inter
+    label.Font = Enum.Font.Montserrat
     label.TextXAlignment = Enum.TextXAlignment.Left
     label.Parent = bg
 
@@ -53,7 +53,7 @@ function Dropdown:Add(parent, options, library)
     dropBtn.BackgroundTransparency = 0.5
     dropBtn.Text = "Select Option..."
     dropBtn.TextColor3 = theme.MutedText
-    dropBtn.Font = Enum.Font.Inter
+    dropBtn.Font = Enum.Font.Montserrat
     dropBtn.TextSize = 11
     dropBtn.TextXAlignment = Enum.TextXAlignment.Left
     dropBtn.Parent = bg

@@ -40,8 +40,8 @@ function Section:New(sName, tab)
     sectionLabel.Text = sName:upper()
     sectionLabel.TextColor3 = theme.Primary
     sectionLabel.TextSize = 10
-    sectionLabel.Font = Enum.Font.Inter
-    sectionLabel.TextSize = 11
+    sectionLabel.Font = Enum.Font.Montserrat
+    sectionLabel.TextSize = 12
     sectionLabel.TextXAlignment = Enum.TextXAlignment.Left
     sectionLabel.Parent = titleFrame
     

@@ -1,7 +1,7 @@
 --[[
     RoseUI v2.5.0
     Created by RoseUI Team
-    Build Date: 4/3/2026, 11:26:59 p. m.
+    Build Date: 4/3/2026, 11:31:50 p. m.
     
     This is a unified distribution file. 
 ]]
@@ -579,7 +579,7 @@ function Window:New(options, library)
     title.BackgroundTransparency = 1
     title.Text = "ROSEUI"
     title.TextColor3 = theme.Text
-    title.Font = Enum.Font.Inter
+    title.Font = Enum.Font.Montserrat
     title.TextSize = 14
     title.TextXAlignment = Enum.TextXAlignment.Left
     title.Parent = header
@@ -643,7 +643,7 @@ function Window:New(options, library)
         fallbackLabel.BackgroundTransparency = 1
         fallbackLabel.Text = shortName
         fallbackLabel.TextColor3 = theme.SecondaryText
-        fallbackLabel.Font = Enum.Font.Inter
+        fallbackLabel.Font = Enum.Font.Montserrat
         fallbackLabel.TextSize = 8
         fallbackLabel.ZIndex = 2
         fallbackLabel.Visible = (icon.Image == "")
@@ -655,7 +655,7 @@ function Window:New(options, library)
         val.BackgroundTransparency = 1
         val.Text = defaultVal
         val.TextColor3 = theme.Primary
-        val.Font = Enum.Font.Inter
+        val.Font = Enum.Font.Montserrat
         val.TextSize = 11
         val.TextXAlignment = Enum.TextXAlignment.Left
         val.Parent = item
@@ -1923,8 +1923,8 @@ function Tab:New(tabOptions, window)
     label.BackgroundTransparency = 1
     label.Text = tabName
     label.TextColor3 = theme.SecondaryText
-    label.Font = isSubTab and Enum.Font.Inter or Enum.Font.Inter
-    label.TextSize = isSubTab and 11 or 12
+    label.Font = Enum.Font.Montserrat
+    label.TextSize = 12
     label.TextXAlignment = Enum.TextXAlignment.Left
     label.Parent = contentFrame
 
@@ -1981,6 +1981,9 @@ function Tab:New(tabOptions, window)
         local leftH = leftLayout.AbsoluteContentSize.Y
         local rightH = rightLayout.AbsoluteContentSize.Y
         local maxH = math.max(leftH, rightH)
+        
+        leftCol.Size = UDim2.new(0.5, -8, 0, leftH)
+        rightCol.Size = UDim2.new(0.5, -8, 0, rightH)
         page.CanvasSize = UDim2.new(0, 0, 0, maxH + 40)
     end
 
@@ -2162,8 +2165,8 @@ function Section:New(sName, tab)
     sectionLabel.Text = sName:upper()
     sectionLabel.TextColor3 = theme.Primary
     sectionLabel.TextSize = 10
-    sectionLabel.Font = Enum.Font.Inter
-    sectionLabel.TextSize = 11
+    sectionLabel.Font = Enum.Font.Montserrat
+    sectionLabel.TextSize = 12
     sectionLabel.TextXAlignment = Enum.TextXAlignment.Left
     sectionLabel.Parent = titleFrame
     
@@ -2295,7 +2298,7 @@ function Button:Add(parent, options, library)
     titleLbl.BackgroundTransparency = 1
     titleLbl.Text = bName
     titleLbl.TextColor3 = theme.Text
-    titleLbl.Font = Enum.Font.Inter
+    titleLbl.Font = Enum.Font.Montserrat
     titleLbl.TextSize = 12
     titleLbl.TextXAlignment = Enum.TextXAlignment.Left
     titleLbl.Parent = btn
@@ -2307,7 +2310,7 @@ function Button:Add(parent, options, library)
         descLbl.BackgroundTransparency = 1
         descLbl.Text = bDesc
         descLbl.TextColor3 = theme.SecondaryText
-        descLbl.Font = Enum.Font.Inter
+        descLbl.Font = Enum.Font.Montserrat
         descLbl.TextSize = 10
         descLbl.TextXAlignment = Enum.TextXAlignment.Left
         descLbl.TextWrapped = true
@@ -2386,7 +2389,7 @@ function Toggle:Add(parent, options, library)
     label.Position = UDim2.new(0, 12, 0, tDesc and 4 or 0)
     label.BackgroundTransparency = 1
     label.Text = tName
-    label.Font = Enum.Font.Inter
+    label.Font = Enum.Font.Montserrat
     label.TextSize = 12
     label.TextColor3 = theme.Text
     label.TextXAlignment = Enum.TextXAlignment.Left
@@ -2399,7 +2402,7 @@ function Toggle:Add(parent, options, library)
         descLabel.BackgroundTransparency = 1
         descLabel.Text = options.Description
         descLabel.TextColor3 = theme.MutedText
-        descLabel.Font = Enum.Font.Inter
+        descLabel.Font = Enum.Font.Montserrat
         descLabel.TextSize = 10
         descLabel.TextXAlignment = Enum.TextXAlignment.Left
         descLabel.Parent = bg
@@ -2519,7 +2522,7 @@ function Slider:Add(parent, options, library)
     label.Text = sName
     label.TextColor3 = theme.Text
     label.TextSize = 12
-    label.Font = Enum.Font.Inter
+    label.Font = Enum.Font.Montserrat
     label.TextXAlignment = Enum.TextXAlignment.Left
     label.Parent = bg
 
@@ -2530,7 +2533,7 @@ function Slider:Add(parent, options, library)
         descLabel.BackgroundTransparency = 1
         descLabel.Text = options.Description
         descLabel.TextColor3 = theme.MutedText
-        descLabel.Font = Enum.Font.Inter
+        descLabel.Font = Enum.Font.Montserrat
         descLabel.TextSize = 10
         descLabel.TextXAlignment = Enum.TextXAlignment.Left
         descLabel.Parent = bg
@@ -2685,7 +2688,7 @@ function Dropdown:Add(parent, options, library)
     label.Text = dName
     label.TextColor3 = theme.Text
     label.TextSize = 12
-    label.Font = Enum.Font.Inter
+    label.Font = Enum.Font.Montserrat
     label.TextXAlignment = Enum.TextXAlignment.Left
     label.Parent = bg
 
@@ -2696,7 +2699,7 @@ function Dropdown:Add(parent, options, library)
     dropBtn.BackgroundTransparency = 0.5
     dropBtn.Text = "Select Option..."
     dropBtn.TextColor3 = theme.MutedText
-    dropBtn.Font = Enum.Font.Inter
+    dropBtn.Font = Enum.Font.Montserrat
     dropBtn.TextSize = 11
     dropBtn.TextXAlignment = Enum.TextXAlignment.Left
     dropBtn.Parent = bg
@@ -3150,7 +3153,7 @@ function Textbox:Add(parent, options, library)
     label.Text = tName
     label.TextColor3 = theme.Text
     label.TextSize = 12
-    label.Font = Enum.Font.Inter
+    label.Font = Enum.Font.Montserrat
     label.TextXAlignment = Enum.TextXAlignment.Left
     label.Parent = bg
 
@@ -3254,7 +3257,7 @@ function Keybind:Add(parent, options, library)
     label.Text = kbName
     label.TextColor3 = theme.Text
     label.TextSize = 12
-    label.Font = Enum.Font.Inter
+    label.Font = Enum.Font.Montserrat
     label.TextXAlignment = Enum.TextXAlignment.Left
     label.Parent = bg
 
@@ -4203,7 +4206,7 @@ function Documentation:AddVersionCard(parent, options, library)
     titleLbl.BackgroundTransparency = 1
     titleLbl.Text = title
     titleLbl.TextColor3 = theme.Text
-    titleLbl.Font = Enum.Font.Inter
+    titleLbl.Font = Enum.Font.Montserrat
     titleLbl.TextSize = 12
     titleLbl.TextXAlignment = Enum.TextXAlignment.Left
     titleLbl.Parent = cardFrame
@@ -4214,7 +4217,7 @@ function Documentation:AddVersionCard(parent, options, library)
     descLbl.BackgroundTransparency = 1
     descLbl.Text = description
     descLbl.TextColor3 = theme.SecondaryText
-    descLbl.Font = Enum.Font.Inter
+    descLbl.Font = Enum.Font.Montserrat
     descLbl.TextSize = 10
     descLbl.TextXAlignment = Enum.TextXAlignment.Left
     descLbl.TextYAlignment = Enum.TextYAlignment.Top

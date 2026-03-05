@@ -44,7 +44,7 @@ function Slider:Add(parent, options, library)
     label.Text = sName
     label.TextColor3 = theme.Text
     label.TextSize = 12
-    label.Font = Enum.Font.Inter
+    label.Font = Enum.Font.Montserrat
     label.TextXAlignment = Enum.TextXAlignment.Left
     label.Parent = bg
 
@@ -55,7 +55,7 @@ function Slider:Add(parent, options, library)
         descLabel.BackgroundTransparency = 1
         descLabel.Text = options.Description
         descLabel.TextColor3 = theme.MutedText
-        descLabel.Font = Enum.Font.Inter
+        descLabel.Font = Enum.Font.Montserrat
         descLabel.TextSize = 10
         descLabel.TextXAlignment = Enum.TextXAlignment.Left
         descLabel.Parent = bg

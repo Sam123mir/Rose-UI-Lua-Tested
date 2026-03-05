@@ -43,7 +43,7 @@ function Keybind:Add(parent, options, library)
     label.Text = kbName
     label.TextColor3 = theme.Text
     label.TextSize = 12
-    label.Font = Enum.Font.Inter
+    label.Font = Enum.Font.Montserrat
     label.TextXAlignment = Enum.TextXAlignment.Left
     label.Parent = bg
 

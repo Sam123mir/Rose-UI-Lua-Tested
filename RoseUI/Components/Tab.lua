@@ -93,8 +93,8 @@ function Tab:New(tabOptions, window)
     label.BackgroundTransparency = 1
     label.Text = tabName
     label.TextColor3 = theme.SecondaryText
-    label.Font = isSubTab and Enum.Font.Inter or Enum.Font.Inter
-    label.TextSize = isSubTab and 11 or 12
+    label.Font = Enum.Font.Montserrat
+    label.TextSize = 12
     label.TextXAlignment = Enum.TextXAlignment.Left
     label.Parent = contentFrame
 
@@ -151,6 +151,9 @@ function Tab:New(tabOptions, window)
         local leftH = leftLayout.AbsoluteContentSize.Y
         local rightH = rightLayout.AbsoluteContentSize.Y
         local maxH = math.max(leftH, rightH)
+        
+        leftCol.Size = UDim2.new(0.5, -8, 0, leftH)
+        rightCol.Size = UDim2.new(0.5, -8, 0, rightH)
         page.CanvasSize = UDim2.new(0, 0, 0, maxH + 40)
     end
 

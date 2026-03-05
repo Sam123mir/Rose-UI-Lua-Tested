@@ -40,7 +40,7 @@ function Toggle:Add(parent, options, library)
     label.Position = UDim2.new(0, 12, 0, tDesc and 4 or 0)
     label.BackgroundTransparency = 1
     label.Text = tName
-    label.Font = Enum.Font.Inter
+    label.Font = Enum.Font.Montserrat
     label.TextSize = 12
     label.TextColor3 = theme.Text
     label.TextXAlignment = Enum.TextXAlignment.Left
@@ -53,7 +53,7 @@ function Toggle:Add(parent, options, library)
         descLabel.BackgroundTransparency = 1
         descLabel.Text = options.Description
         descLabel.TextColor3 = theme.MutedText
-        descLabel.Font = Enum.Font.Inter
+        descLabel.Font = Enum.Font.Montserrat
         descLabel.TextSize = 10
         descLabel.TextXAlignment = Enum.TextXAlignment.Left
         descLabel.Parent = bg
