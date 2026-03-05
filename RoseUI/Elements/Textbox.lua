@@ -39,8 +39,8 @@ function Textbox:Add(parent, options, library)
     label.BackgroundTransparency = 1
     label.Text = tName
     label.TextColor3 = theme.Text
-    label.TextSize = 11
-    label.Font = Enum.Font.GothamBold
+    label.TextSize = 12
+    label.Font = Enum.Font.Inter
     label.TextXAlignment = Enum.TextXAlignment.Left
     label.Parent = bg
 
@@ -53,9 +53,10 @@ function Textbox:Add(parent, options, library)
     Instance.new("UICorner", boxBg).CornerRadius = UDim.new(0, 6)
 
     local box = Instance.new("TextBox")
-    box.Size = UDim2.new(1, -20, 1, 0)
-    box.Position = UDim2.new(0, 10, 0, 0)
-    box.BackgroundTransparency = 1
+    box.Size = UDim2.new(1, -24, 0, 32)
+    box.Position = UDim2.new(0, 12, 0, options.Description and 42 or 28)
+    box.BackgroundColor3 = theme.Surface
+    box.BackgroundTransparency = 0.5
     box.Text = default
     box.PlaceholderText = placeholder
     box.PlaceholderColor3 = theme.SecondaryText

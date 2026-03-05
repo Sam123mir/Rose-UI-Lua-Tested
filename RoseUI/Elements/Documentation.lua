@@ -159,7 +159,7 @@ function Documentation:AddVersionCard(parent, options, library)
     titleLbl.BackgroundTransparency = 1
     titleLbl.Text = title
     titleLbl.TextColor3 = theme.Text
-    titleLbl.Font = Enum.Font.GothamBold
+    titleLbl.Font = Enum.Font.Inter
     titleLbl.TextSize = 12
     titleLbl.TextXAlignment = Enum.TextXAlignment.Left
     titleLbl.Parent = cardFrame
@@ -170,7 +170,7 @@ function Documentation:AddVersionCard(parent, options, library)
     descLbl.BackgroundTransparency = 1
     descLbl.Text = description
     descLbl.TextColor3 = theme.SecondaryText
-    descLbl.Font = Enum.Font.Gotham
+    descLbl.Font = Enum.Font.Inter
     descLbl.TextSize = 10
     descLbl.TextXAlignment = Enum.TextXAlignment.Left
     descLbl.TextYAlignment = Enum.TextYAlignment.Top

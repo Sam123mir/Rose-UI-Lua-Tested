@@ -40,21 +40,21 @@ function Toggle:Add(parent, options, library)
     label.Position = UDim2.new(0, 12, 0, tDesc and 4 or 0)
     label.BackgroundTransparency = 1
     label.Text = tName
+    label.Font = Enum.Font.Inter
+    label.TextSize = 12
     label.TextColor3 = theme.Text
-    label.TextSize = 11
-    label.Font = Enum.Font.GothamBold
     label.TextXAlignment = Enum.TextXAlignment.Left
     label.Parent = bg
 
-    if tDesc then
+    if options.Description then
         local descLabel = Instance.new("TextLabel")
         descLabel.Size = UDim2.new(1, -60, 0, 14)
         descLabel.Position = UDim2.new(0, 12, 0, 24)
         descLabel.BackgroundTransparency = 1
-        descLabel.Text = tDesc
-        descLabel.TextColor3 = theme.SecondaryText
-        descLabel.Font = Enum.Font.Gotham
-        descLabel.TextSize = 9
+        descLabel.Text = options.Description
+        descLabel.TextColor3 = theme.MutedText
+        descLabel.Font = Enum.Font.Inter
+        descLabel.TextSize = 10
         descLabel.TextXAlignment = Enum.TextXAlignment.Left
         descLabel.Parent = bg
     end

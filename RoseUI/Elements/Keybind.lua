@@ -42,8 +42,8 @@ function Keybind:Add(parent, options, library)
     label.BackgroundTransparency = 1
     label.Text = kbName
     label.TextColor3 = theme.Text
-    label.TextSize = 11
-    label.Font = Enum.Font.GothamBold
+    label.TextSize = 12
+    label.Font = Enum.Font.Inter
     label.TextXAlignment = Enum.TextXAlignment.Left
     label.Parent = bg
 

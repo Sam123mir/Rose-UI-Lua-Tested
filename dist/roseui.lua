@@ -1,7 +1,7 @@
 --[[
     RoseUI v2.5.0
     Created by RoseUI Team
-    Build Date: 4/3/2026, 11:20:09 p. m.
+    Build Date: 4/3/2026, 11:26:59 p. m.
     
     This is a unified distribution file. 
 ]]
@@ -2295,8 +2295,8 @@ function Button:Add(parent, options, library)
     titleLbl.BackgroundTransparency = 1
     titleLbl.Text = bName
     titleLbl.TextColor3 = theme.Text
-    titleLbl.Font = Enum.Font.GothamBold
-    titleLbl.TextSize = 11
+    titleLbl.Font = Enum.Font.Inter
+    titleLbl.TextSize = 12
     titleLbl.TextXAlignment = Enum.TextXAlignment.Left
     titleLbl.Parent = btn
 
@@ -2307,8 +2307,8 @@ function Button:Add(parent, options, library)
         descLbl.BackgroundTransparency = 1
         descLbl.Text = bDesc
         descLbl.TextColor3 = theme.SecondaryText
-        descLbl.Font = Enum.Font.Gotham
-        descLbl.TextSize = 9
+        descLbl.Font = Enum.Font.Inter
+        descLbl.TextSize = 10
         descLbl.TextXAlignment = Enum.TextXAlignment.Left
         descLbl.TextWrapped = true
         descLbl.Parent = btn
@@ -2386,21 +2386,21 @@ function Toggle:Add(parent, options, library)
     label.Position = UDim2.new(0, 12, 0, tDesc and 4 or 0)
     label.BackgroundTransparency = 1
     label.Text = tName
+    label.Font = Enum.Font.Inter
+    label.TextSize = 12
     label.TextColor3 = theme.Text
-    label.TextSize = 11
-    label.Font = Enum.Font.GothamBold
     label.TextXAlignment = Enum.TextXAlignment.Left
     label.Parent = bg
 
-    if tDesc then
+    if options.Description then
         local descLabel = Instance.new("TextLabel")
         descLabel.Size = UDim2.new(1, -60, 0, 14)
         descLabel.Position = UDim2.new(0, 12, 0, 24)
         descLabel.BackgroundTransparency = 1
-        descLabel.Text = tDesc
-        descLabel.TextColor3 = theme.SecondaryText
-        descLabel.Font = Enum.Font.Gotham
-        descLabel.TextSize = 9
+        descLabel.Text = options.Description
+        descLabel.TextColor3 = theme.MutedText
+        descLabel.Font = Enum.Font.Inter
+        descLabel.TextSize = 10
         descLabel.TextXAlignment = Enum.TextXAlignment.Left
         descLabel.Parent = bg
     end
@@ -2518,20 +2518,20 @@ function Slider:Add(parent, options, library)
     label.BackgroundTransparency = 1
     label.Text = sName
     label.TextColor3 = theme.Text
-    label.TextSize = 11
-    label.Font = Enum.Font.GothamBold
+    label.TextSize = 12
+    label.Font = Enum.Font.Inter
     label.TextXAlignment = Enum.TextXAlignment.Left
     label.Parent = bg
 
-    if sDesc then
+    if options.Description then
         local descLabel = Instance.new("TextLabel")
-        descLabel.Size = UDim2.new(1, -60, 0, 14)
+        descLabel.Size = UDim2.new(1, -24, 0, 14)
         descLabel.Position = UDim2.new(0, 12, 0, 24)
         descLabel.BackgroundTransparency = 1
-        descLabel.Text = sDesc
-        descLabel.TextColor3 = theme.SecondaryText
-        descLabel.Font = Enum.Font.Gotham
-        descLabel.TextSize = 9
+        descLabel.Text = options.Description
+        descLabel.TextColor3 = theme.MutedText
+        descLabel.Font = Enum.Font.Inter
+        descLabel.TextSize = 10
         descLabel.TextXAlignment = Enum.TextXAlignment.Left
         descLabel.Parent = bg
     end
@@ -2684,20 +2684,20 @@ function Dropdown:Add(parent, options, library)
     label.BackgroundTransparency = 1
     label.Text = dName
     label.TextColor3 = theme.Text
-    label.TextSize = 11
-    label.Font = Enum.Font.GothamBold
+    label.TextSize = 12
+    label.Font = Enum.Font.Inter
     label.TextXAlignment = Enum.TextXAlignment.Left
     label.Parent = bg
 
     local dropBtn = Instance.new("TextButton")
-    dropBtn.Size = UDim2.new(0.5, -12, 0, 26)
-    dropBtn.Position = UDim2.new(0.5, 0, 0.5, -13)
-    dropBtn.BackgroundColor3 = theme.Background
+    dropBtn.Size = UDim2.new(1, -24, 0, 32)
+    dropBtn.Position = UDim2.new(0, 12, 0, options.Description and 42 or 28)
+    dropBtn.BackgroundColor3 = theme.Surface
     dropBtn.BackgroundTransparency = 0.5
-    dropBtn.Text = tostring(default)
-    dropBtn.TextColor3 = theme.SecondaryText
-    dropBtn.Font = Enum.Font.Gotham
-    dropBtn.TextSize = 10
+    dropBtn.Text = "Select Option..."
+    dropBtn.TextColor3 = theme.MutedText
+    dropBtn.Font = Enum.Font.Inter
+    dropBtn.TextSize = 11
     dropBtn.TextXAlignment = Enum.TextXAlignment.Left
     dropBtn.Parent = bg
     Instance.new("UICorner", dropBtn).CornerRadius = UDim.new(0, 8)
@@ -3149,8 +3149,8 @@ function Textbox:Add(parent, options, library)
     label.BackgroundTransparency = 1
     label.Text = tName
     label.TextColor3 = theme.Text
-    label.TextSize = 11
-    label.Font = Enum.Font.GothamBold
+    label.TextSize = 12
+    label.Font = Enum.Font.Inter
     label.TextXAlignment = Enum.TextXAlignment.Left
     label.Parent = bg
 
@@ -3163,9 +3163,10 @@ function Textbox:Add(parent, options, library)
     Instance.new("UICorner", boxBg).CornerRadius = UDim.new(0, 6)
 
     local box = Instance.new("TextBox")
-    box.Size = UDim2.new(1, -20, 1, 0)
-    box.Position = UDim2.new(0, 10, 0, 0)
-    box.BackgroundTransparency = 1
+    box.Size = UDim2.new(1, -24, 0, 32)
+    box.Position = UDim2.new(0, 12, 0, options.Description and 42 or 28)
+    box.BackgroundColor3 = theme.Surface
+    box.BackgroundTransparency = 0.5
     box.Text = default
     box.PlaceholderText = placeholder
     box.PlaceholderColor3 = theme.SecondaryText
@@ -3252,8 +3253,8 @@ function Keybind:Add(parent, options, library)
     label.BackgroundTransparency = 1
     label.Text = kbName
     label.TextColor3 = theme.Text
-    label.TextSize = 11
-    label.Font = Enum.Font.GothamBold
+    label.TextSize = 12
+    label.Font = Enum.Font.Inter
     label.TextXAlignment = Enum.TextXAlignment.Left
     label.Parent = bg
 
@@ -4202,7 +4203,7 @@ function Documentation:AddVersionCard(parent, options, library)
     titleLbl.BackgroundTransparency = 1
     titleLbl.Text = title
     titleLbl.TextColor3 = theme.Text
-    titleLbl.Font = Enum.Font.GothamBold
+    titleLbl.Font = Enum.Font.Inter
     titleLbl.TextSize = 12
     titleLbl.TextXAlignment = Enum.TextXAlignment.Left
     titleLbl.Parent = cardFrame
@@ -4213,7 +4214,7 @@ function Documentation:AddVersionCard(parent, options, library)
     descLbl.BackgroundTransparency = 1
     descLbl.Text = description
     descLbl.TextColor3 = theme.SecondaryText
-    descLbl.Font = Enum.Font.Gotham
+    descLbl.Font = Enum.Font.Inter
     descLbl.TextSize = 10
     descLbl.TextXAlignment = Enum.TextXAlignment.Left
     descLbl.TextYAlignment = Enum.TextYAlignment.Top
