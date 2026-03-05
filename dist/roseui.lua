@@ -1,7 +1,7 @@
 --[[
     RoseUI v2.5.0
     Created by RoseUI Team
-    Build Date: 4/3/2026, 10:42:36 p. m.
+    Build Date: 4/3/2026, 10:46:57 p. m.
     
     This is a unified distribution file. 
 ]]
@@ -2109,6 +2109,10 @@ function Tab:New(tabOptions, window)
     
     function TabObj:AddVersionCard(options)
         return library.Elements.Documentation:AddVersionCard(getNextCol(), options, library)
+    end
+
+    function TabObj:AddColorPicker(options)
+        return library.Elements.ColorPicker:Add(getNextCol(), options, library)
     end
 
     return TabObj

@@ -286,6 +286,10 @@ function Tab:New(tabOptions, window)
         return library.Elements.Documentation:AddVersionCard(getNextCol(), options, library)
     end
 
+    function TabObj:AddColorPicker(options)
+        return library.Elements.ColorPicker:Add(getNextCol(), options, library)
+    end
+
     return TabObj
 end
 

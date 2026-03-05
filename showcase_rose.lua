@@ -43,12 +43,8 @@ local MainTab = CombatFolder:AddFile({
 
 Window:AddDivider()
 
--- CARPETA: DOCUMENTACION
-local DocFolder = Window:AddFolder({ 
-    Name = "Documentacion", 
-    Icon = Icons.GetIcon("lucide:file-text") 
-})
-local InfoTab = DocFolder:AddFile({ 
+-- TOP LEVEL FILE: DOCUMENTATION
+local InfoTab = Window:AddFile({ 
     Name = "API Docs", 
     Icon = Icons.GetIcon("lucide:layout-list") 
 })
