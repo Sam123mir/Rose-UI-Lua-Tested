@@ -13,7 +13,14 @@ function Section:New(sName, tab)
     sectionFrame.Name = sName .. "_Section"
     sectionFrame.Size = UDim2.new(1, 0, 0, 30)
     sectionFrame.BackgroundTransparency = 1
-    sectionFrame.Parent = tab.Page
+    
+    local parentCol = tab.Page
+    if tab.LeftColumn and tab.RightColumn then
+        parentCol = tab.CurrentSide == "Left" and tab.LeftColumn or tab.RightColumn
+        tab.CurrentSide = tab.CurrentSide == "Left" and "Right" or "Left"
+    end
+    
+    sectionFrame.Parent = parentCol
     
     local titleFrame = Instance.new("Frame")
     titleFrame.Size = UDim2.new(1, 0, 0, 15)

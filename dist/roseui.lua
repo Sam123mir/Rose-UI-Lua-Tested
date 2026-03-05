@@ -1,7 +1,7 @@
 --[[
     RoseUI v2.5.0
     Created by RoseUI Team
-    Build Date: 4/3/2026, 9:47:52 p. m.
+    Build Date: 4/3/2026, 10:15:24 p. m.
     
     This is a unified distribution file. 
 ]]
@@ -490,12 +490,6 @@ function Window:New(options, library)
     mainFrame.Parent = screenGui
     Instance.new("UICorner", mainFrame).CornerRadius = UDim.new(0, 12)
 
-    local mainStroke = Instance.new("UIStroke")
-    mainStroke.Color = theme.Primary
-    mainStroke.Transparency = 0.8
-    mainStroke.Thickness = 1
-    mainStroke.Parent = mainFrame
-
     
     local camera = workspace.CurrentCamera
     local blurPart = Instance.new("Part")
@@ -576,7 +570,7 @@ function Window:New(options, library)
     logoIcon.Parent = header
 
     local title = Instance.new("TextLabel")
-    title.Size = UDim2.new(0, 60, 1, 0)
+    title.Size = UDim2.new(0, 70, 1, 0)
     title.Position = UDim2.new(0, 38, 0, 0)
     title.BackgroundTransparency = 1
     title.Text = "ROSEUI"
@@ -585,6 +579,41 @@ function Window:New(options, library)
     title.TextSize = 13
     title.TextXAlignment = Enum.TextXAlignment.Left
     title.Parent = header
+    
+    local discordBtn = Instance.new("TextButton")
+    discordBtn.Size = UDim2.new(0, 20, 0, 20)
+    discordBtn.Position = UDim2.new(0, 95, 0.5, -10)
+    discordBtn.BackgroundColor3 = Color3.fromRGB(88, 101, 242)
+    discordBtn.BackgroundTransparency = 0.95
+    discordBtn.Text = ""
+    discordBtn.Parent = header
+    Instance.new("UICorner", discordBtn).CornerRadius = UDim.new(0, 4)
+    
+    local dscIcon = Instance.new("ImageLabel")
+    dscIcon.Size = UDim2.new(0, 14, 0, 14)
+    dscIcon.Position = UDim2.new(0.5, -7, 0.5, -7)
+    dscIcon.BackgroundTransparency = 1
+    local dIcon = resolveIcon(options.DiscordIcon or "lucide:message-square")
+    if type(dIcon) == "table" then
+        dscIcon.Image = dIcon.Image or ""
+        dscIcon.ImageRectOffset = dIcon.ImageRectOffset or Vector2.new(0,0)
+        dscIcon.ImageRectSize = dIcon.ImageRectSize or Vector2.new(0,0)
+    else
+        dscIcon.Image = dIcon
+    end
+    dscIcon.ImageColor3 = Color3.fromRGB(88, 101, 242)
+    dscIcon.Parent = discordBtn
+    
+    discordBtn.MouseButton1Click:Connect(function()
+        if setclipboard and options.DiscordLink then
+            setclipboard(options.DiscordLink)
+            if WindowObj.Notify then
+                WindowObj:Notify({Title = "Discord", Text = "Link copied to clipboard!", Duration = 3})
+            end
+        end
+    end)
+    discordBtn.MouseEnter:Connect(function() TweenService:Create(discordBtn, TweenInfo.new(0.2), {BackgroundTransparency = 0.8}):Play() end)
+    discordBtn.MouseLeave:Connect(function() TweenService:Create(discordBtn, TweenInfo.new(0.2), {BackgroundTransparency = 0.95}):Play() end)
 
     
     local statsFrame = Instance.new("Frame")
@@ -941,7 +970,7 @@ function Window:New(options, library)
     
     local sidebar = Instance.new("Frame")
     sidebar.Name = "Sidebar"
-    sidebar.Size = UDim2.new(0, 192, 1, 0)
+    sidebar.Size = UDim2.new(0, 220, 1, 0)
     sidebar.BackgroundColor3 = theme.Accent
     sidebar.BackgroundTransparency = 0.4
     sidebar.BorderSizePixel = 0
@@ -970,13 +999,13 @@ function Window:New(options, library)
 
     
     local profile = Instance.new("Frame")
-    profile.Size = UDim2.new(1, 0, 0, 70)
+    profile.Size = UDim2.new(1, 0, 0, 90)
     profile.BackgroundTransparency = 1
     profile.Parent = sidebar
     
     local avatarFrame = Instance.new("Frame")
-    avatarFrame.Size = UDim2.new(0, 40, 0, 40)
-    avatarFrame.Position = UDim2.new(0, 15, 0.5, -20)
+    avatarFrame.Size = UDim2.new(0, 44, 0, 44)
+    avatarFrame.Position = UDim2.new(0.5, -22, 0, 12)
     avatarFrame.BackgroundColor3 = theme.DeepAccent
     avatarFrame.Parent = profile
     Instance.new("UICorner", avatarFrame).CornerRadius = UDim.new(1, 0)
@@ -994,38 +1023,38 @@ function Window:New(options, library)
     local thumbSize = Enum.ThumbnailSize.Size420x420
     local content, isReady = Services.Players:GetUserThumbnailAsync(userId, thumbType, thumbSize)
     
-    avatarImg.Image = content or assets.Icons.User
+    avatarImg.Image = content or resolveIcon(assets.Icons.User)
     avatarImg.ImageColor3 = Color3.new(1,1,1)
     avatarImg.Parent = avatarFrame
     Instance.new("UICorner", avatarImg).CornerRadius = UDim.new(1, 0)
     
     local userName = Instance.new("TextLabel")
-    userName.Size = UDim2.new(1, -70, 0, 14)
-    userName.Position = UDim2.new(0, 65, 0.5, -12)
+    userName.Size = UDim2.new(1, 0, 0, 14)
+    userName.Position = UDim2.new(0, 0, 0, 62)
     userName.BackgroundTransparency = 1
     userName.Text = Services.Players.LocalPlayer.Name
     userName.TextColor3 = theme.Text
     userName.Font = Enum.Font.GothamBold
-    userName.TextSize = 11
-    userName.TextXAlignment = Enum.TextXAlignment.Left
+    userName.TextSize = 12
+    userName.TextXAlignment = Enum.TextXAlignment.Center
     userName.Parent = profile
     
     local userStatus = Instance.new("TextLabel")
-    userStatus.Size = UDim2.new(1, -70, 0, 12)
-    userStatus.Position = UDim2.new(0, 65, 0.5, 2)
+    userStatus.Size = UDim2.new(1, 0, 0, 12)
+    userStatus.Position = UDim2.new(0, 0, 0, 78)
     userStatus.BackgroundTransparency = 1
-    userStatus.Text = langData.activeNow
-    userStatus.TextColor3 = Color3.fromRGB(80, 200, 80) 
+    userStatus.Text = "● " .. langData.activeNow
+    userStatus.TextColor3 = Color3.fromRGB(0, 255, 128) 
     userStatus.Font = Enum.Font.GothamBold
     userStatus.TextSize = 9
-    userStatus.TextXAlignment = Enum.TextXAlignment.Left
+    userStatus.TextXAlignment = Enum.TextXAlignment.Center
     userStatus.Parent = profile
 
     local sep = Instance.new("Frame")
-    sep.Size = UDim2.new(1, -30, 0, 1)
-    sep.Position = UDim2.new(0, 15, 1, 0)
+    sep.Size = UDim2.new(1, -40, 0, 1)
+    sep.Position = UDim2.new(0, 20, 1, 4)
     sep.BackgroundColor3 = theme.Primary
-    sep.BackgroundTransparency = 0.75
+    sep.BackgroundTransparency = 0.85
     sep.BorderSizePixel = 0
     sep.Parent = profile
 
@@ -1034,10 +1063,10 @@ function Window:New(options, library)
     
     local searchBarFrame = Instance.new("TextButton")
     searchBarFrame.Name = "SearchBarTrigger"
-    searchBarFrame.Size = UDim2.new(1, -24, 0, 32)
-    searchBarFrame.Position = UDim2.new(0, 12, 0, 78)
-    searchBarFrame.BackgroundColor3 = theme.Surface
-    searchBarFrame.BackgroundTransparency = 0.3
+    searchBarFrame.Size = UDim2.new(1, -24, 0, 34)
+    searchBarFrame.Position = UDim2.new(0, 12, 0, 105)
+    searchBarFrame.BackgroundColor3 = Color3.new(0.05, 0.05, 0.05) 
+    searchBarFrame.BackgroundTransparency = 0.2
     searchBarFrame.AutoButtonColor = false
     searchBarFrame.Text = ""
     searchBarFrame.Parent = sidebar
@@ -1045,13 +1074,13 @@ function Window:New(options, library)
     
     local searchStroke = Instance.new("UIStroke")
     searchStroke.Color = theme.Primary
-    searchStroke.Transparency = 0.5
+    searchStroke.Transparency = 1 
     searchStroke.Thickness = 1
     searchStroke.Parent = searchBarFrame
 
     local searchIconImg = Instance.new("ImageLabel")
     searchIconImg.Size = UDim2.new(0, 14, 0, 14)
-    searchIconImg.Position = UDim2.new(0, 12, 0.5, -7)
+    searchIconImg.Position = UDim2.new(0, 14, 0.5, -7)
     searchIconImg.BackgroundTransparency = 1
     
     local resolvedSearch = resolveIcon(assets.Icons.Search)
@@ -1067,29 +1096,29 @@ function Window:New(options, library)
     searchIconImg.Parent = searchBarFrame
 
     local searchFakeText = Instance.new("TextLabel")
-    searchFakeText.Size = UDim2.new(1, -40, 1, 0)
-    searchFakeText.Position = UDim2.new(0, 32, 0, 0)
+    searchFakeText.Size = UDim2.new(1, -44, 1, 0)
+    searchFakeText.Position = UDim2.new(0, 36, 0, 0)
     searchFakeText.BackgroundTransparency = 1
     searchFakeText.Text = langData.searchFeatures
-    searchFakeText.TextColor3 = theme.Text
+    searchFakeText.TextColor3 = theme.MutedText
     searchFakeText.Font = Enum.Font.Gotham
     searchFakeText.TextSize = 10
     searchFakeText.TextXAlignment = Enum.TextXAlignment.Left
     searchFakeText.Parent = searchBarFrame
 
     searchBarFrame.MouseEnter:Connect(function()
-        TweenService:Create(searchStroke, TweenInfo.new(0.2), {Transparency = 0}):Play()
-        TweenService:Create(searchBarFrame, TweenInfo.new(0.2), {BackgroundTransparency = 0.15}):Play()
+        TweenService:Create(searchStroke, TweenInfo.new(0.2), {Transparency = 0.5}):Play()
+        TweenService:Create(searchBarFrame, TweenInfo.new(0.2), {BackgroundColor3 = theme.Surface, BackgroundTransparency = 0.3}):Play()
     end)
     searchBarFrame.MouseLeave:Connect(function()
-        TweenService:Create(searchStroke, TweenInfo.new(0.2), {Transparency = 0.5}):Play()
-        TweenService:Create(searchBarFrame, TweenInfo.new(0.2), {BackgroundTransparency = 0.3}):Play()
+        TweenService:Create(searchStroke, TweenInfo.new(0.2), {Transparency = 1}):Play()
+        TweenService:Create(searchBarFrame, TweenInfo.new(0.2), {BackgroundColor3 = Color3.new(0.05, 0.05, 0.05), BackgroundTransparency = 0.2}):Play()
     end)
 
     
     local navScroll = Instance.new("ScrollingFrame")
-    navScroll.Size = UDim2.new(1, 0, 1, -150)
-    navScroll.Position = UDim2.new(0, 0, 0, 118)
+    navScroll.Size = UDim2.new(1, 0, 1, -180)
+    navScroll.Position = UDim2.new(0, 0, 0, 150)
     navScroll.BackgroundTransparency = 1
     navScroll.BorderSizePixel = 0
     navScroll.ScrollBarThickness = 2
@@ -1099,6 +1128,7 @@ function Window:New(options, library)
     local navLayout = Instance.new("UIListLayout")
     navLayout.Padding = UDim.new(0, 4)
     navLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+    navLayout.SortOrder = Enum.SortOrder.LayoutOrder
     navLayout.Parent = navScroll
 
     
@@ -1106,8 +1136,8 @@ function Window:New(options, library)
     
     local contentArea = Instance.new("Frame")
     contentArea.Name = "ContentArea"
-    contentArea.Size = UDim2.new(1, -192, 1, 0)
-    contentArea.Position = UDim2.new(0, 192, 0, 0)
+    contentArea.Size = UDim2.new(1, -220, 1, 0)
+    contentArea.Position = UDim2.new(0, 220, 0, 0)
     contentArea.BackgroundTransparency = 1
     contentArea.Parent = body
     
@@ -1456,13 +1486,16 @@ function Window:New(options, library)
         return library.Tab:New(options, self)
     end
     
+    WindowObj.OrderCounter = 10
+    
     function WindowObj:AddDivider()
         local div = Instance.new("Frame")
-        div.Size = UDim2.new(1, -24, 0, 1)
+        div.Size = UDim2.new(1, -24, 0, 2)
         div.Position = UDim2.new(0, 12, 0, 0)
         div.BackgroundColor3 = theme.Primary
-        div.BackgroundTransparency = 0.8
+        div.BackgroundTransparency = 0.6
         div.BorderSizePixel = 0
+        div.LayoutOrder = 5 
         div.Parent = navScroll
     end
     
@@ -1813,12 +1846,21 @@ function Tab:New(tabOptions, window)
 
     local isSubTab = tabOptions.IsSubTab or tabOptions.IsFile or false
     local isFile = tabOptions.IsFile or false
+    local isPinned = tabOptions.Pinned or false
     local parentOverride = tabOptions.ParentOverride
 
     local tabBtn = Instance.new("Frame")
     tabBtn.Name = tabName .. (isFile and "_File" or (isSubTab and "_Sub" or "_Main"))
     tabBtn.Size = UDim2.new(1, 0, 0, (isFile or isSubTab) and 34 or 42)
     tabBtn.BackgroundTransparency = 1
+    
+    if isPinned then
+        tabBtn.LayoutOrder = 1
+    else
+        window.OrderCounter = (window.OrderCounter or 10) + 1
+        tabBtn.LayoutOrder = window.OrderCounter
+    end
+    
     tabBtn.Parent = parentOverride or window.NavScroll
 
     local btnTrigger = Instance.new("TextButton")
@@ -1901,17 +1943,54 @@ function Tab:New(tabOptions, window)
     page.Parent = window.PageContainer
 
     local pageLayout = Instance.new("UIListLayout")
-    pageLayout.Padding = UDim.new(0, 10)
-    pageLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+    pageLayout.FillDirection = Enum.FillDirection.Horizontal
+    pageLayout.Padding = UDim.new(0, 12)
+    pageLayout.SortOrder = Enum.SortOrder.LayoutOrder
     pageLayout.Parent = page
 
-    pageLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-        page.CanvasSize = UDim2.new(0, 0, 0, pageLayout.AbsoluteContentSize.Y + 20)
-    end)
+    local leftCol = Instance.new("Frame")
+    leftCol.Name = "LeftColumn"
+    leftCol.Size = UDim2.new(0.5, -6, 1, 0)
+    leftCol.BackgroundTransparency = 1
+    leftCol.LayoutOrder = 1
+    leftCol.Parent = page
+    
+    local leftLayout = Instance.new("UIListLayout")
+    leftLayout.Padding = UDim.new(0, 10)
+    leftLayout.SortOrder = Enum.SortOrder.LayoutOrder
+    leftLayout.Parent = leftCol
+
+    local rightCol = Instance.new("Frame")
+    rightCol.Name = "RightColumn"
+    rightCol.Size = UDim2.new(0.5, -6, 1, 0)
+    rightCol.BackgroundTransparency = 1
+    rightCol.LayoutOrder = 2
+    rightCol.Parent = page
+    
+    local rightLayout = Instance.new("UIListLayout")
+    rightLayout.Padding = UDim.new(0, 10)
+    rightLayout.SortOrder = Enum.SortOrder.LayoutOrder
+    rightLayout.Parent = rightCol
+
+    local function updateCanvas()
+        local leftH = leftLayout.AbsoluteContentSize.Y
+        local rightH = rightLayout.AbsoluteContentSize.Y
+        local maxH = math.max(leftH, rightH)
+        
+        leftCol.Size = UDim2.new(0.5, -6, 0, maxH)
+        rightCol.Size = UDim2.new(0.5, -6, 0, maxH)
+        page.CanvasSize = UDim2.new(0, 0, 0, maxH + 40)
+    end
+
+    leftLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(updateCanvas)
+    rightLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(updateCanvas)
 
     local TabObj = {
         Window = window,
         Page = page,
+        LeftColumn = leftCol,
+        RightColumn = rightCol,
+        CurrentSide = "Left",
         Btn = tabBtn,
         Content = contentFrame,
         Label = label,
@@ -1998,9 +2077,36 @@ function Tab:New(tabOptions, window)
         subOptions.IsSubTab = true
         return Tab:New(subOptions, self.Window)
     end
+    
+    local function getNextCol()
+        if not TabObj.LeftColumn then return TabObj.Page end
+        local parentCol = TabObj.CurrentSide == "Left" and TabObj.LeftColumn or TabObj.RightColumn
+        TabObj.CurrentSide = TabObj.CurrentSide == "Left" and "Right" or "Left"
+        return parentCol
+    end
 
     function TabObj:AddSection(sName)
         return library.Section:New(sName, self)
+    end
+
+    function TabObj:AddParagraph(options)
+        return library.Elements.Paragraph:Add(getNextCol(), options, library)
+    end
+
+    function TabObj:AddDocTitle(options)
+        return library.Elements.Documentation:AddTitle(getNextCol(), options, library)
+    end
+    
+    function TabObj:AddDocDescription(options)
+        return library.Elements.Documentation:AddDescription(getNextCol(), options, library)
+    end
+    
+    function TabObj:AddCard(options)
+        return library.Elements.Documentation:AddCard(getNextCol(), options, library)
+    end
+    
+    function TabObj:AddVersionCard(options)
+        return library.Elements.Documentation:AddVersionCard(getNextCol(), options, library)
     end
 
     return TabObj
@@ -2023,7 +2129,14 @@ function Section:New(sName, tab)
     sectionFrame.Name = sName .. "_Section"
     sectionFrame.Size = UDim2.new(1, 0, 0, 30)
     sectionFrame.BackgroundTransparency = 1
-    sectionFrame.Parent = tab.Page
+    
+    local parentCol = tab.Page
+    if tab.LeftColumn and tab.RightColumn then
+        parentCol = tab.CurrentSide == "Left" and tab.LeftColumn or tab.RightColumn
+        tab.CurrentSide = tab.CurrentSide == "Left" and "Right" or "Left"
+    end
+    
+    sectionFrame.Parent = parentCol
     
     local titleFrame = Instance.new("Frame")
     titleFrame.Size = UDim2.new(1, 0, 0, 15)
@@ -4147,7 +4260,195 @@ function Paragraph:Add(parent, options, library)
 end
 
 return Paragraph
-end function __DARKLUA_BUNDLE_MODULES.v():typeof(__modImpl())local v=__DARKLUA_BUNDLE_MODULES.cache.v if not v then v={c=__modImpl()}__DARKLUA_BUNDLE_MODULES.cache.v=v end return v.c end end end
+end function __DARKLUA_BUNDLE_MODULES.v():typeof(__modImpl())local v=__DARKLUA_BUNDLE_MODULES.cache.v if not v then v={c=__modImpl()}__DARKLUA_BUNDLE_MODULES.cache.v=v end return v.c end end do local function __modImpl()
+local Documentation = {}
+
+function Documentation:AddTitle(parent, options, library)
+    local text = options.Title or options.Text or "DOCUMENTATION TITLE"
+    local theme = library.Theme
+    
+    local titleFrame = Instance.new("Frame")
+    titleFrame.Size = UDim2.new(1, 0, 0, 30)
+    titleFrame.BackgroundTransparency = 1
+    titleFrame.Parent = parent
+    
+    local accentBar = Instance.new("Frame")
+    accentBar.Size = UDim2.new(0, 3, 0, 16)
+    accentBar.Position = UDim2.new(0, 4, 0.5, -8)
+    accentBar.BackgroundColor3 = theme.Primary
+    accentBar.BorderSizePixel = 0
+    accentBar.Parent = titleFrame
+    Instance.new("UICorner", accentBar).CornerRadius = UDim.new(0, 2)
+    
+    local label = Instance.new("TextLabel")
+    label.Size = UDim2.new(1, -20, 1, 0)
+    label.Position = UDim2.new(0, 14, 0, 0)
+    label.BackgroundTransparency = 1
+    label.Text = text:upper()
+    label.TextColor3 = theme.Primary
+    label.Font = Enum.Font.GothamBlack
+    label.TextSize = 12
+    label.TextXAlignment = Enum.TextXAlignment.Left
+    label.Parent = titleFrame
+    
+    
+    local spacedText = ""
+    for i = 1, #text do
+        spacedText = spacedText .. text:sub(i,i):upper() .. " "
+    end
+    label.Text = spacedText
+    
+    return titleFrame
+end
+
+function Documentation:AddDescription(parent, options, library)
+    local text = options.Text or options.Description or "Description text..."
+    local theme = library.Theme
+    
+    local descLabel = Instance.new("TextLabel")
+    descLabel.Size = UDim2.new(1, -8, 0, 20) 
+    descLabel.BackgroundTransparency = 1
+    descLabel.Text = text
+    descLabel.TextColor3 = theme.SecondaryText
+    descLabel.Font = Enum.Font.Gotham
+    descLabel.TextSize = 11
+    descLabel.TextXAlignment = Enum.TextXAlignment.Left
+    descLabel.TextYAlignment = Enum.TextXAlignment.Top
+    descLabel.TextWrapped = true
+    descLabel.Parent = parent
+    
+    local padding = Instance.new("UIPadding")
+    padding.PaddingLeft = UDim.new(0, 4)
+    padding.Parent = descLabel
+    
+    local textBounds = descLabel.TextBounds
+    descLabel.Size = UDim2.new(1, -8, 0, textBounds.Y + 10)
+    
+    descLabel:GetPropertyChangedSignal("AbsoluteSize"):Connect(function()
+        descLabel.Size = UDim2.new(1, -8, 0, descLabel.TextBounds.Y + 10)
+    end)
+    
+    return descLabel
+end
+
+function Documentation:AddCard(parent, options, library)
+    local title = options.Title or "Card Title"
+    local desc = options.Description or options.Text or "Card description goes here."
+    local theme = library.Theme
+    
+    local cardFrame = Instance.new("Frame")
+    cardFrame.Size = UDim2.new(1, 0, 0, 60)
+    cardFrame.BackgroundColor3 = theme.Surface
+    cardFrame.BackgroundTransparency = 0.5
+    cardFrame.Parent = parent
+    Instance.new("UICorner", cardFrame).CornerRadius = UDim.new(0, 8)
+    
+    local stroke = Instance.new("UIStroke")
+    stroke.Color = theme.Primary
+    stroke.Transparency = 0.8
+    stroke.Thickness = 1
+    stroke.Parent = cardFrame
+    
+    local titleLbl = Instance.new("TextLabel")
+    titleLbl.Size = UDim2.new(1, -24, 0, 16)
+    titleLbl.Position = UDim2.new(0, 12, 0, 10)
+    titleLbl.BackgroundTransparency = 1
+    titleLbl.Text = title
+    titleLbl.TextColor3 = theme.Text
+    titleLbl.Font = Enum.Font.GothamBold
+    titleLbl.TextSize = 12
+    titleLbl.TextXAlignment = Enum.TextXAlignment.Left
+    titleLbl.Parent = cardFrame
+    
+    local descLbl = Instance.new("TextLabel")
+    descLbl.Size = UDim2.new(1, -24, 0, 20)
+    descLbl.Position = UDim2.new(0, 12, 0, 26)
+    descLbl.BackgroundTransparency = 1
+    descLbl.Text = desc
+    descLbl.TextColor3 = theme.SecondaryText
+    descLbl.Font = Enum.Font.Gotham
+    descLbl.TextSize = 10
+    descLbl.TextXAlignment = Enum.TextXAlignment.Left
+    descLbl.TextYAlignment = Enum.TextXAlignment.Top
+    descLbl.TextWrapped = true
+    descLbl.Parent = cardFrame
+    
+    
+    local frameHeight = 10 + 16 + descLbl.TextBounds.Y + 10
+    cardFrame.Size = UDim2.new(1, 0, 0, math.max(60, frameHeight))
+    
+    return cardFrame
+end
+
+function Documentation:AddVersionCard(parent, options, library)
+    local version = options.Version or "v1.0.0"
+    local title = options.Title or "Added new features"
+    local description = options.Description or options.Text or "- Updated xyz\n- Fixed abc"
+    local theme = library.Theme
+    
+    local cardFrame = Instance.new("Frame")
+    cardFrame.Size = UDim2.new(1, 0, 0, 80)
+    cardFrame.BackgroundColor3 = theme.Background
+    cardFrame.BackgroundTransparency = 0.1
+    cardFrame.Parent = parent
+    Instance.new("UICorner", cardFrame).CornerRadius = UDim.new(0, 8)
+    
+    local stroke = Instance.new("UIStroke")
+    stroke.Color = theme.Primary
+    stroke.Transparency = 0.6
+    stroke.Thickness = 1
+    stroke.Parent = cardFrame
+    
+    local statusBadge = Instance.new("Frame")
+    statusBadge.Size = UDim2.new(0, 48, 0, 18)
+    statusBadge.Position = UDim2.new(0, 12, 0, 12)
+    statusBadge.BackgroundColor3 = theme.Primary
+    statusBadge.BackgroundTransparency = 0.8
+    statusBadge.Parent = cardFrame
+    Instance.new("UICorner", statusBadge).CornerRadius = UDim.new(0, 4)
+    
+    local versionLbl = Instance.new("TextLabel")
+    versionLbl.Size = UDim2.new(1, 0, 1, 0)
+    versionLbl.BackgroundTransparency = 1
+    versionLbl.Text = version
+    versionLbl.TextColor3 = theme.Text
+    versionLbl.Font = Enum.Font.GothamBold
+    versionLbl.TextSize = 10
+    versionLbl.Parent = statusBadge
+    
+    local titleLbl = Instance.new("TextLabel")
+    titleLbl.Size = UDim2.new(1, -76, 0, 18)
+    titleLbl.Position = UDim2.new(0, 68, 0, 12)
+    titleLbl.BackgroundTransparency = 1
+    titleLbl.Text = title
+    titleLbl.TextColor3 = theme.Text
+    titleLbl.Font = Enum.Font.GothamBold
+    titleLbl.TextSize = 12
+    titleLbl.TextXAlignment = Enum.TextXAlignment.Left
+    titleLbl.Parent = cardFrame
+    
+    local descLbl = Instance.new("TextLabel")
+    descLbl.Size = UDim2.new(1, -24, 0, 30)
+    descLbl.Position = UDim2.new(0, 12, 0, 38)
+    descLbl.BackgroundTransparency = 1
+    descLbl.Text = description
+    descLbl.TextColor3 = theme.SecondaryText
+    descLbl.Font = Enum.Font.Gotham
+    descLbl.TextSize = 10
+    descLbl.TextXAlignment = Enum.TextXAlignment.Left
+    descLbl.TextYAlignment = Enum.TextXAlignment.Top
+    descLbl.TextWrapped = true
+    descLbl.Parent = cardFrame
+    
+    
+    local frameHeight = 38 + descLbl.TextBounds.Y + 12
+    cardFrame.Size = UDim2.new(1, 0, 0, math.max(60, frameHeight))
+    
+    return cardFrame
+end
+
+return Documentation
+end function __DARKLUA_BUNDLE_MODULES.w():typeof(__modImpl())local v=__DARKLUA_BUNDLE_MODULES.cache.w if not v then v={c=__modImpl()}__DARKLUA_BUNDLE_MODULES.cache.w=v end return v.c end end end
 
 
 local RoseUI = {
@@ -4186,6 +4487,7 @@ RoseUI.Elements.TargetList = __DARKLUA_BUNDLE_MODULES.s()
 RoseUI.Elements.InventoryGrid = __DARKLUA_BUNDLE_MODULES.t()
 RoseUI.Elements.PlotGrid = __DARKLUA_BUNDLE_MODULES.u()
 RoseUI.Elements.Paragraph = __DARKLUA_BUNDLE_MODULES.v()
+RoseUI.Elements.Documentation = __DARKLUA_BUNDLE_MODULES.w()
 
 
 function RoseUI:Notify(options)

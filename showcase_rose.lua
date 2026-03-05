@@ -59,18 +59,25 @@ local ThemeTab = ConfigFolder:AddFile({
 })
 
 -- ##########################################################################
--- ROSE INFO
+-- ROSE INFO (Documentation Page)
 -- ##########################################################################
-local WelcomeSection = InfoTab:AddSection("ABOUT ROSE UI")
-
-WelcomeSection:AddParagraph({
-    Name = "Welcome to Rose UI v2.6",
-    Text = "Rose UI is a modern, lightweight, and highly customizable library built for Lua scripts. Designed with performance and aesthetics in mind, it provides a premium experience."
+InfoTab:AddDocTitle({
+    Text = "WELCOME TO ROSE UI v2.6"
 })
 
-WelcomeSection:AddParagraph({
-    Name = "For Developers",
-    Text = "This framework simplifies UI creation with modular components, dynamic icons, robust animations, and multi-language support. It lets you focus purely on your script logic."
+InfoTab:AddDocDescription({
+    Text = "Rose UI is a modern, premium, and highly customizable script hub library built for Lua. Designed with performance and a stunning Masonry layout in mind, it provides an outstanding user experience without the hassle."
+})
+
+InfoTab:AddVersionCard({
+    Version = "v2.6 Stable",
+    Title = "The Documentation Update",
+    Description = "• Added Masonry Grid Layout\n• Added Documentation System (Cards, Titles)\n• Discord integrated into header\n• Wider sidebar and centered profile\n• Removed borders and polished UI elements"
+})
+
+InfoTab:AddCard({
+    Title = "For Developers",
+    Description = "This framework simplifies UI creation with modular components, auto-closing dropdowns, customizable keybinds, and dynamic layout routing. Build your scripts faster."
 })
 
 -- ##########################################################################

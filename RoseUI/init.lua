@@ -36,6 +36,7 @@ RoseUI.Elements.TargetList = import("Elements/TargetList")
 RoseUI.Elements.InventoryGrid = import("Elements/InventoryGrid")
 RoseUI.Elements.PlotGrid = import("Elements/PlotGrid")
 RoseUI.Elements.Paragraph = import("Elements/Paragraph")
+RoseUI.Elements.Documentation = import("Elements/Documentation")
 
 -- API Principal
 function RoseUI:Notify(options)

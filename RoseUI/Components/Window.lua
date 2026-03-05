@@ -112,12 +112,6 @@ function Window:New(options, library)
     mainFrame.Parent = screenGui
     Instance.new("UICorner", mainFrame).CornerRadius = UDim.new(0, 12)
 
-    local mainStroke = Instance.new("UIStroke")
-    mainStroke.Color = theme.Primary
-    mainStroke.Transparency = 0.8
-    mainStroke.Thickness = 1
-    mainStroke.Parent = mainFrame
-
     -- Acrylic Blur Part
     local camera = workspace.CurrentCamera
     local blurPart = Instance.new("Part")
@@ -198,7 +192,7 @@ function Window:New(options, library)
     logoIcon.Parent = header
 
     local title = Instance.new("TextLabel")
-    title.Size = UDim2.new(0, 60, 1, 0)
+    title.Size = UDim2.new(0, 70, 1, 0)
     title.Position = UDim2.new(0, 38, 0, 0)
     title.BackgroundTransparency = 1
     title.Text = "ROSEUI"
@@ -207,6 +201,41 @@ function Window:New(options, library)
     title.TextSize = 13
     title.TextXAlignment = Enum.TextXAlignment.Left
     title.Parent = header
+    
+    local discordBtn = Instance.new("TextButton")
+    discordBtn.Size = UDim2.new(0, 20, 0, 20)
+    discordBtn.Position = UDim2.new(0, 95, 0.5, -10)
+    discordBtn.BackgroundColor3 = Color3.fromRGB(88, 101, 242)
+    discordBtn.BackgroundTransparency = 0.95
+    discordBtn.Text = ""
+    discordBtn.Parent = header
+    Instance.new("UICorner", discordBtn).CornerRadius = UDim.new(0, 4)
+    
+    local dscIcon = Instance.new("ImageLabel")
+    dscIcon.Size = UDim2.new(0, 14, 0, 14)
+    dscIcon.Position = UDim2.new(0.5, -7, 0.5, -7)
+    dscIcon.BackgroundTransparency = 1
+    local dIcon = resolveIcon(options.DiscordIcon or "lucide:message-square")
+    if type(dIcon) == "table" then
+        dscIcon.Image = dIcon.Image or ""
+        dscIcon.ImageRectOffset = dIcon.ImageRectOffset or Vector2.new(0,0)
+        dscIcon.ImageRectSize = dIcon.ImageRectSize or Vector2.new(0,0)
+    else
+        dscIcon.Image = dIcon
+    end
+    dscIcon.ImageColor3 = Color3.fromRGB(88, 101, 242)
+    dscIcon.Parent = discordBtn
+    
+    discordBtn.MouseButton1Click:Connect(function()
+        if setclipboard and options.DiscordLink then
+            setclipboard(options.DiscordLink)
+            if WindowObj.Notify then
+                WindowObj:Notify({Title = "Discord", Text = "Link copied to clipboard!", Duration = 3})
+            end
+        end
+    end)
+    discordBtn.MouseEnter:Connect(function() TweenService:Create(discordBtn, TweenInfo.new(0.2), {BackgroundTransparency = 0.8}):Play() end)
+    discordBtn.MouseLeave:Connect(function() TweenService:Create(discordBtn, TweenInfo.new(0.2), {BackgroundTransparency = 0.95}):Play() end)
 
     -- Stats Container (Centered)
     local statsFrame = Instance.new("Frame")
@@ -559,11 +588,11 @@ function Window:New(options, library)
     body.Parent = mainFrame
 
     -- ========================================================================
-    -- Sidebar (192px) - Enhanced
+    -- Sidebar (220px) - Enhanced & Centered
     -- ========================================================================
     local sidebar = Instance.new("Frame")
     sidebar.Name = "Sidebar"
-    sidebar.Size = UDim2.new(0, 192, 1, 0)
+    sidebar.Size = UDim2.new(0, 220, 1, 0)
     sidebar.BackgroundColor3 = theme.Accent
     sidebar.BackgroundTransparency = 0.4
     sidebar.BorderSizePixel = 0
@@ -590,15 +619,15 @@ function Window:New(options, library)
     sidebarBorder.BorderSizePixel = 0
     sidebarBorder.Parent = sidebar
 
-    -- Profile Section
+    -- Profile Section (Centered)
     local profile = Instance.new("Frame")
-    profile.Size = UDim2.new(1, 0, 0, 70)
+    profile.Size = UDim2.new(1, 0, 0, 90)
     profile.BackgroundTransparency = 1
     profile.Parent = sidebar
     
     local avatarFrame = Instance.new("Frame")
-    avatarFrame.Size = UDim2.new(0, 40, 0, 40)
-    avatarFrame.Position = UDim2.new(0, 15, 0.5, -20)
+    avatarFrame.Size = UDim2.new(0, 44, 0, 44)
+    avatarFrame.Position = UDim2.new(0.5, -22, 0, 12)
     avatarFrame.BackgroundColor3 = theme.DeepAccent
     avatarFrame.Parent = profile
     Instance.new("UICorner", avatarFrame).CornerRadius = UDim.new(1, 0)
@@ -616,50 +645,50 @@ function Window:New(options, library)
     local thumbSize = Enum.ThumbnailSize.Size420x420
     local content, isReady = Services.Players:GetUserThumbnailAsync(userId, thumbType, thumbSize)
     
-    avatarImg.Image = content or assets.Icons.User
+    avatarImg.Image = content or resolveIcon(assets.Icons.User)
     avatarImg.ImageColor3 = Color3.new(1,1,1)
     avatarImg.Parent = avatarFrame
     Instance.new("UICorner", avatarImg).CornerRadius = UDim.new(1, 0)
     
     local userName = Instance.new("TextLabel")
-    userName.Size = UDim2.new(1, -70, 0, 14)
-    userName.Position = UDim2.new(0, 65, 0.5, -12)
+    userName.Size = UDim2.new(1, 0, 0, 14)
+    userName.Position = UDim2.new(0, 0, 0, 62)
     userName.BackgroundTransparency = 1
     userName.Text = Services.Players.LocalPlayer.Name
     userName.TextColor3 = theme.Text
     userName.Font = Enum.Font.GothamBold
-    userName.TextSize = 11
-    userName.TextXAlignment = Enum.TextXAlignment.Left
+    userName.TextSize = 12
+    userName.TextXAlignment = Enum.TextXAlignment.Center
     userName.Parent = profile
     
     local userStatus = Instance.new("TextLabel")
-    userStatus.Size = UDim2.new(1, -70, 0, 12)
-    userStatus.Position = UDim2.new(0, 65, 0.5, 2)
+    userStatus.Size = UDim2.new(1, 0, 0, 12)
+    userStatus.Position = UDim2.new(0, 0, 0, 78)
     userStatus.BackgroundTransparency = 1
-    userStatus.Text = langData.activeNow
-    userStatus.TextColor3 = Color3.fromRGB(80, 200, 80) -- Green for active
+    userStatus.Text = "● " .. langData.activeNow
+    userStatus.TextColor3 = Color3.fromRGB(0, 255, 128) -- Vibrant Green for active
     userStatus.Font = Enum.Font.GothamBold
     userStatus.TextSize = 9
-    userStatus.TextXAlignment = Enum.TextXAlignment.Left
+    userStatus.TextXAlignment = Enum.TextXAlignment.Center
     userStatus.Parent = profile
 
     local sep = Instance.new("Frame")
-    sep.Size = UDim2.new(1, -30, 0, 1)
-    sep.Position = UDim2.new(0, 15, 1, 0)
+    sep.Size = UDim2.new(1, -40, 0, 1)
+    sep.Position = UDim2.new(0, 20, 1, 4)
     sep.BackgroundColor3 = theme.Primary
-    sep.BackgroundTransparency = 0.75
+    sep.BackgroundTransparency = 0.85
     sep.BorderSizePixel = 0
     sep.Parent = profile
 
     -- ========================================================================
-    -- Search Bar (Between Profile and Navigation)
+    -- Search Bar (Centered, Dark, Red Icon)
     -- ========================================================================
     local searchBarFrame = Instance.new("TextButton")
     searchBarFrame.Name = "SearchBarTrigger"
-    searchBarFrame.Size = UDim2.new(1, -24, 0, 32)
-    searchBarFrame.Position = UDim2.new(0, 12, 0, 78)
-    searchBarFrame.BackgroundColor3 = theme.Surface
-    searchBarFrame.BackgroundTransparency = 0.3
+    searchBarFrame.Size = UDim2.new(1, -24, 0, 34)
+    searchBarFrame.Position = UDim2.new(0, 12, 0, 105)
+    searchBarFrame.BackgroundColor3 = Color3.new(0.05, 0.05, 0.05) -- Very Dark background
+    searchBarFrame.BackgroundTransparency = 0.2
     searchBarFrame.AutoButtonColor = false
     searchBarFrame.Text = ""
     searchBarFrame.Parent = sidebar
@@ -667,13 +696,13 @@ function Window:New(options, library)
     
     local searchStroke = Instance.new("UIStroke")
     searchStroke.Color = theme.Primary
-    searchStroke.Transparency = 0.5
+    searchStroke.Transparency = 1 -- Hidden by default
     searchStroke.Thickness = 1
     searchStroke.Parent = searchBarFrame
 
     local searchIconImg = Instance.new("ImageLabel")
     searchIconImg.Size = UDim2.new(0, 14, 0, 14)
-    searchIconImg.Position = UDim2.new(0, 12, 0.5, -7)
+    searchIconImg.Position = UDim2.new(0, 14, 0.5, -7)
     searchIconImg.BackgroundTransparency = 1
     
     local resolvedSearch = resolveIcon(assets.Icons.Search)
@@ -689,29 +718,29 @@ function Window:New(options, library)
     searchIconImg.Parent = searchBarFrame
 
     local searchFakeText = Instance.new("TextLabel")
-    searchFakeText.Size = UDim2.new(1, -40, 1, 0)
-    searchFakeText.Position = UDim2.new(0, 32, 0, 0)
+    searchFakeText.Size = UDim2.new(1, -44, 1, 0)
+    searchFakeText.Position = UDim2.new(0, 36, 0, 0)
     searchFakeText.BackgroundTransparency = 1
     searchFakeText.Text = langData.searchFeatures
-    searchFakeText.TextColor3 = theme.Text
+    searchFakeText.TextColor3 = theme.MutedText
     searchFakeText.Font = Enum.Font.Gotham
     searchFakeText.TextSize = 10
     searchFakeText.TextXAlignment = Enum.TextXAlignment.Left
     searchFakeText.Parent = searchBarFrame
 
     searchBarFrame.MouseEnter:Connect(function()
-        TweenService:Create(searchStroke, TweenInfo.new(0.2), {Transparency = 0}):Play()
-        TweenService:Create(searchBarFrame, TweenInfo.new(0.2), {BackgroundTransparency = 0.15}):Play()
+        TweenService:Create(searchStroke, TweenInfo.new(0.2), {Transparency = 0.5}):Play()
+        TweenService:Create(searchBarFrame, TweenInfo.new(0.2), {BackgroundColor3 = theme.Surface, BackgroundTransparency = 0.3}):Play()
     end)
     searchBarFrame.MouseLeave:Connect(function()
-        TweenService:Create(searchStroke, TweenInfo.new(0.2), {Transparency = 0.5}):Play()
-        TweenService:Create(searchBarFrame, TweenInfo.new(0.2), {BackgroundTransparency = 0.3}):Play()
+        TweenService:Create(searchStroke, TweenInfo.new(0.2), {Transparency = 1}):Play()
+        TweenService:Create(searchBarFrame, TweenInfo.new(0.2), {BackgroundColor3 = Color3.new(0.05, 0.05, 0.05), BackgroundTransparency = 0.2}):Play()
     end)
 
-    -- Navigation (adjusted position to account for search bar)
+    -- Navigation (adjusted position to account for search bar and centering)
     local navScroll = Instance.new("ScrollingFrame")
-    navScroll.Size = UDim2.new(1, 0, 1, -150)
-    navScroll.Position = UDim2.new(0, 0, 0, 118)
+    navScroll.Size = UDim2.new(1, 0, 1, -180)
+    navScroll.Position = UDim2.new(0, 0, 0, 150)
     navScroll.BackgroundTransparency = 1
     navScroll.BorderSizePixel = 0
     navScroll.ScrollBarThickness = 2
@@ -721,6 +750,7 @@ function Window:New(options, library)
     local navLayout = Instance.new("UIListLayout")
     navLayout.Padding = UDim.new(0, 4)
     navLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+    navLayout.SortOrder = Enum.SortOrder.LayoutOrder
     navLayout.Parent = navScroll
 
     -- ========================================================================
@@ -728,8 +758,8 @@ function Window:New(options, library)
     -- ========================================================================
     local contentArea = Instance.new("Frame")
     contentArea.Name = "ContentArea"
-    contentArea.Size = UDim2.new(1, -192, 1, 0)
-    contentArea.Position = UDim2.new(0, 192, 0, 0)
+    contentArea.Size = UDim2.new(1, -220, 1, 0)
+    contentArea.Position = UDim2.new(0, 220, 0, 0)
     contentArea.BackgroundTransparency = 1
     contentArea.Parent = body
     
@@ -1078,13 +1108,16 @@ function Window:New(options, library)
         return library.Tab:New(options, self)
     end
     
+    WindowObj.OrderCounter = 10
+    
     function WindowObj:AddDivider()
         local div = Instance.new("Frame")
-        div.Size = UDim2.new(1, -24, 0, 1)
+        div.Size = UDim2.new(1, -24, 0, 2)
         div.Position = UDim2.new(0, 12, 0, 0)
         div.BackgroundColor3 = theme.Primary
-        div.BackgroundTransparency = 0.8
+        div.BackgroundTransparency = 0.6
         div.BorderSizePixel = 0
+        div.LayoutOrder = 5 -- Between Pinned and Normal items
         div.Parent = navScroll
     end
     

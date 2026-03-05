@@ -23,12 +23,21 @@ function Tab:New(tabOptions, window)
 
     local isSubTab = tabOptions.IsSubTab or tabOptions.IsFile or false
     local isFile = tabOptions.IsFile or false
+    local isPinned = tabOptions.Pinned or false
     local parentOverride = tabOptions.ParentOverride
 
     local tabBtn = Instance.new("Frame")
     tabBtn.Name = tabName .. (isFile and "_File" or (isSubTab and "_Sub" or "_Main"))
     tabBtn.Size = UDim2.new(1, 0, 0, (isFile or isSubTab) and 34 or 42)
     tabBtn.BackgroundTransparency = 1
+    
+    if isPinned then
+        tabBtn.LayoutOrder = 1
+    else
+        window.OrderCounter = (window.OrderCounter or 10) + 1
+        tabBtn.LayoutOrder = window.OrderCounter
+    end
+    
     tabBtn.Parent = parentOverride or window.NavScroll
 
     local btnTrigger = Instance.new("TextButton")
@@ -111,17 +120,54 @@ function Tab:New(tabOptions, window)
     page.Parent = window.PageContainer
 
     local pageLayout = Instance.new("UIListLayout")
-    pageLayout.Padding = UDim.new(0, 10)
-    pageLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+    pageLayout.FillDirection = Enum.FillDirection.Horizontal
+    pageLayout.Padding = UDim.new(0, 12)
+    pageLayout.SortOrder = Enum.SortOrder.LayoutOrder
     pageLayout.Parent = page
 
-    pageLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-        page.CanvasSize = UDim2.new(0, 0, 0, pageLayout.AbsoluteContentSize.Y + 20)
-    end)
+    local leftCol = Instance.new("Frame")
+    leftCol.Name = "LeftColumn"
+    leftCol.Size = UDim2.new(0.5, -6, 1, 0)
+    leftCol.BackgroundTransparency = 1
+    leftCol.LayoutOrder = 1
+    leftCol.Parent = page
+    
+    local leftLayout = Instance.new("UIListLayout")
+    leftLayout.Padding = UDim.new(0, 10)
+    leftLayout.SortOrder = Enum.SortOrder.LayoutOrder
+    leftLayout.Parent = leftCol
+
+    local rightCol = Instance.new("Frame")
+    rightCol.Name = "RightColumn"
+    rightCol.Size = UDim2.new(0.5, -6, 1, 0)
+    rightCol.BackgroundTransparency = 1
+    rightCol.LayoutOrder = 2
+    rightCol.Parent = page
+    
+    local rightLayout = Instance.new("UIListLayout")
+    rightLayout.Padding = UDim.new(0, 10)
+    rightLayout.SortOrder = Enum.SortOrder.LayoutOrder
+    rightLayout.Parent = rightCol
+
+    local function updateCanvas()
+        local leftH = leftLayout.AbsoluteContentSize.Y
+        local rightH = rightLayout.AbsoluteContentSize.Y
+        local maxH = math.max(leftH, rightH)
+        
+        leftCol.Size = UDim2.new(0.5, -6, 0, maxH)
+        rightCol.Size = UDim2.new(0.5, -6, 0, maxH)
+        page.CanvasSize = UDim2.new(0, 0, 0, maxH + 40)
+    end
+
+    leftLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(updateCanvas)
+    rightLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(updateCanvas)
 
     local TabObj = {
         Window = window,
         Page = page,
+        LeftColumn = leftCol,
+        RightColumn = rightCol,
+        CurrentSide = "Left",
         Btn = tabBtn,
         Content = contentFrame,
         Label = label,
@@ -208,9 +254,36 @@ function Tab:New(tabOptions, window)
         subOptions.IsSubTab = true
         return Tab:New(subOptions, self.Window)
     end
+    
+    local function getNextCol()
+        if not TabObj.LeftColumn then return TabObj.Page end
+        local parentCol = TabObj.CurrentSide == "Left" and TabObj.LeftColumn or TabObj.RightColumn
+        TabObj.CurrentSide = TabObj.CurrentSide == "Left" and "Right" or "Left"
+        return parentCol
+    end
 
     function TabObj:AddSection(sName)
         return library.Section:New(sName, self)
+    end
+
+    function TabObj:AddParagraph(options)
+        return library.Elements.Paragraph:Add(getNextCol(), options, library)
+    end
+
+    function TabObj:AddDocTitle(options)
+        return library.Elements.Documentation:AddTitle(getNextCol(), options, library)
+    end
+    
+    function TabObj:AddDocDescription(options)
+        return library.Elements.Documentation:AddDescription(getNextCol(), options, library)
+    end
+    
+    function TabObj:AddCard(options)
+        return library.Elements.Documentation:AddCard(getNextCol(), options, library)
+    end
+    
+    function TabObj:AddVersionCard(options)
+        return library.Elements.Documentation:AddVersionCard(getNextCol(), options, library)
     end
 
     return TabObj
