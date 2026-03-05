@@ -202,40 +202,7 @@ function Window:New(options, library)
     title.TextXAlignment = Enum.TextXAlignment.Left
     title.Parent = header
     
-    local discordBtn = Instance.new("TextButton")
-    discordBtn.Size = UDim2.new(0, 20, 0, 20)
-    discordBtn.Position = UDim2.new(0, 95, 0.5, -10)
-    discordBtn.BackgroundColor3 = Color3.fromRGB(88, 101, 242)
-    discordBtn.BackgroundTransparency = 0.95
-    discordBtn.Text = ""
-    discordBtn.Parent = header
-    Instance.new("UICorner", discordBtn).CornerRadius = UDim.new(0, 4)
-    
-    local dscIcon = Instance.new("ImageLabel")
-    dscIcon.Size = UDim2.new(0, 14, 0, 14)
-    dscIcon.Position = UDim2.new(0.5, -7, 0.5, -7)
-    dscIcon.BackgroundTransparency = 1
-    local dIcon = resolveIcon(options.DiscordIcon or "lucide:message-square")
-    if type(dIcon) == "table" then
-        dscIcon.Image = dIcon.Image or ""
-        dscIcon.ImageRectOffset = dIcon.ImageRectOffset or Vector2.new(0,0)
-        dscIcon.ImageRectSize = dIcon.ImageRectSize or Vector2.new(0,0)
-    else
-        dscIcon.Image = dIcon
-    end
-    dscIcon.ImageColor3 = Color3.fromRGB(88, 101, 242)
-    dscIcon.Parent = discordBtn
-    
-    discordBtn.MouseButton1Click:Connect(function()
-        if setclipboard and options.DiscordLink then
-            setclipboard(options.DiscordLink)
-            if WindowObj.Notify then
-                WindowObj:Notify({Title = "Discord", Text = "Link copied to clipboard!", Duration = 3})
-            end
-        end
-    end)
-    discordBtn.MouseEnter:Connect(function() TweenService:Create(discordBtn, TweenInfo.new(0.2), {BackgroundTransparency = 0.8}):Play() end)
-    discordBtn.MouseLeave:Connect(function() TweenService:Create(discordBtn, TweenInfo.new(0.2), {BackgroundTransparency = 0.95}):Play() end)
+    -- Removed discordBtn from header as requested
 
     -- Stats Container (Centered)
     local statsFrame = Instance.new("Frame")
@@ -778,13 +745,48 @@ function Window:New(options, library)
     footer.Parent = sidebar
     
     local versionLbl = Instance.new("TextLabel")
-    versionLbl.Size = UDim2.new(1, 0, 1, 0)
+    versionLbl.Size = UDim2.new(1, -40, 1, 0)
+    versionLbl.Position = UDim2.new(0, 14, 0, 0)
     versionLbl.BackgroundTransparency = 1
-    versionLbl.Text = hubType
+    versionLbl.Text = hubType:upper()
     versionLbl.TextColor3 = theme.MutedText
     versionLbl.Font = Enum.Font.GothamBold
     versionLbl.TextSize = 9
+    versionLbl.TextXAlignment = Enum.TextXAlignment.Left
     versionLbl.Parent = footer
+
+    local discordBtn = Instance.new("TextButton")
+    discordBtn.Size = UDim2.new(0, 16, 0, 16)
+    discordBtn.Position = UDim2.new(1, -26, 0.5, -8)
+    discordBtn.BackgroundColor3 = Color3.fromRGB(88, 101, 242)
+    discordBtn.BackgroundTransparency = 1
+    discordBtn.Text = ""
+    discordBtn.Parent = footer
+    
+    local dscIcon = Instance.new("ImageLabel")
+    dscIcon.Size = UDim2.new(1, 0, 1, 0)
+    dscIcon.BackgroundTransparency = 1
+    local dIcon = resolveIcon(options.DiscordIcon or "lucide:message-square")
+    if type(dIcon) == "table" then
+        dscIcon.Image = dIcon.Image or ""
+        dscIcon.ImageRectOffset = dIcon.ImageRectOffset or Vector2.new(0,0)
+        dscIcon.ImageRectSize = dIcon.ImageRectSize or Vector2.new(0,0)
+    else
+        dscIcon.Image = dIcon
+    end
+    dscIcon.ImageColor3 = Color3.fromRGB(150, 150, 150)
+    dscIcon.Parent = discordBtn
+    
+    discordBtn.MouseButton1Click:Connect(function()
+        if setclipboard and options.DiscordLink then
+            setclipboard(options.DiscordLink)
+            if WindowObj.Notify then
+                WindowObj:Notify({Title = "Discord", Text = "Link copied to clipboard!", Duration = 3})
+            end
+        end
+    end)
+    discordBtn.MouseEnter:Connect(function() TweenService:Create(dscIcon, TweenInfo.new(0.2), {ImageColor3 = Color3.fromRGB(88, 101, 242)}):Play() end)
+    discordBtn.MouseLeave:Connect(function() TweenService:Create(dscIcon, TweenInfo.new(0.2), {ImageColor3 = Color3.fromRGB(150, 150, 150)}):Play() end)
 
     -- ========================================================================
     -- Window Object

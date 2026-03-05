@@ -2,7 +2,7 @@ local Documentation = {}
 
 function Documentation:AddTitle(parent, options, library)
     local text = options.Title or options.Text or "DOCUMENTATION TITLE"
-    local theme = library.Theme
+    local theme = library.CurrentTheme or library.Theme
     
     local titleFrame = Instance.new("Frame")
     titleFrame.Size = UDim2.new(1, 0, 0, 30)
@@ -40,7 +40,7 @@ end
 
 function Documentation:AddDescription(parent, options, library)
     local text = options.Text or options.Description or "Description text..."
-    local theme = library.Theme
+    local theme = library.CurrentTheme or library.Theme
     
     local descLabel = Instance.new("TextLabel")
     descLabel.Size = UDim2.new(1, -8, 0, 20) -- Will auto-adjust
@@ -71,7 +71,7 @@ end
 function Documentation:AddCard(parent, options, library)
     local title = options.Title or "Card Title"
     local desc = options.Description or options.Text or "Card description goes here."
-    local theme = library.Theme
+    local theme = library.CurrentTheme or library.Theme
     
     local cardFrame = Instance.new("Frame")
     cardFrame.Size = UDim2.new(1, 0, 0, 60)
@@ -121,7 +121,7 @@ function Documentation:AddVersionCard(parent, options, library)
     local version = options.Version or "v1.0.0"
     local title = options.Title or "Added new features"
     local description = options.Description or options.Text or "- Updated xyz\n- Fixed abc"
-    local theme = library.Theme
+    local theme = library.CurrentTheme or library.Theme
     
     local cardFrame = Instance.new("Frame")
     cardFrame.Size = UDim2.new(1, 0, 0, 80)

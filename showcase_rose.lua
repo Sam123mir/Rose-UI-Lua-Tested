@@ -26,58 +26,71 @@ local Window = RoseUI:CreateWindow({
 })
 
 -- 4. Estructura de Navegación (Carpetas y Archivos)
--- INFO STANDALONE FILE
-local InfoTab = Window:AddFile({
-    Name = "Rose Info",
-    Icon = Icons.GetIcon("lucide:info")
-})
-
-Window:AddDivider()
 
 -- CARPETA: COMBATE
 local CombatFolder = Window:AddFolder({ 
     Name = "Combate", 
-    Icon = Icons.GetIcon("lucide:zap") -- Usando Lucide
-})
-local MainTab = CombatFolder:AddFile({ 
-    Name = "Principal", 
-    Icon = Icons.GetIcon("lucide:target") -- Icons repair
+    Icon = Icons.GetIcon("lucide:zap") 
 })
 local MiscTab = CombatFolder:AddFile({ 
     Name = "Misceláneo", 
     Icon = Icons.GetIcon("lucide:box") 
 })
-
--- CARPETA: CONFIGURACIÓN
-local ConfigFolder = Window:AddFolder({ 
-    Name = "Config", 
-    Icon = Icons.GetIcon("lucide:settings") 
+local MainTab = CombatFolder:AddFile({ 
+    Name = "Principal", 
+    Icon = Icons.GetIcon("lucide:target") 
 })
-local ThemeTab = ConfigFolder:AddFile({ 
-    Name = "Visuales", 
-    Icon = Icons.GetIcon("lucide:eye") 
+
+Window:AddDivider()
+
+-- CARPETA: DOCUMENTACION
+local DocFolder = Window:AddFolder({ 
+    Name = "Documentacion", 
+    Icon = Icons.GetIcon("lucide:file-text") 
+})
+local InfoTab = DocFolder:AddFile({ 
+    Name = "API Docs", 
+    Icon = Icons.GetIcon("lucide:layout-list") 
 })
 
 -- ##########################################################################
--- ROSE INFO (Documentation Page)
+-- DOCUMENTACION -> API Docs
 -- ##########################################################################
-InfoTab:AddDocTitle({
-    Text = "WELCOME TO ROSE UI v2.6"
-})
+InfoTab:AddDocTitle({ Text = "API DOCUMENTATION" })
 
-InfoTab:AddDocDescription({
-    Text = "Rose UI is a modern, premium, and highly customizable script hub library built for Lua. Designed with performance and a stunning Masonry layout in mind, it provides an outstanding user experience without the hassle."
+InfoTab:AddVersionCard({
+    Version = "v2.1.0",
+    Title = "Drawing Library",
+    Description = "Advanced rendering capabilities for shapes, lines, and custom text rendering on screen."
 })
 
 InfoTab:AddVersionCard({
-    Version = "v2.6 Stable",
-    Title = "The Documentation Update",
-    Description = "• Added Masonry Grid Layout\n• Added Documentation System (Cards, Titles)\n• Discord integrated into header\n• Wider sidebar and centered profile\n• Removed borders and polished UI elements"
+    Version = "v1.5.2",
+    Title = "Environment API",
+    Description = "Access to custom execution environment variables and specialized thread management functions."
 })
 
-InfoTab:AddCard({
-    Title = "For Developers",
-    Description = "This framework simplifies UI creation with modular components, auto-closing dropdowns, customizable keybinds, and dynamic layout routing. Build your scripts faster."
+InfoTab:AddVersionCard({
+    Version = "v3.0.1",
+    Title = "Memory Hacks",
+    Description = "Functions for direct memory manipulation, hook management, and metatable hooking."
+})
+
+InfoTab:AddVersionCard({
+    Version = "v1.0.0",
+    Title = "WebSockets",
+    Description = "Establish persistent connections with external servers and manage data streams efficiently."
+})
+
+InfoTab:AddDocTitle({ Text = "THEME COLOR PICKER" })
+
+InfoTab:AddColorPicker({
+    Name = "Theme Accent",
+    Default = Color3.fromRGB(242, 13, 13),
+    Flag = "AccentColor",
+    Callback = function(c) 
+        print("Changing Accent Color:", c)
+    end
 })
 
 -- ##########################################################################
@@ -103,25 +116,7 @@ AimSection:AddSlider({
     Callback = function(v) print("Distance:", v) end
 })
 
--- ##########################################################################
--- VISUALS (Dropdown & ColorPicker)
--- ##########################################################################
-local Appearance = ThemeTab:AddSection("INTERFACE STYLE")
-
-Appearance:AddColorPicker({
-    Name = "Theme Accent",
-    Default = Color3.fromRGB(242, 13, 13),
-    Flag = "AccentColor",
-    Callback = function(c) print("New Color:", c) end
-})
-
-Appearance:AddDropdown({
-    Name = "ESP Type",
-    Options = {"Boxes", "Skeleton", "Tracer", "Highlights", "Head Circle"},
-    Default = "Boxes",
-    Flag = "EspType",
-    Callback = function(v) print("ESP:", v) end
-})
+-- Removed old ThemeTab from here
 
 -- ##########################################################################
 -- MISC (Buscador y Utilidades)
