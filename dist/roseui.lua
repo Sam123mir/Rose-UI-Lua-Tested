@@ -1,7 +1,7 @@
 --[[
     RoseUI v2.5.0
     Created by RoseUI Team
-    Build Date: 4/3/2026, 9:18:59 p. m.
+    Build Date: 4/3/2026, 9:28:51 p. m.
     
     This is a unified distribution file. 
 ]]
@@ -2086,6 +2086,10 @@ function Section:New(sName, tab)
         return library.Elements.Label:Add(self.Container, options, library)
     end
 
+    function SectionObj:AddParagraph(options)
+        return library.Elements.Paragraph:Add(self.Container, options, library)
+    end
+
     function SectionObj:AddTargetList(options)
         return library.Elements.TargetList:Add(self.Container, options, library)
     end
@@ -4020,7 +4024,76 @@ function PlotGrid:Add(parent, options, library)
 end
 
 return PlotGrid
-end function __DARKLUA_BUNDLE_MODULES.u():typeof(__modImpl())local v=__DARKLUA_BUNDLE_MODULES.cache.u if not v then v={c=__modImpl()}__DARKLUA_BUNDLE_MODULES.cache.u=v end return v.c end end end
+end function __DARKLUA_BUNDLE_MODULES.u():typeof(__modImpl())local v=__DARKLUA_BUNDLE_MODULES.cache.u if not v then v={c=__modImpl()}__DARKLUA_BUNDLE_MODULES.cache.u=v end return v.c end end do local function __modImpl()
+
+local Constants = __DARKLUA_BUNDLE_MODULES.a()
+
+local Paragraph = {}
+
+function Paragraph:Add(parent, options, library)
+    local pName = options.Name or "Paragraph"
+    local pText = options.Text or "Input text here."
+    local theme = library.CurrentTheme or { 
+        Text = Color3.fromRGB(240, 255, 240),
+        SecondaryText = Color3.fromRGB(180, 180, 180),
+        Surface = Color3.fromRGB(30, 30, 30)
+    }
+
+    local paragraphFrame = Instance.new("Frame")
+    paragraphFrame.Name = pName .. "_Paragraph"
+    paragraphFrame.Size = UDim2.new(1, 0, 0, 50)
+    paragraphFrame.BackgroundColor3 = theme.Surface
+    paragraphFrame.BackgroundTransparency = 0.5
+    paragraphFrame.Parent = parent
+    Instance.new("UICorner", paragraphFrame).CornerRadius = UDim.new(0, 6)
+    
+    local pStroke = Instance.new("UIStroke")
+    pStroke.Color = Color3.new(1,1,1)
+    pStroke.Transparency = 0.95
+    pStroke.Thickness = 1
+    pStroke.Parent = paragraphFrame
+
+    local title = Instance.new("TextLabel")
+    title.Size = UDim2.new(1, -16, 0, 20)
+    title.Position = UDim2.new(0, 8, 0, 4)
+    title.BackgroundTransparency = 1
+    title.Text = pName
+    title.TextColor3 = theme.Text
+    title.Font = Enum.Font.GothamBold
+    title.TextSize = 11
+    title.TextXAlignment = Enum.TextXAlignment.Left
+    title.Parent = paragraphFrame
+    
+    local textLbl = Instance.new("TextLabel")
+    textLbl.Size = UDim2.new(1, -16, 1, -26)
+    textLbl.Position = UDim2.new(0, 8, 0, 22)
+    textLbl.BackgroundTransparency = 1
+    textLbl.Text = pText
+    textLbl.TextColor3 = theme.SecondaryText
+    textLbl.Font = Enum.Font.Gotham
+    textLbl.TextSize = 10
+    textLbl.TextXAlignment = Enum.TextXAlignment.Left
+    textLbl.TextYAlignment = Enum.TextYAlignment.Top
+    textLbl.TextWrapped = true
+    textLbl.Parent = paragraphFrame
+    
+    textLbl.AutomaticSize = Enum.AutomaticSize.Y
+    paragraphFrame.AutomaticSize = Enum.AutomaticSize.Y
+    
+    local ParagraphObj = {
+        Type = "Paragraph",
+        Instance = paragraphFrame
+    }
+
+    function ParagraphObj:Set(newText)
+        textLbl.Text = newText
+    end
+
+    return ParagraphObj
+end
+
+return Paragraph
+end function __DARKLUA_BUNDLE_MODULES.v():typeof(__modImpl())local v=__DARKLUA_BUNDLE_MODULES.cache.v if not v then v={c=__modImpl()}__DARKLUA_BUNDLE_MODULES.cache.v=v end return v.c end end end
 
 
 local RoseUI = {
@@ -4058,6 +4131,7 @@ RoseUI.Elements.Label = __DARKLUA_BUNDLE_MODULES.r()
 RoseUI.Elements.TargetList = __DARKLUA_BUNDLE_MODULES.s()
 RoseUI.Elements.InventoryGrid = __DARKLUA_BUNDLE_MODULES.t()
 RoseUI.Elements.PlotGrid = __DARKLUA_BUNDLE_MODULES.u()
+RoseUI.Elements.Paragraph = __DARKLUA_BUNDLE_MODULES.v()
 
 
 function RoseUI:Notify(options)

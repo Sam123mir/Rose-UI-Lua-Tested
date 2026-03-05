@@ -102,6 +102,10 @@ function Section:New(sName, tab)
         return library.Elements.Label:Add(self.Container, options, library)
     end
 
+    function SectionObj:AddParagraph(options)
+        return library.Elements.Paragraph:Add(self.Container, options, library)
+    end
+
     function SectionObj:AddTargetList(options)
         return library.Elements.TargetList:Add(self.Container, options, library)
     end
