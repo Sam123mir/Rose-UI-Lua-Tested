@@ -1,7 +1,7 @@
 --[[
     RoseUI v2.5.0
     Created by RoseUI Team
-    Build Date: 4/3/2026, 11:00:37 p. m.
+    Build Date: 4/3/2026, 11:08:47 p. m.
     
     This is a unified distribution file. 
 ]]
@@ -489,6 +489,10 @@ function Window:New(options, library)
     mainFrame.Active = true
     mainFrame.Parent = screenGui
     Instance.new("UICorner", mainFrame).CornerRadius = UDim.new(0, 12)
+    
+    local minSizeConstraint = Instance.new("UISizeConstraint")
+    minSizeConstraint.MinSize = Vector2.new(finalWidth, finalHeight)
+    minSizeConstraint.Parent = mainFrame
 
     
     local camera = workspace.CurrentCamera
@@ -1144,7 +1148,10 @@ function Window:New(options, library)
     local dscIcon = Instance.new("ImageLabel")
     dscIcon.Size = UDim2.new(1, 0, 1, 0)
     dscIcon.BackgroundTransparency = 1
-    local dIcon = resolveIcon(options.DiscordIcon or "lucide:message-square")
+    local dIcon = resolveIcon("lucide:discord") 
+    if not dIcon or dIcon == "" then
+        dIcon = "rbxassetid://10723374482" 
+    end
     if type(dIcon) == "table" then
         dscIcon.Image = dIcon.Image or ""
         dscIcon.ImageRectOffset = dIcon.ImageRectOffset or Vector2.new(0,0)
@@ -1158,9 +1165,7 @@ function Window:New(options, library)
     discordBtn.MouseButton1Click:Connect(function()
         if setclipboard and options.DiscordLink then
             setclipboard(options.DiscordLink)
-            if WindowObj.Notify then
-                WindowObj:Notify({Title = "Discord", Text = "Link copied to clipboard!", Duration = 3})
-            end
+            library:Notify({Title = "Discord", Text = "Link copied to clipboard!", Duration = 3})
         end
     end)
     discordBtn.MouseEnter:Connect(function() TweenService:Create(dscIcon, TweenInfo.new(0.2), {ImageColor3 = Color3.fromRGB(88, 101, 242)}):Play() end)
@@ -1944,33 +1949,31 @@ function Tab:New(tabOptions, window)
     page.Visible = false
     page.Parent = window.PageContainer
 
-    local pageLayout = Instance.new("UIListLayout")
-    pageLayout.FillDirection = Enum.FillDirection.Horizontal
-    pageLayout.Padding = UDim.new(0, 12)
-    pageLayout.SortOrder = Enum.SortOrder.LayoutOrder
-    pageLayout.Parent = page
-
     local leftCol = Instance.new("Frame")
     leftCol.Name = "LeftColumn"
-    leftCol.Size = UDim2.new(0.5, -6, 1, 0)
+    leftCol.Size = UDim2.new(0.5, -8, 0, 0)
+    leftCol.Position = UDim2.new(0, 0, 0, 0)
     leftCol.BackgroundTransparency = 1
+    leftCol.AutomaticSize = Enum.AutomaticSize.Y
     leftCol.LayoutOrder = 1
     leftCol.Parent = page
     
     local leftLayout = Instance.new("UIListLayout")
-    leftLayout.Padding = UDim.new(0, 10)
+    leftLayout.Padding = UDim.new(0, 12)
     leftLayout.SortOrder = Enum.SortOrder.LayoutOrder
     leftLayout.Parent = leftCol
 
     local rightCol = Instance.new("Frame")
     rightCol.Name = "RightColumn"
-    rightCol.Size = UDim2.new(0.5, -6, 1, 0)
+    rightCol.Size = UDim2.new(0.5, -8, 0, 0)
+    rightCol.Position = UDim2.new(0.5, 8, 0, 0)
     rightCol.BackgroundTransparency = 1
+    rightCol.AutomaticSize = Enum.AutomaticSize.Y
     rightCol.LayoutOrder = 2
     rightCol.Parent = page
     
     local rightLayout = Instance.new("UIListLayout")
-    rightLayout.Padding = UDim.new(0, 10)
+    rightLayout.Padding = UDim.new(0, 12)
     rightLayout.SortOrder = Enum.SortOrder.LayoutOrder
     rightLayout.Parent = rightCol
 
@@ -1978,9 +1981,6 @@ function Tab:New(tabOptions, window)
         local leftH = leftLayout.AbsoluteContentSize.Y
         local rightH = rightLayout.AbsoluteContentSize.Y
         local maxH = math.max(leftH, rightH)
-        
-        leftCol.Size = UDim2.new(0.5, -6, 0, maxH)
-        rightCol.Size = UDim2.new(0.5, -6, 0, maxH)
         page.CanvasSize = UDim2.new(0, 0, 0, maxH + 40)
     end
 
@@ -2177,7 +2177,7 @@ function Section:New(sName, tab)
     sectionContainer.Size = UDim2.new(1, 0, 0, 0)
     local secLayout = Instance.new("UIListLayout")
     secLayout.Padding = UDim.new(0, 10)
-    secLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+    secLayout.HorizontalAlignment = Enum.HorizontalAlignment.Left
     secLayout.Parent = sectionContainer
     
     sectionContainer.Position = UDim2.new(0, 0, 0, 28)

@@ -111,6 +111,10 @@ function Window:New(options, library)
     mainFrame.Active = true
     mainFrame.Parent = screenGui
     Instance.new("UICorner", mainFrame).CornerRadius = UDim.new(0, 12)
+    
+    local minSizeConstraint = Instance.new("UISizeConstraint")
+    minSizeConstraint.MinSize = Vector2.new(finalWidth, finalHeight)
+    minSizeConstraint.Parent = mainFrame
 
     -- Acrylic Blur Part
     local camera = workspace.CurrentCamera
@@ -766,7 +770,10 @@ function Window:New(options, library)
     local dscIcon = Instance.new("ImageLabel")
     dscIcon.Size = UDim2.new(1, 0, 1, 0)
     dscIcon.BackgroundTransparency = 1
-    local dIcon = resolveIcon(options.DiscordIcon or "lucide:message-square")
+    local dIcon = resolveIcon("lucide:discord") -- Attempt real discord icon
+    if not dIcon or dIcon == "" then
+        dIcon = "rbxassetid://10723374482" -- Fallback to a high-quality discord asset
+    end
     if type(dIcon) == "table" then
         dscIcon.Image = dIcon.Image or ""
         dscIcon.ImageRectOffset = dIcon.ImageRectOffset or Vector2.new(0,0)
@@ -780,9 +787,7 @@ function Window:New(options, library)
     discordBtn.MouseButton1Click:Connect(function()
         if setclipboard and options.DiscordLink then
             setclipboard(options.DiscordLink)
-            if WindowObj.Notify then
-                WindowObj:Notify({Title = "Discord", Text = "Link copied to clipboard!", Duration = 3})
-            end
+            library:Notify({Title = "Discord", Text = "Link copied to clipboard!", Duration = 3})
         end
     end)
     discordBtn.MouseEnter:Connect(function() TweenService:Create(dscIcon, TweenInfo.new(0.2), {ImageColor3 = Color3.fromRGB(88, 101, 242)}):Play() end)

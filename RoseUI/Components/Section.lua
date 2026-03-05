@@ -55,7 +55,7 @@ function Section:New(sName, tab)
     sectionContainer.Size = UDim2.new(1, 0, 0, 0)
     local secLayout = Instance.new("UIListLayout")
     secLayout.Padding = UDim.new(0, 10)
-    secLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+    secLayout.HorizontalAlignment = Enum.HorizontalAlignment.Left
     secLayout.Parent = sectionContainer
     
     sectionContainer.Position = UDim2.new(0, 0, 0, 28)

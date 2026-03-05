@@ -119,33 +119,31 @@ function Tab:New(tabOptions, window)
     page.Visible = false
     page.Parent = window.PageContainer
 
-    local pageLayout = Instance.new("UIListLayout")
-    pageLayout.FillDirection = Enum.FillDirection.Horizontal
-    pageLayout.Padding = UDim.new(0, 12)
-    pageLayout.SortOrder = Enum.SortOrder.LayoutOrder
-    pageLayout.Parent = page
-
     local leftCol = Instance.new("Frame")
     leftCol.Name = "LeftColumn"
-    leftCol.Size = UDim2.new(0.5, -6, 1, 0)
+    leftCol.Size = UDim2.new(0.5, -8, 0, 0)
+    leftCol.Position = UDim2.new(0, 0, 0, 0)
     leftCol.BackgroundTransparency = 1
+    leftCol.AutomaticSize = Enum.AutomaticSize.Y
     leftCol.LayoutOrder = 1
     leftCol.Parent = page
     
     local leftLayout = Instance.new("UIListLayout")
-    leftLayout.Padding = UDim.new(0, 10)
+    leftLayout.Padding = UDim.new(0, 12)
     leftLayout.SortOrder = Enum.SortOrder.LayoutOrder
     leftLayout.Parent = leftCol
 
     local rightCol = Instance.new("Frame")
     rightCol.Name = "RightColumn"
-    rightCol.Size = UDim2.new(0.5, -6, 1, 0)
+    rightCol.Size = UDim2.new(0.5, -8, 0, 0)
+    rightCol.Position = UDim2.new(0.5, 8, 0, 0)
     rightCol.BackgroundTransparency = 1
+    rightCol.AutomaticSize = Enum.AutomaticSize.Y
     rightCol.LayoutOrder = 2
     rightCol.Parent = page
     
     local rightLayout = Instance.new("UIListLayout")
-    rightLayout.Padding = UDim.new(0, 10)
+    rightLayout.Padding = UDim.new(0, 12)
     rightLayout.SortOrder = Enum.SortOrder.LayoutOrder
     rightLayout.Parent = rightCol
 
@@ -153,9 +151,6 @@ function Tab:New(tabOptions, window)
         local leftH = leftLayout.AbsoluteContentSize.Y
         local rightH = rightLayout.AbsoluteContentSize.Y
         local maxH = math.max(leftH, rightH)
-        
-        leftCol.Size = UDim2.new(0.5, -6, 0, maxH)
-        rightCol.Size = UDim2.new(0.5, -6, 0, maxH)
         page.CanvasSize = UDim2.new(0, 0, 0, maxH + 40)
     end
 
