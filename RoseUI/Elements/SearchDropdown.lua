@@ -185,6 +185,20 @@ function SearchDropdown:Add(parent, options, library)
         TweenService:Create(bgStroke, TweenInfo.new(0.2), {Transparency = 0.95, Color = Color3.new(1,1,1)}):Play()
     end)
 
+    function SearchObj:Close()
+        if SearchObj.IsOpen then
+            SearchObj.IsOpen = false
+            TweenService:Create(arrow, TweenInfo.new(0.3), {Rotation = 0}):Play()
+            local t = TweenService:Create(dropMenuBg, TweenInfo.new(0.2), {Size = UDim2.new(0, dropBtn.AbsoluteSize.X, 0, 0)})
+            t:Play()
+            t.Completed:Connect(function()
+                if not SearchObj.IsOpen then dropMenuBg.Visible = false end
+            end)
+        end
+    end
+
+    table.insert(library.Elements, SearchObj)
+
     return SearchObj
 end
 

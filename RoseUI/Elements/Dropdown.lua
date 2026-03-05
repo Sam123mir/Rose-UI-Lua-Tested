@@ -173,6 +173,12 @@ function Dropdown:Add(parent, options, library)
         end
     end
 
+    function DropdownObj:Close()
+        if DropdownObj.IsOpen then
+            DropdownObj:Toggle()
+        end
+    end
+
     function DropdownObj:Refresh(newList)
         DropdownObj.Options = newList
         for _, child in pairs(dropMenu:GetChildren()) do

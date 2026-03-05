@@ -1,7 +1,7 @@
 --[[
     RoseUI v2.5.0
     Created by RoseUI Team
-    Build Date: 4/3/2026, 9:28:51 p. m.
+    Build Date: 4/3/2026, 9:47:52 p. m.
     
     This is a unified distribution file. 
 ]]
@@ -650,8 +650,8 @@ function Window:New(options, library)
         fallbackLabel.Parent = item
         
         local val = Instance.new("TextLabel")
-        val.Size = UDim2.new(1, -28, 1, 0)
-        val.Position = UDim2.new(0, 26, 0, 0)
+        val.Size = UDim2.new(1, -32, 1, 0)
+        val.Position = UDim2.new(0, 30, 0, 0)
         val.BackgroundTransparency = 1
         val.Text = defaultVal
         val.TextColor3 = theme.Primary
@@ -668,9 +668,9 @@ function Window:New(options, library)
         separator.BorderSizePixel = 0
         separator.Parent = item
         
-        item.Size = UDim2.new(0, val.TextBounds.X + 40, 1, 0)
+        item.Size = UDim2.new(0, val.TextBounds.X + 44, 1, 0)
         val:GetPropertyChangedSignal("Text"):Connect(function()
-            item.Size = UDim2.new(0, val.TextBounds.X + 40, 1, 0)
+            item.Size = UDim2.new(0, val.TextBounds.X + 44, 1, 0)
         end)
         
         return val
@@ -1451,6 +1451,21 @@ function Window:New(options, library)
         return library.Folder:New(folderOptions, self)
     end
     
+    function WindowObj:AddFile(options)
+        options.IsFile = true
+        return library.Tab:New(options, self)
+    end
+    
+    function WindowObj:AddDivider()
+        local div = Instance.new("Frame")
+        div.Size = UDim2.new(1, -24, 0, 1)
+        div.Position = UDim2.new(0, 12, 0, 0)
+        div.BackgroundColor3 = theme.Primary
+        div.BackgroundTransparency = 0.8
+        div.BorderSizePixel = 0
+        div.Parent = navScroll
+    end
+    
     
     navLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
         navScroll.CanvasSize = UDim2.new(0, 0, 0, navLayout.AbsoluteContentSize.Y)
@@ -1461,8 +1476,10 @@ function Window:New(options, library)
     end)
 
     
+    WindowObj.ToggleKey = options.Keybind or Enum.KeyCode.RightControl
+    
     local toggleConn = UserInputService.InputBegan:Connect(function(input, gpe)
-        if not gpe and input.KeyCode == Enum.KeyCode.RightControl then
+        if not gpe and input.KeyCode == WindowObj.ToggleKey then
             screenGui.Enabled = not screenGui.Enabled
         end
     end)
@@ -1931,6 +1948,15 @@ function Tab:New(tabOptions, window)
  
         window.CurrentTab = TabObj
         setActive(true)
+        
+        
+        for _, el in pairs(library.Elements) do
+            if (el.Type == "Dropdown" or el.Type == "SearchDropdown") and el.IsOpen then
+                if type(el.Close) == "function" then
+                    el:Close()
+                end
+            end
+        end
     end)
 
     btnTrigger.MouseEnter:Connect(function()
@@ -2670,6 +2696,12 @@ function Dropdown:Add(parent, options, library)
         end
     end
 
+    function DropdownObj:Close()
+        if DropdownObj.IsOpen then
+            DropdownObj:Toggle()
+        end
+    end
+
     function DropdownObj:Refresh(newList)
         DropdownObj.Options = newList
         for _, child in pairs(dropMenu:GetChildren()) do
@@ -2937,6 +2969,20 @@ function SearchDropdown:Add(parent, options, library)
         TweenService:Create(bgStroke, TweenInfo.new(0.2), {Transparency = 0.95, Color = Color3.new(1,1,1)}):Play()
     end)
 
+    function SearchObj:Close()
+        if SearchObj.IsOpen then
+            SearchObj.IsOpen = false
+            TweenService:Create(arrow, TweenInfo.new(0.3), {Rotation = 0}):Play()
+            local t = TweenService:Create(dropMenuBg, TweenInfo.new(0.2), {Size = UDim2.new(0, dropBtn.AbsoluteSize.X, 0, 0)})
+            t:Play()
+            t.Completed:Connect(function()
+                if not SearchObj.IsOpen then dropMenuBg.Visible = false end
+            end)
+        end
+    end
+
+    table.insert(library.Elements, SearchObj)
+
     return SearchObj
 end
 
@@ -3018,6 +3064,14 @@ function Textbox:Add(parent, options, library)
     box.FocusLost:Connect(function(enter)
         boxObj.Value = box.Text
         cb(box.Text)
+        
+        if options.NotifyOnChange and library.Window then
+            library.Window:Notify({
+                Title = tName,
+                Text = "Value changed to: " .. box.Text,
+                Duration = 2
+            })
+        end
     end)
 
     bg.MouseEnter:Connect(function() 

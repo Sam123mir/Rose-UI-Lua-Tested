@@ -272,8 +272,8 @@ function Window:New(options, library)
         fallbackLabel.Parent = item
         
         local val = Instance.new("TextLabel")
-        val.Size = UDim2.new(1, -28, 1, 0)
-        val.Position = UDim2.new(0, 26, 0, 0)
+        val.Size = UDim2.new(1, -32, 1, 0)
+        val.Position = UDim2.new(0, 30, 0, 0)
         val.BackgroundTransparency = 1
         val.Text = defaultVal
         val.TextColor3 = theme.Primary
@@ -290,9 +290,9 @@ function Window:New(options, library)
         separator.BorderSizePixel = 0
         separator.Parent = item
         
-        item.Size = UDim2.new(0, val.TextBounds.X + 40, 1, 0)
+        item.Size = UDim2.new(0, val.TextBounds.X + 44, 1, 0)
         val:GetPropertyChangedSignal("Text"):Connect(function()
-            item.Size = UDim2.new(0, val.TextBounds.X + 40, 1, 0)
+            item.Size = UDim2.new(0, val.TextBounds.X + 44, 1, 0)
         end)
         
         return val
@@ -1073,6 +1073,21 @@ function Window:New(options, library)
         return library.Folder:New(folderOptions, self)
     end
     
+    function WindowObj:AddFile(options)
+        options.IsFile = true
+        return library.Tab:New(options, self)
+    end
+    
+    function WindowObj:AddDivider()
+        local div = Instance.new("Frame")
+        div.Size = UDim2.new(1, -24, 0, 1)
+        div.Position = UDim2.new(0, 12, 0, 0)
+        div.BackgroundColor3 = theme.Primary
+        div.BackgroundTransparency = 0.8
+        div.BorderSizePixel = 0
+        div.Parent = navScroll
+    end
+    
     -- Auto Update Canvas Size & Layout Adjustments
     navLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
         navScroll.CanvasSize = UDim2.new(0, 0, 0, navLayout.AbsoluteContentSize.Y)
@@ -1083,8 +1098,10 @@ function Window:New(options, library)
     end)
 
     -- Toggle Hotkey
+    WindowObj.ToggleKey = options.Keybind or Enum.KeyCode.RightControl
+    
     local toggleConn = UserInputService.InputBegan:Connect(function(input, gpe)
-        if not gpe and input.KeyCode == Enum.KeyCode.RightControl then
+        if not gpe and input.KeyCode == WindowObj.ToggleKey then
             screenGui.Enabled = not screenGui.Enabled
         end
     end)

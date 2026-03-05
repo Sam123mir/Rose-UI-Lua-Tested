@@ -74,6 +74,14 @@ function Textbox:Add(parent, options, library)
     box.FocusLost:Connect(function(enter)
         boxObj.Value = box.Text
         cb(box.Text)
+        
+        if options.NotifyOnChange and library.Window then
+            library.Window:Notify({
+                Title = tName,
+                Text = "Value changed to: " .. box.Text,
+                Duration = 2
+            })
+        end
     end)
 
     bg.MouseEnter:Connect(function() 

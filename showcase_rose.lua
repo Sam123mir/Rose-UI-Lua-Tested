@@ -26,6 +26,14 @@ local Window = RoseUI:CreateWindow({
 })
 
 -- 4. Estructura de Navegación (Carpetas y Archivos)
+-- INFO STANDALONE FILE
+local InfoTab = Window:AddFile({
+    Name = "Rose Info",
+    Icon = Icons.GetIcon("lucide:info")
+})
+
+Window:AddDivider()
+
 -- CARPETA: COMBATE
 local CombatFolder = Window:AddFolder({ 
     Name = "Combate", 
@@ -51,6 +59,21 @@ local ThemeTab = ConfigFolder:AddFile({
 })
 
 -- ##########################################################################
+-- ROSE INFO
+-- ##########################################################################
+local WelcomeSection = InfoTab:AddSection("ABOUT ROSE UI")
+
+WelcomeSection:AddParagraph({
+    Name = "Welcome to Rose UI v2.6",
+    Text = "Rose UI is a modern, lightweight, and highly customizable library built for Lua scripts. Designed with performance and aesthetics in mind, it provides a premium experience."
+})
+
+WelcomeSection:AddParagraph({
+    Name = "For Developers",
+    Text = "This framework simplifies UI creation with modular components, dynamic icons, robust animations, and multi-language support. It lets you focus purely on your script logic."
+})
+
+-- ##########################################################################
 -- COMBATE -> MAIN
 -- ##########################################################################
 local AimSection = MainTab:AddSection("AIMBOT CONTROLS")
@@ -60,6 +83,7 @@ AimSection:AddToggle({
     Description = "Automatically redirects your bullets to targets.",
     Default = false,
     Flag = "SilentAim",
+    NotifyOnChange = true,
     Callback = function(v) print("Silent Aim:", v) end
 })
 
@@ -129,6 +153,7 @@ ExtraFields:AddTextbox({
     Default = "Player1",
     Placeholder = "Enter name here...",
     Flag = "TargetUser",
+    NotifyOnChange = true,
     Callback = function(v) print("Target Set:", v) end
 })
 

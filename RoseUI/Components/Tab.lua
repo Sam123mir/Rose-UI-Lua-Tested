@@ -158,6 +158,15 @@ function Tab:New(tabOptions, window)
  
         window.CurrentTab = TabObj
         setActive(true)
+        
+        -- Cierra todos los dropdowns abiertos al cambiar de pestaña
+        for _, el in pairs(library.Elements) do
+            if (el.Type == "Dropdown" or el.Type == "SearchDropdown") and el.IsOpen then
+                if type(el.Close) == "function" then
+                    el:Close()
+                end
+            end
+        end
     end)
 
     btnTrigger.MouseEnter:Connect(function()
