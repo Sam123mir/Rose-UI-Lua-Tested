@@ -1,118 +1,371 @@
-# 🌹 RoseUI Complete Documentation
+# 🌹 RoseUI Premium — Documentation
 
-RoseUI is designed to be intuitive and customizable. Here is the complete API reference.
-
-## 🛠️ Global API
-
-### Loading the System
-```lua
-local RoseUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/Sam123mir/Rose-UI-Lua-Tested/main/dist/roseui.lua"))()
-```
-
-### Loading Icons
-```lua
-local Icons = loadstring(game:HttpGet("https://raw.githubusercontent.com/Sam123mir/Icons-RoseV1/main/Main.lua"))()
-```
-
-### Icon Usage
-The icon library allows access to multiple design families (Lucide, Solar, Craft, Geist, SF Symbols).
-
-**Get Icon ID**
-To use an icon in RoseUI, simply call the `Icons.GetIcon` function specifying the name and, optionally, the family with a prefix.
-
-```lua
--- Format "Library:IconName" or just "IconName" (defaults to Lucide)
-local lucideHome = Icons.GetIcon("Home") -- Returns rbxassetid://...
-local solarBolt = Icons.GetIcon("solar:Bolt")
-local geistUser = Icons.GetIcon("geist:User")
-```
-
-Available libraries: `lucide`, `solar`, `craft`, `geist`, `sfsymbols`.
-
-**Integration with RoseUI**
-Pass the result directly to the interface components:
-```lua
-Window:AddFolder({ 
-    Name = "Visuals", 
-    Icon = Icons.GetIcon("solar:Eye") -- This is how icons are passed to the UI
-})
-```
-
-### `RoseUI:CreateWindow(options)`
-Configure your interface base.
-- `Name` (string): Main title.
-- `Tag` (string): Small tag or version next to the title.
-- `Logo` (string/id): Asset ID or library icon.
-- `Keybind` (Enum.KeyCode): Key to hide/show (Default: RightControl).
+> **Version:** 1.3.0 | **Repo:** [Sam123mir/Rose-UI-Lua-Tested](https://github.com/Sam123mir/Rose-UI-Lua-Tested)
 
 ---
 
-## 📑 Organization: Folders and Tabs
+## Table of Contents
 
-### `Window:AddFolder(options)`
-Creates a collapsible category in the sidebar.
-- `Name` (string): Visible name.
-- `Icon` (string): Library icon.
-
-### `Folder:AddFile(options)` or `Window:MakeTab(options)`
-Creates a content page.
-- `Name` (string): Name.
-- `Icon` (string): Icon.
+1. [Installation](#installation)
+2. [Creating a Window](#creating-a-window)
+3. [Pages (Tabs)](#pages-tabs)
+4. [UI Elements](#ui-elements)
+   - [Toggle](#toggle)
+   - [Slider](#slider)
+   - [Button](#button)
+   - [Label](#label)
+   - [Section](#section)
+   - [Keybind](#keybind)
+   - [Dropdown](#dropdown)
+   - [ColorPicker](#colorpicker)
+   - [TextBox](#textbox)
+5. [Notification System](#notification-system)
+6. [Configuration System](#configuration-system)
+7. [Update System](#update-system)
+8. [Window Methods](#window-methods)
+9. [Icon System](#icon-system)
 
 ---
 
-## 🧱 Elements and Components
+## Installation
 
-### `Tab:AddSection(name)`
-Divides your page into logical blocks.
+Load the unified build directly in your executor:
 
-#### Buttons
 ```lua
-Section:AddButton({
-    Name = "Click Me",
-    Description = "Describe what this button does",
-    Callback = function() print("Clicked!") end
+local RoseUI = loadstring(game:HttpGet(
+    "https://raw.githubusercontent.com/Sam123mir/Rose-UI-Lua-Tested/main/dist/roseui.lua"
+))()
+```
+
+**Recommended: wait for the game to fully load before initializing RoseUI:**
+
+```lua
+if not game:IsLoaded() then game.Loaded:Wait() end
+task.wait(0.5)
+
+local RoseUI = loadstring(game:HttpGet(
+    "https://raw.githubusercontent.com/Sam123mir/Rose-UI-Lua-Tested/main/dist/roseui.lua"
+))()
+```
+
+---
+
+## Creating a Window
+
+```lua
+local Window = RoseUI:CreateWindow({
+    Name      = "My Hub",           -- Window title (string, required)
+    Logo      = Icons.GetIcon("solar:Bolt"), -- Icon (optional, requires Icon system)
+    ToggleKey = Enum.KeyCode.RightShift,     -- Key to show/hide UI (optional, default: RightShift)
 })
 ```
 
-#### Toggles
+| Parameter  | Type              | Required | Description                        |
+|------------|-------------------|----------|------------------------------------|
+| `Name`     | string            | ✅       | Title displayed in the window bar  |
+| `Logo`     | Icon              | ❌       | Icon shown next to the title       |
+| `ToggleKey`| Enum.KeyCode      | ❌       | Key to toggle UI visibility        |
+
+---
+
+## Pages (Tabs)
+
+Create navigation pages inside the window:
+
 ```lua
-Section:AddToggle({
-    Name = "Auto Farm",
-    Default = false,
-    Flag = "AutoFarm",
-    Callback = function(state) print("State:", state) end
-})
+local TabCombat   = Window:CreatePage("Combat")
+local TabMovement = Window:CreatePage("Movement")
+local TabConfig   = Window:CreatePage("Config")
 ```
 
-#### Sliders
-```lua
-Section:AddSlider({
-    Name = "Walk Speed",
-    Min = 16,
-    Max = 200,
-    Default = 16,
-    Flag = "ws",
-    Callback = function(v) game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = v end
-})
-```
+| Parameter | Type   | Required | Description         |
+|-----------|--------|----------|---------------------|
+| name      | string | ✅       | Name of the tab     |
 
-#### Color Picker (Redesigned)
+---
+
+## UI Elements
+
+### Toggle
+
+A boolean on/off switch.
+
 ```lua
-Section:AddColorPicker({
-    Name = "Team Color",
-    Default = Color3.fromRGB(242, 13, 13),
-    Flag = "TeamColor",
-    Callback = function(color) print("Color changed") end
+Tab:CreateToggle({
+    Name     = "Enable Feature",
+    Flag     = "FeatureToggle",  -- used for SaveConfig/LoadConfig
+    Default  = false,
+    Callback = function(state)   -- state: boolean
+        print("Toggle is now:", state)
+    end
 })
 ```
 
 ---
 
-## 📊 Widgets and Search
+### Slider
 
-- **Search**: The search bar in the sidebar automatically filters all folders and files.
-- **Widgets**: Automatically shows **FPS**, **Ping**, **RAM**, and accurate **Local Time** in real-time.
+A numeric range input.
+
+```lua
+Tab:CreateSlider({
+    Name     = "Walk Speed",
+    Flag     = "WalkSpeedSlider",
+    Min      = 16,
+    Max      = 500,
+    Default  = 16,
+    Callback = function(value)   -- value: number
+        game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = value
+    end
+})
+```
 
 ---
-*RoseUI v2.5.0 Premium Edition*
+
+### Button
+
+A clickable action button.
+
+```lua
+Tab:CreateButton({
+    Name     = "Teleport to Spawn",
+    Callback = function()
+        -- your action here
+    end
+})
+```
+
+---
+
+### Label
+
+A static informational text line.
+
+```lua
+Tab:CreateLabel({
+    Name = "This is an informational label."
+})
+```
+
+---
+
+### Section
+
+A visual separator between groups of elements.
+
+```lua
+Tab:CreateSection("── Advanced Settings ──")
+```
+
+---
+
+### Keybind
+
+An interactive key selector. Users can click it and press any key to reassign.
+
+```lua
+Tab:CreateKeybind({
+    Name     = "Aim Key",
+    Flag     = "AimKeybind",
+    Default  = Enum.KeyCode.E,
+    Callback = function(key)   -- key: Enum.KeyCode
+        print("New key assigned:", key.Name)
+    end
+})
+```
+
+---
+
+### Dropdown
+
+A selection input with multiple options.
+
+```lua
+Tab:CreateDropdown({
+    Name     = "Select Mode",
+    Flag     = "ModeDropdown",
+    Options  = { "Normal", "Silent", "Aggressive" },
+    Default  = "Normal",
+    Callback = function(selected)   -- selected: string
+        print("Mode selected:", selected)
+    end
+})
+```
+
+---
+
+### ColorPicker
+
+A full RGB/HEX color picker with presets.
+
+```lua
+Tab:CreateColorPicker({
+    Name     = "ESP Color",
+    Flag     = "ESPColor",
+    Default  = Color3.fromRGB(255, 60, 60),
+    Callback = function(color)   -- color: Color3
+        print("Color changed:", color)
+    end
+})
+```
+
+---
+
+### TextBox
+
+A free-text input field.
+
+```lua
+Tab:CreateTextBox({
+    Name        = "Target Player",
+    Flag        = "TargetName",
+    Default     = "",
+    PlaceHolder = "Enter a player name...",
+    Callback = function(text)   -- text: string
+        print("Input received:", text)
+    end
+})
+```
+
+---
+
+## Notification System
+
+Display in-UI toast notifications with four visual types.
+
+```lua
+RoseUI:Notify({
+    Title    = "Operation complete",
+    Message  = "Everything worked as expected.",
+    Type     = "success",   -- "success" | "error" | "warning" | "info"
+    Duration = 3            -- seconds (default: 3)
+})
+```
+
+| Type      | Color  | Use case                        |
+|-----------|--------|---------------------------------|
+| `success` | 🟢 Green  | Operation completed successfully |
+| `error`   | 🔴 Red    | Something went wrong             |
+| `warning` | 🟡 Yellow | Potential issue or risk          |
+| `info`    | 🔵 Blue   | Neutral informational message    |
+
+---
+
+## Configuration System
+
+Save and restore all element states across sessions using JSON files.
+
+> Requires executor support for `writefile`, `readfile`, and `isfile`.
+
+### SaveConfig
+
+```lua
+RoseUI:SaveConfig("my_script_config.json")
+```
+
+Saves all registered `Flag` values to a local JSON file.
+
+### LoadConfig
+
+```lua
+RoseUI:LoadConfig("my_script_config.json")
+```
+
+Reads the JSON file and restores each flag value, then fires the corresponding callback.
+
+**Safety guarantees built in:**
+- Skips unknown flags — won't crash on foreign keys
+- Type-checks each value — a `string` in the file will never be applied to a `boolean` flag
+- Range-checks sliders — values outside `Min`/`Max` are ignored
+- All callbacks are wrapped in `pcall` — a broken callback won't abort the whole load
+
+**Recommended pattern:**
+
+```lua
+-- At the bottom of your script, auto-restore saved preferences:
+task.spawn(function()
+    task.wait(0.5)
+    RoseUI:LoadConfig("my_script_config.json")
+end)
+
+-- In your Config tab, expose Save/Load buttons:
+ConfigTab:CreateButton({
+    Name     = "Save Config",
+    Callback = function()
+        RoseUI:SaveConfig("my_script_config.json")
+        RoseUI:Notify({ Title = "Saved", Message = "Config saved.", Type = "success" })
+    end
+})
+
+ConfigTab:CreateButton({
+    Name     = "Load Config",
+    Callback = function()
+        RoseUI:LoadConfig("my_script_config.json")
+        RoseUI:Notify({ Title = "Loaded", Message = "Config restored.", Type = "info" })
+    end
+})
+```
+
+---
+
+## Update System
+
+Automatically check GitHub for a newer release and notify the user.
+
+```lua
+RoseUI:CheckVersion({
+    Repo           = "Sam123mir/Rose-UI-Lua-Tested",  -- GitHub repo (string, required)
+    CurrentVersion = "1.3.0",                          -- Your script's version (string, required)
+    Silent         = false,                            -- Suppress UI notification (boolean, optional)
+    OnUpdate = function(newVersion, oldVersion)        -- Fires if update is available (optional)
+        warn("Update available: " .. oldVersion .. " → " .. newVersion)
+    end,
+    OnCurrent = function()                             -- Fires if already up to date (optional)
+        print("Up to date ✓")
+    end
+})
+```
+
+| Parameter        | Type     | Required | Description                                          |
+|------------------|----------|----------|------------------------------------------------------|
+| `Repo`           | string   | ✅       | GitHub repo in `"user/repo"` format                 |
+| `CurrentVersion` | string   | ✅       | Version string, with or without leading `v`          |
+| `Silent`         | boolean  | ❌       | If `true`, suppresses the in-UI notification         |
+| `OnUpdate`       | function | ❌       | Called with `(newVersion, oldVersion)` if outdated   |
+| `OnCurrent`      | function | ❌       | Called with no args if already on latest             |
+
+**Important:** `CheckVersion` runs in `task.spawn` — it never blocks your script or the UI.
+
+---
+
+## Window Methods
+
+| Method                       | Description                                      |
+|------------------------------|--------------------------------------------------|
+| `Window:CreatePage(name)`    | Creates a new tab/page                           |
+| `Window:Destroy()`           | Destroys the window and cleans up all connections and drawings |
+| `Window:IsDestroyed()`       | Returns `true` if the window has been destroyed  |
+
+---
+
+## Icon System
+
+RoseUI supports multiple icon families via a dedicated loader.
+
+```lua
+local Icons = loadstring(game:HttpGet(
+    "https://raw.githubusercontent.com/Sam123mir/Icons-RoseV1/main/Main.lua"
+))()
+
+-- Usage: "family:IconName"
+Icons.GetIcon("solar:Bolt")
+Icons.GetIcon("lucide:Shield")
+Icons.GetIcon("craft:Star")
+Icons.GetIcon("geist:Home")
+```
+
+**Supported families:** `solar`, `lucide`, `craft`, `geist`, `sf`
+
+---
+
+*Made with ❤️ for the Roblox community — [github.com/Sam123mir/Rose-UI-Lua-Tested](https://github.com/Sam123mir/Rose-UI-Lua-Tested)*

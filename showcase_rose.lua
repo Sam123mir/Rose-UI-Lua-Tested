@@ -1,178 +1,259 @@
--- [[ 🌹 RoseUI v2.5 Premium Showcase 🌹 ]]
--- Versión Unificada: https://github.com/Sam123mir/Rose-UI-Lua-Tested
+-- ============================================================
+--  🌹 RoseUI Premium — showcase_rose.lua
+--  Ejemplo completo de todos los componentes y sistemas.
+--  Versión: 1.3.0 | github.com/Sam123mir/Rose-UI-Lua-Tested
+-- ============================================================
 
--- 1. Cargar Librería (Versión Dist para mejor rendimiento)
-local RoseUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/Sam123mir/Rose-UI-Lua-Tested/main/dist/roseui.lua"))()
+-- ── 1. CARGA DE LIBRERÍAS ────────────────────────────────────
+if not game:IsLoaded() then game.Loaded:Wait() end
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+task.wait(0.5)
 
--- 2. Cargar Iconos (Repositorio Dedicado)
-local Icons = loadstring(game:HttpGet("https://raw.githubusercontent.com/Sam123mir/Icons-RoseV1/main/Main.lua"))()
+local RoseUI = loadstring(game:HttpGet(
+    "https://raw.githubusercontent.com/Sam123mir/Rose-UI-Lua-Tested/main/dist/roseui.lua"
+))()
 
--- Notificación de Bienvenida
-RoseUI:Notify({
-    Title = "RoseUI Cargado",
-    Text = "Sistema de Build y Iconos detectado. Bienvenido.",
-    Duration = 5
+local Icons = loadstring(game:HttpGet(
+    "https://raw.githubusercontent.com/Sam123mir/Icons-RoseV1/main/Main.lua"
+))()
+
+task.wait(0.3)
+
+-- ── 2. VERIFICACIÓN DE VERSIÓN (automática al iniciar) ───────
+--  Se ejecuta en segundo plano, no bloquea la UI.
+RoseUI:CheckVersion({
+    Repo           = "Sam123mir/Rose-UI-Lua-Tested",
+    CurrentVersion = "1.3.0",
+    Silent         = false,
+    OnUpdate = function(newVersion, oldVersion)
+        -- Callback opcional: puedes logear, deshabilitar features, etc.
+        warn(string.format("RoseUI: Actualización disponible %s → %s", oldVersion, newVersion))
+    end,
+    OnCurrent = function()
+        print("RoseUI: Estás usando la última versión ✓")
+    end
 })
 
--- 3. Crear Ventana
+-- ── 3. CREAR VENTANA ─────────────────────────────────────────
 local Window = RoseUI:CreateWindow({
-    Name = "ROSE UI",
-    Tag = "V1.2.4",
-    Logo = "https://i.ibb.co/TqKyDDyq/rose-emoji.webp", -- Official high-quality link
-    Keybind = Enum.KeyCode.RightControl
+    Name      = "🌹 RoseUI — Showcase",
+    Logo      = Icons.GetIcon("solar:Bolt"),
+    ToggleKey = Enum.KeyCode.RightShift, -- RightShift muestra/oculta la UI
 })
 
--- 4. Estructura de Navegación (Carpetas y Archivos)
+-- ── 4. PÁGINAS ───────────────────────────────────────────────
+local TabBasicos    = Window:CreatePage("Básicos")
+local TabAvanzados  = Window:CreatePage("Avanzados")
+local TabNotif      = Window:CreatePage("Notificaciones")
+local TabConfig     = Window:CreatePage("Configuración")
 
--- CARPETA: COMBATE
-local CombatFolder = Window:AddFolder({ 
-    Name = "Combate", 
-    Icon = Icons.GetIcon("lucide:zap") 
-})
-local MiscTab = CombatFolder:AddFile({ 
-    Name = "Misceláneo", 
-    Icon = Icons.GetIcon("lucide:box") 
-})
-local MainTab = CombatFolder:AddFile({ 
-    Name = "Principal", 
-    Icon = Icons.GetIcon("lucide:target") 
-})
+-- ============================================================
+--  TAB 1 — ELEMENTOS BÁSICOS
+-- ============================================================
 
-Window:AddDivider()
-
--- TOP LEVEL FILE: DOCUMENTATION
-local InfoTab = Window:AddFile({ 
-    Name = "API Docs", 
-    Icon = Icons.GetIcon("lucide:layout-list") 
-})
-
--- ##########################################################################
--- DOCUMENTACION -> API Docs
--- ##########################################################################
-InfoTab:AddDocTitle({ Text = "API DOCUMENTATION" })
-
-InfoTab:AddVersionCard({
-    Version = "v2.1.0",
-    Title = "Drawing Library",
-    Description = "Advanced rendering capabilities for shapes, lines, and custom text rendering on screen."
-})
-
-InfoTab:AddVersionCard({
-    Version = "v1.5.2",
-    Title = "Environment API",
-    Description = "Access to custom execution environment variables and specialized thread management functions."
-})
-
-InfoTab:AddVersionCard({
-    Version = "v3.0.1",
-    Title = "Memory Hacks",
-    Description = "Functions for direct memory manipulation, hook management, and metatable hooking."
-})
-
-InfoTab:AddVersionCard({
-    Version = "v1.0.0",
-    Title = "WebSockets",
-    Description = "Establish persistent connections with external servers and manage data streams efficiently."
-})
-
-InfoTab:AddDocTitle({ Text = "THEME COLOR PICKER" })
-
-InfoTab:AddColorPicker({
-    Name = "Theme Accent",
-    Default = Color3.fromRGB(242, 13, 13),
-    Flag = "AccentColor",
-    Callback = function(c) 
-        print("Changing Accent Color:", c)
-    end
-})
-
--- ##########################################################################
--- COMBATE -> MAIN
--- ##########################################################################
-local AimSection = MainTab:AddSection("AIMBOT CONTROLS")
-
-AimSection:AddToggle({
-    Name = "Silent Aim",
-    Description = "Automatically redirects your bullets to targets.",
+-- TOGGLE
+TabBasicos:CreateToggle({
+    Name    = "Toggle de Ejemplo",
+    Flag    = "ExampleToggle",
     Default = false,
-    Flag = "SilentAim",
-    NotifyOnChange = true,
-    Callback = function(v) print("Silent Aim:", v) end
+    Callback = function(state)
+        print("Toggle →", state)
+    end
 })
 
-AimSection:AddSlider({
-    Name = "Target Distance",
-    Min = 50,
-    Max = 1000,
-    Default = 500,
-    Flag = "Dist",
-    Callback = function(v) print("Distance:", v) end
+-- SLIDER
+TabBasicos:CreateSlider({
+    Name    = "Slider de Velocidad",
+    Flag    = "SpeedSlider",
+    Min     = 16,
+    Max     = 500,
+    Default = 16,
+    Callback = function(value)
+        print("Velocidad →", value)
+        -- Ejemplo de aplicación real:
+        -- game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = value
+    end
 })
 
--- Removed old ThemeTab from here
-
--- ##########################################################################
--- MISC (Buscador y Utilidades)
--- ##########################################################################
-local Utils = MiscTab:AddSection("EXTRA FEATURES")
-
-Utils:AddSearchDropdown({
-    Name = "Teleport Places",
-    Options = {"Prison Life", "Adopt Me", "Blox Fruits", "Arsenal", "Doors", "Brookhaven"},
-    Default = {"Arsenal"},
-    Flag = "TPs"
-})
-
-Utils:AddButton({
-    Name = "Force Unload",
-    Description = "Removes all RoseUI traces from game memory.",
+-- BUTTON
+TabBasicos:CreateButton({
+    Name     = "Botón de Acción",
     Callback = function()
-        local ui = game:GetService("CoreGui"):FindFirstChild("ROSE HUB")
-        if ui then ui:Destroy() end
+        print("Botón presionado!")
+        RoseUI:Notify({
+            Title    = "Acción ejecutada",
+            Message  = "El botón fue presionado correctamente.",
+            Type     = "success",
+            Duration = 3
+        })
     end
 })
 
-Utils:AddParagraph({
-    Name = "Notice",
-    Text = "This UI library was built with performance and modern aesthetics in mind."
+-- LABEL
+TabBasicos:CreateLabel({
+    Name = "Esto es un Label informativo"
 })
 
-Utils:AddLabel({
-    Name = "Status: Undetected"
-})
+-- SECTION (separador visual)
+TabBasicos:CreateSection("── Sección de Controles ──")
 
-local ExtraFields = MiscTab:AddSection("INPUT FIELDS")
-
-ExtraFields:AddTextbox({
-    Name = "Target Username",
-    Default = "Player1",
-    Placeholder = "Enter name here...",
-    Flag = "TargetUser",
-    NotifyOnChange = true,
-    Callback = function(v) print("Target Set:", v) end
-})
-
-ExtraFields:AddKeybind({
-    Name = "Toggle Menu Bind",
-    Default = Enum.KeyCode.RightControl,
-    Flag = "MenuBind",
-    Callback = function(key) 
-        print("Menu bind changed to:", key)
+-- KEYBIND
+TabBasicos:CreateKeybind({
+    Name    = "Tecla de Acción",
+    Flag    = "ActionKey",
+    Default = Enum.KeyCode.E,
+    Callback = function(key)
+        print("Nueva tecla asignada →", key.Name)
+        RoseUI:Notify({
+            Title   = "Keybind actualizado",
+            Message = "Tecla: " .. key.Name,
+            Type    = "info",
+            Duration = 2
+        })
     end
 })
 
-ExtraFields:AddButton({
-    Name = "Test Notification",
-    Description = "Spawns a custom test notification.",
+-- ============================================================
+--  TAB 2 — ELEMENTOS AVANZADOS
+-- ============================================================
+
+-- DROPDOWN
+TabAvanzados:CreateDropdown({
+    Name    = "Selecciona un Modo",
+    Flag    = "ModeDropdown",
+    Options = { "Normal", "Silencioso", "Agresivo", "Defensivo" },
+    Default = "Normal",
+    Callback = function(selected)
+        print("Modo seleccionado →", selected)
+    end
+})
+
+-- COLOR PICKER
+TabAvanzados:CreateColorPicker({
+    Name    = "Color de ESP",
+    Flag    = "ESPColor",
+    Default = Color3.fromRGB(255, 60, 60),
+    Callback = function(color)
+        print("Color →", color)
+    end
+})
+
+-- TEXTBOX
+TabAvanzados:CreateTextBox({
+    Name        = "Nombre del jugador objetivo",
+    Flag        = "TargetName",
+    Default     = "",
+    PlaceHolder = "Escribe un nombre...",
+    Callback = function(text)
+        print("Texto ingresado →", text)
+    end
+})
+
+-- ============================================================
+--  TAB 3 — DEMO DE NOTIFICACIONES
+-- ============================================================
+
+TabNotif:CreateButton({
+    Name     = "✅ Notificación: Success",
     Callback = function()
         RoseUI:Notify({
-            Title = "Test Alert",
-            Text = "Notifications are fully working now!",
-            Icon = Icons.GetIcon("lucide:bell-ring") or "rbxassetid://10723376188",
+            Title    = "Operación exitosa",
+            Message  = "Todo salió bien sin errores.",
+            Type     = "success",
             Duration = 4
         })
     end
 })
 
--- Mensaje en consola
-print("--- [ RoseUI v2.6 Showcase Loaded Successfully ] ---")
+TabNotif:CreateButton({
+    Name     = "❌ Notificación: Error",
+    Callback = function()
+        RoseUI:Notify({
+            Title    = "Error crítico",
+            Message  = "No se pudo completar la operación.",
+            Type     = "error",
+            Duration = 4
+        })
+    end
+})
+
+TabNotif:CreateButton({
+    Name     = "⚠️ Notificación: Warning",
+    Callback = function()
+        RoseUI:Notify({
+            Title    = "Advertencia",
+            Message  = "Esto puede causar comportamiento inesperado.",
+            Type     = "warning",
+            Duration = 4
+        })
+    end
+})
+
+TabNotif:CreateButton({
+    Name     = "ℹ️ Notificación: Info",
+    Callback = function()
+        RoseUI:Notify({
+            Title    = "Información",
+            Message  = "RoseUI v1.3.0 está activo y funcionando.",
+            Type     = "info",
+            Duration = 4
+        })
+    end
+})
+
+-- ============================================================
+--  TAB 4 — SISTEMA DE CONFIGURACIÓN
+-- ============================================================
+
+TabConfig:CreateButton({
+    Name     = "💾 Guardar Configuración",
+    Callback = function()
+        RoseUI:SaveConfig("roseui_showcase.json")
+        RoseUI:Notify({
+            Title    = "Configuración guardada",
+            Message  = "Archivo: roseui_showcase.json",
+            Type     = "success",
+            Duration = 3
+        })
+    end
+})
+
+TabConfig:CreateButton({
+    Name     = "📂 Cargar Configuración",
+    Callback = function()
+        RoseUI:LoadConfig("roseui_showcase.json")
+        RoseUI:Notify({
+            Title    = "Configuración cargada",
+            Message  = "Todos los valores han sido restaurados.",
+            Type     = "info",
+            Duration = 3
+        })
+    end
+})
+
+TabConfig:CreateSection("── Peligro ──")
+
+TabConfig:CreateButton({
+    Name     = "🔴 Unload RoseUI",
+    Callback = function()
+        RoseUI:Notify({
+            Title    = "Cerrando RoseUI",
+            Message  = "Hasta la próxima.",
+            Type     = "warning",
+            Duration = 2
+        })
+        task.wait(2)
+        Window:Destroy()
+    end
+})
+
+-- ── 5. AUTO-CARGAR CONFIG GUARDADA (al final del script) ─────
+--  Si existe un archivo guardado de una sesión anterior,
+--  restaura todos los valores automáticamente.
+task.spawn(function()
+    task.wait(0.5) -- pequeña espera para que la UI termine de renderizar
+    RoseUI:LoadConfig("roseui_showcase.json")
+end)
+
+print("🌹 RoseUI Showcase cargado correctamente ✓")
