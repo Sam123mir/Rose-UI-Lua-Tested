@@ -11,7 +11,7 @@ local Notification = {}
 
 function Notification:New(options, library)
     local title = options.Title or "Notification"
-    local text = options.Text or ""
+    local text = options.Text or options.Message or ""
     local dur = options.Duration or 5
     
     local theme = library and library.CurrentTheme or {
@@ -23,7 +23,7 @@ function Notification:New(options, library)
     }
 
     local success, notifGui = pcall(function() return CoreGui:FindFirstChild("RoseUI_Notifs") end)
-    local targetParent = success and CoreGui or game.Players.LocalPlayer:WaitForChild("PlayerGui")
+    local targetParent = success and CoreGui or game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
     notifGui = targetParent:FindFirstChild("RoseUI_Notifs")
     
     if not notifGui then

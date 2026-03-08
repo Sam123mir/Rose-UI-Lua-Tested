@@ -10,6 +10,9 @@ local Lighting = Services.Lighting
 local Window = {}
 
 function Window:New(options, library)
+    assert(game:IsLoaded(), "RoseUI: El juego no ha terminado de cargar")
+    assert(game:GetService("Players").LocalPlayer, "RoseUI: LocalPlayer no disponible")
+    
     local titleText = options.Name or "RoseUI"
     local hubType = options.HubType or "v1.2.4 Premium"
     local theme = library.CurrentTheme or import("Core/Themes")["Rose v2 (Premium)"]
@@ -85,7 +88,7 @@ function Window:New(options, library)
     end
     _G.RoseUI_Connections = {}
 
-    local targetContainer = Services.CoreGui:FindFirstChild("RoseUI_Window") and Services.CoreGui or game.Players.LocalPlayer:WaitForChild("PlayerGui")
+    local targetContainer = Services.CoreGui:FindFirstChild("RoseUI_Window") and Services.CoreGui or game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
     
     if targetContainer:FindFirstChild("RoseUI_Window") then targetContainer.RoseUI_Window:Destroy() end
     
@@ -1104,14 +1107,21 @@ function Window:New(options, library)
     library.Utilities:MakeResizable(resizeHandle, mainFrame, Vector2.new(600, 400), Vector2.new(math.min(viewSizeX - 40, 1100), math.min(viewSizeY - 40, 750)))
 
     function WindowObj:MakeTab(tabOptions)
+        assert(self.Instance, "RoseUI: Llama CreateWindow antes de MakeTab")
+        assert(tabOptions, "RoseUI: Faltan opciones para MakeTab")
+        assert(type(tabOptions) == "table" or type(tabOptions) == "string", "RoseUI: El nombre debe ser string o tabla")
         return library.Tab:New(tabOptions, self)
     end
 
     function WindowObj:AddFolder(folderOptions)
+        assert(self.Instance, "RoseUI: La ventana no existe")
+        assert(folderOptions, "RoseUI: Faltan opciones para AddFolder")
         return library.Folder:New(folderOptions, self)
     end
     
     function WindowObj:AddFile(options)
+        assert(self.Instance, "RoseUI: La ventana no existe")
+        assert(options, "RoseUI: Faltan opciones para AddFile")
         options.IsFile = true
         return library.Tab:New(options, self)
     end
@@ -1275,6 +1285,26 @@ function Window:New(options, library)
         TweenService:Create(btnCancel, TweenInfo.new(0.3), {BackgroundTransparency = 0, TextTransparency = 0}):Play()
         TweenService:Create(btnConfirm, TweenInfo.new(0.3), {BackgroundTransparency = 0, TextTransparency = 0}):Play()
         TweenService:Create(btnConfirmStroke, TweenInfo.new(0.3), {Transparency = 0}):Play()
+    end
+
+    function WindowObj:Destroy()
+        if self.Instance then self.Instance:Destroy() end
+        if _G.RoseUI_Connections then
+            for _, conn in pairs(_G.RoseUI_Connections) do
+                if typeof(conn) == "RBXScriptConnection" then conn:Disconnect() end
+            end
+            _G.RoseUI_Connections = nil
+        end
+        if _G.RoseUI_Drawings then
+            for _, drawing in pairs(_G.RoseUI_Drawings) do
+                if drawing and typeof(drawing) == "table" and drawing.Remove then 
+                    drawing:Remove() 
+                elseif type(drawing) ~= "table" then
+                    pcall(function() drawing:Remove() end)
+                end
+            end
+            _G.RoseUI_Drawings = nil
+        end
     end
 
     return WindowObj

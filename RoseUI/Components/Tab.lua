@@ -288,6 +288,26 @@ function Tab:New(tabOptions, window)
         return library.Elements.ColorPicker:Add(getNextCol(), options, library)
     end
 
+    function TabObj:AddKeybind(options)
+        return library.Elements.Keybind:Add(getNextCol(), options, library)
+    end
+    
+    function TabObj:AddToggle(options)
+        return library.Elements.Toggle:Add(getNextCol(), options, library)
+    end
+    
+    function TabObj:AddSlider(options)
+        return library.Elements.Slider:Add(getNextCol(), options, library)
+    end
+    
+    function TabObj:AddDropdown(options)
+        return library.Elements.Dropdown:Add(getNextCol(), options, library)
+    end
+    
+    function TabObj:AddButton(options)
+        return library.Elements.Button:Add(getNextCol(), options, library)
+    end
+
     return TabObj
 end
 

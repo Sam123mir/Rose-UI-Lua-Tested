@@ -13,6 +13,13 @@ function Utilities:Tween(object, info, properties)
     return tween
 end
 
+function Utilities:SafeNewCClosure(fn)
+    if newcclosure then return newcclosure(fn) end
+    return fn
+end
+
+Utilities.HasDrawing = pcall(function() return Drawing.new("Circle") end)
+
 function Utilities:MakeDraggable(dragFrame, parentFrame)
     local dragging, dragInput, dragStart, startPos
     

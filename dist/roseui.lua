@@ -1,8 +1,14 @@
 --[[
     RoseUI v2.5.0
     Created by RoseUI Team
-    Build Date: 5/3/2026, 12:06:56 p. m.
+    Build Date: 7/3/2026, 11:17:43 p. m.
     
+    ____  ____  _____ ______   __  ______
+   / __ \/ __ \/ ___// ____/  / / / /  _/
+  / /_/ / / / /\__ \/ __/    / / / // /  
+ / _, _/ /_/ /___/ / /___   / /_/ // /   
+/_/ |_|\____//____/_____/   \____/___/   
+                                         
     This is a unified distribution file. 
 ]]
 
@@ -140,6 +146,13 @@ function Utilities:Tween(object, info, properties)
     return tween
 end
 
+function Utilities:SafeNewCClosure(fn)
+    if newcclosure then return newcclosure(fn) end
+    return fn
+end
+
+Utilities.HasDrawing = pcall(function() return Drawing.new("Circle") end)
+
 function Utilities:MakeDraggable(dragFrame, parentFrame)
     local dragging, dragInput, dragStart, startPos
     
@@ -260,7 +273,7 @@ local Notification = {}
 
 function Notification:New(options, library)
     local title = options.Title or "Notification"
-    local text = options.Text or ""
+    local text = options.Text or options.Message or ""
     local dur = options.Duration or 5
     
     local theme = library and library.CurrentTheme or {
@@ -272,7 +285,7 @@ function Notification:New(options, library)
     }
 
     local success, notifGui = pcall(function() return CoreGui:FindFirstChild("RoseUI_Notifs") end)
-    local targetParent = success and CoreGui or game.Players.LocalPlayer:WaitForChild("PlayerGui")
+    local targetParent = success and CoreGui or game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
     notifGui = targetParent:FindFirstChild("RoseUI_Notifs")
     
     if not notifGui then
@@ -412,6 +425,9 @@ local Lighting = Services.Lighting
 local Window = {}
 
 function Window:New(options, library)
+    assert(game:IsLoaded(), "RoseUI: El juego no ha terminado de cargar")
+    assert(game:GetService("Players").LocalPlayer, "RoseUI: LocalPlayer no disponible")
+    
     local titleText = options.Name or "RoseUI"
     local hubType = options.HubType or "v1.2.4 Premium"
     local theme = library.CurrentTheme or __DARKLUA_BUNDLE_MODULES.b()
@@ -488,7 +504,7 @@ function Window:New(options, library)
     end
     _G.RoseUI_Connections = {}
 
-    local targetContainer = Services.CoreGui:FindFirstChild("RoseUI_Window") and Services.CoreGui or game.Players.LocalPlayer:WaitForChild("PlayerGui")
+    local targetContainer = Services.CoreGui:FindFirstChild("RoseUI_Window") and Services.CoreGui or game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
     
     if targetContainer:FindFirstChild("RoseUI_Window") then targetContainer.RoseUI_Window:Destroy() end
     
@@ -1507,14 +1523,21 @@ function Window:New(options, library)
     library.Utilities:MakeResizable(resizeHandle, mainFrame, Vector2.new(600, 400), Vector2.new(math.min(viewSizeX - 40, 1100), math.min(viewSizeY - 40, 750)))
 
     function WindowObj:MakeTab(tabOptions)
+        assert(self.Instance, "RoseUI: Llama CreateWindow antes de MakeTab")
+        assert(tabOptions, "RoseUI: Faltan opciones para MakeTab")
+        assert(type(tabOptions) == "table" or type(tabOptions) == "string", "RoseUI: El nombre debe ser string o tabla")
         return library.Tab:New(tabOptions, self)
     end
 
     function WindowObj:AddFolder(folderOptions)
+        assert(self.Instance, "RoseUI: La ventana no existe")
+        assert(folderOptions, "RoseUI: Faltan opciones para AddFolder")
         return library.Folder:New(folderOptions, self)
     end
     
     function WindowObj:AddFile(options)
+        assert(self.Instance, "RoseUI: La ventana no existe")
+        assert(options, "RoseUI: Faltan opciones para AddFile")
         options.IsFile = true
         return library.Tab:New(options, self)
     end
@@ -1678,6 +1701,26 @@ function Window:New(options, library)
         TweenService:Create(btnCancel, TweenInfo.new(0.3), {BackgroundTransparency = 0, TextTransparency = 0}):Play()
         TweenService:Create(btnConfirm, TweenInfo.new(0.3), {BackgroundTransparency = 0, TextTransparency = 0}):Play()
         TweenService:Create(btnConfirmStroke, TweenInfo.new(0.3), {Transparency = 0}):Play()
+    end
+
+    function WindowObj:Destroy()
+        if self.Instance then self.Instance:Destroy() end
+        if _G.RoseUI_Connections then
+            for _, conn in pairs(_G.RoseUI_Connections) do
+                if typeof(conn) == "RBXScriptConnection" then conn:Disconnect() end
+            end
+            _G.RoseUI_Connections = nil
+        end
+        if _G.RoseUI_Drawings then
+            for _, drawing in pairs(_G.RoseUI_Drawings) do
+                if drawing and typeof(drawing) == "table" and drawing.Remove then 
+                    drawing:Remove() 
+                elseif type(drawing) ~= "table" then
+                    pcall(function() drawing:Remove() end)
+                end
+            end
+            _G.RoseUI_Drawings = nil
+        end
     end
 
     return WindowObj
@@ -2142,6 +2185,26 @@ function Tab:New(tabOptions, window)
 
     function TabObj:AddColorPicker(options)
         return library.Elements.ColorPicker:Add(getNextCol(), options, library)
+    end
+
+    function TabObj:AddKeybind(options)
+        return library.Elements.Keybind:Add(getNextCol(), options, library)
+    end
+    
+    function TabObj:AddToggle(options)
+        return library.Elements.Toggle:Add(getNextCol(), options, library)
+    end
+    
+    function TabObj:AddSlider(options)
+        return library.Elements.Slider:Add(getNextCol(), options, library)
+    end
+    
+    function TabObj:AddDropdown(options)
+        return library.Elements.Dropdown:Add(getNextCol(), options, library)
+    end
+    
+    function TabObj:AddButton(options)
+        return library.Elements.Button:Add(getNextCol(), options, library)
     end
 
     return TabObj
@@ -4301,11 +4364,51 @@ RoseUI.Elements.Documentation = __DARKLUA_BUNDLE_MODULES.w()
 
 
 function RoseUI:Notify(options)
+    assert(options, "RoseUI: Faltan opciones para Notify")
+    assert(type(options) == "table", "RoseUI: Las opciones de Notify deben ser una tabla")
     return self.Notification:New(options, self)
 end
 
 function RoseUI:CreateWindow(options)
+    assert(options, "RoseUI: Faltan opciones para CreateWindow")
+    assert(type(options) == "table", "RoseUI: Las opciones de CreateWindow deben ser una tabla")
     return self.Window:New(options, self)
+end
+
+function RoseUI:SetConfig(options)
+    assert(type(options) == "table" and type(options.SaveFile) == "string", "RoseUI: SaveFile debe ser un string")
+    self.Config = options
+end
+
+function RoseUI:SaveConfig()
+    if not self.Config or not self.Config.SaveFile or not isfile or not writefile then return end
+    local HttpService = game:GetService("HttpService")
+    pcall(function()
+        local data = {}
+        for key, value in pairs(self.Flags) do
+            data[key] = value
+        end
+        writefile(self.Config.SaveFile, HttpService:JSONEncode(data))
+    end)
+end
+
+function RoseUI:LoadConfig()
+    if not self.Config or not self.Config.SaveFile or not isfile or not readfile then return end
+    local HttpService = game:GetService("HttpService")
+    if isfile(self.Config.SaveFile) then
+        pcall(function()
+            local decoded = HttpService:JSONDecode(readfile(self.Config.SaveFile))
+            if type(decoded) == "table" then
+                for key, value in pairs(decoded) do
+                    for _, el in pairs(self.Elements) do
+                        if type(el) == "table" and el.Flag == key and el.Set then
+                            el:Set(value)
+                        end
+                    end
+                end
+            end
+        end)
+    end
 end
 
 return RoseUI
