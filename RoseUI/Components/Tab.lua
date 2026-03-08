@@ -81,7 +81,7 @@ function Tab:New(tabOptions, window)
         icon.ImageRectOffset = tabIcon.ImageRectOffset or Vector2.new(0,0)
         icon.ImageRectSize = tabIcon.ImageRectSize or Vector2.new(0,0)
     else
-        icon.Image = tabIcon
+        icon.Image = tabIcon or ""
     end
     
     icon.ImageColor3 = theme.SecondaryText

@@ -71,7 +71,7 @@ function Folder:New(options, window)
         iconImg.ImageRectOffset = folderIcon.ImageRectOffset or Vector2.new(0,0)
         iconImg.ImageRectSize = folderIcon.ImageRectSize or Vector2.new(0,0)
     else
-        iconImg.Image = folderIcon
+        iconImg.Image = folderIcon or ""
     end
     
     local label = Instance.new("TextLabel")

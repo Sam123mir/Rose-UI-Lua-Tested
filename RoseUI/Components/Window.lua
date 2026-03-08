@@ -208,7 +208,7 @@ function Window:New(options, library)
         logoIcon.ImageRectOffset = finalLogo.ImageRectOffset or Vector2.new(0,0)
         logoIcon.ImageRectSize = finalLogo.ImageRectSize or Vector2.new(0,0)
     else
-        logoIcon.Image = finalLogo
+        logoIcon.Image = finalLogo or ""
     end
     logoIcon.ImageColor3 = theme.Primary
     logoIcon.Parent = header
@@ -271,7 +271,7 @@ function Window:New(options, library)
             icon.ImageRectOffset = iconAsset.ImageRectOffset or Vector2.new(0,0)
             icon.ImageRectSize = iconAsset.ImageRectSize or Vector2.new(0,0)
         else
-            icon.Image = iconAsset
+            icon.Image = iconAsset or ""
         end
         icon.ImageColor3 = theme.SecondaryText
         icon.Parent = item
@@ -386,7 +386,7 @@ function Window:New(options, library)
             btnIcon.ImageRectOffset = iAsset.ImageRectOffset or Vector2.new(0,0)
             btnIcon.ImageRectSize = iAsset.ImageRectSize or Vector2.new(0,0)
         else
-            btnIcon.Image = iAsset
+            btnIcon.Image = iAsset or ""
         end
         btnIcon.ImageColor3 = theme.SecondaryText
         btnIcon.Parent = btn
@@ -490,7 +490,7 @@ function Window:New(options, library)
         minLogo.ImageRectOffset = finalLogo.ImageRectOffset or Vector2.new(0,0)
         minLogo.ImageRectSize = finalLogo.ImageRectSize or Vector2.new(0,0)
     else
-        minLogo.Image = finalLogo
+        minLogo.Image = finalLogo or ""
     end
     minLogo.ImageColor3 = theme.Primary
     minLogo.Parent = restoreBtn
@@ -634,7 +634,7 @@ function Window:New(options, library)
     local thumbSize = Enum.ThumbnailSize.Size420x420
     local content, isReady = Services.Players:GetUserThumbnailAsync(userId, thumbType, thumbSize)
     
-    avatarImg.Image = content or resolveIcon(assets.Icons.User)
+    avatarImg.Image = content or resolveIcon(assets.Icons.User) or ""
     avatarImg.ImageColor3 = Color3.new(1,1,1)
     avatarImg.Parent = avatarFrame
     Instance.new("UICorner", avatarImg).CornerRadius = UDim.new(1, 0)
@@ -797,7 +797,7 @@ function Window:New(options, library)
         dscIcon.ImageRectOffset = dIcon.ImageRectOffset or Vector2.new(0,0)
         dscIcon.ImageRectSize = dIcon.ImageRectSize or Vector2.new(0,0)
     else
-        dscIcon.Image = dIcon
+        dscIcon.Image = dIcon or ""
     end
     dscIcon.ImageColor3 = Color3.fromRGB(150, 150, 150)
     dscIcon.Parent = discordBtn

@@ -138,9 +138,28 @@ function RoseUI:CheckVersion(options)
         local HttpService = game:GetService("HttpService")
         local url = "https://api.github.com/repos/" .. options.Repo .. "/releases/latest"
 
-        local ok, response = pcall(function()
-            return HttpService:GetAsync(url)
-        end)
+        local requestFunc = request or http_request or (syn and syn.request)
+        local ok, response = false, nil
+
+        if requestFunc then
+            local reqOk, reqResult = pcall(function()
+                return requestFunc({
+                    Url = url,
+                    Method = "GET"
+                })
+            end)
+            if reqOk and type(reqResult) == "table" and type(reqResult.Body) == "string" then
+                ok = true
+                response = reqResult.Body
+            else
+                response = reqResult and type(reqResult) == "table" and tostring(reqResult.StatusCode) or tostring(reqResult)
+            end
+        else
+            ok, response = pcall(function()
+                return HttpService:GetAsync(url)
+            end)
+        end
+
 
         if not ok then
             if not silent then

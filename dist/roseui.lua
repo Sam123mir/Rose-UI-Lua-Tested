@@ -7,7 +7,7 @@
                                          
     RoseUI v2.5.0
     Created by RoseUI Team
-    Build Date: 7/3/2026, 11:38:21 p. m.
+    Build Date: 7/3/2026, 11:57:34 p. m.
     
     This is a unified distribution file. 
 ]]
@@ -632,7 +632,7 @@ function Window:New(options, library)
         logoIcon.ImageRectOffset = finalLogo.ImageRectOffset or Vector2.new(0,0)
         logoIcon.ImageRectSize = finalLogo.ImageRectSize or Vector2.new(0,0)
     else
-        logoIcon.Image = finalLogo
+        logoIcon.Image = finalLogo or ""
     end
     logoIcon.ImageColor3 = theme.Primary
     logoIcon.Parent = header
@@ -695,7 +695,7 @@ function Window:New(options, library)
             icon.ImageRectOffset = iconAsset.ImageRectOffset or Vector2.new(0,0)
             icon.ImageRectSize = iconAsset.ImageRectSize or Vector2.new(0,0)
         else
-            icon.Image = iconAsset
+            icon.Image = iconAsset or ""
         end
         icon.ImageColor3 = theme.SecondaryText
         icon.Parent = item
@@ -810,7 +810,7 @@ function Window:New(options, library)
             btnIcon.ImageRectOffset = iAsset.ImageRectOffset or Vector2.new(0,0)
             btnIcon.ImageRectSize = iAsset.ImageRectSize or Vector2.new(0,0)
         else
-            btnIcon.Image = iAsset
+            btnIcon.Image = iAsset or ""
         end
         btnIcon.ImageColor3 = theme.SecondaryText
         btnIcon.Parent = btn
@@ -914,7 +914,7 @@ function Window:New(options, library)
         minLogo.ImageRectOffset = finalLogo.ImageRectOffset or Vector2.new(0,0)
         minLogo.ImageRectSize = finalLogo.ImageRectSize or Vector2.new(0,0)
     else
-        minLogo.Image = finalLogo
+        minLogo.Image = finalLogo or ""
     end
     minLogo.ImageColor3 = theme.Primary
     minLogo.Parent = restoreBtn
@@ -1058,7 +1058,7 @@ function Window:New(options, library)
     local thumbSize = Enum.ThumbnailSize.Size420x420
     local content, isReady = Services.Players:GetUserThumbnailAsync(userId, thumbType, thumbSize)
     
-    avatarImg.Image = content or resolveIcon(assets.Icons.User)
+    avatarImg.Image = content or resolveIcon(assets.Icons.User) or ""
     avatarImg.ImageColor3 = Color3.new(1,1,1)
     avatarImg.Parent = avatarFrame
     Instance.new("UICorner", avatarImg).CornerRadius = UDim.new(1, 0)
@@ -1221,7 +1221,7 @@ function Window:New(options, library)
         dscIcon.ImageRectOffset = dIcon.ImageRectOffset or Vector2.new(0,0)
         dscIcon.ImageRectSize = dIcon.ImageRectSize or Vector2.new(0,0)
     else
-        dscIcon.Image = dIcon
+        dscIcon.Image = dIcon or ""
     end
     dscIcon.ImageColor3 = Color3.fromRGB(150, 150, 150)
     dscIcon.Parent = discordBtn
@@ -1840,7 +1840,7 @@ function Folder:New(options, window)
         iconImg.ImageRectOffset = folderIcon.ImageRectOffset or Vector2.new(0,0)
         iconImg.ImageRectSize = folderIcon.ImageRectSize or Vector2.new(0,0)
     else
-        iconImg.Image = folderIcon
+        iconImg.Image = folderIcon or ""
     end
     
     local label = Instance.new("TextLabel")
@@ -2020,7 +2020,7 @@ function Tab:New(tabOptions, window)
         icon.ImageRectOffset = tabIcon.ImageRectOffset or Vector2.new(0,0)
         icon.ImageRectSize = tabIcon.ImageRectSize or Vector2.new(0,0)
     else
-        icon.Image = tabIcon
+        icon.Image = tabIcon or ""
     end
     
     icon.ImageColor3 = theme.SecondaryText
@@ -4506,9 +4506,28 @@ function RoseUI:CheckVersion(options)
         local HttpService = game:GetService("HttpService")
         local url = "https://api.github.com/repos/" .. options.Repo .. "/releases/latest"
 
-        local ok, response = pcall(function()
-            return HttpService:GetAsync(url)
-        end)
+        local requestFunc = request or http_request or (syn and syn.request)
+        local ok, response = false, nil
+
+        if requestFunc then
+            local reqOk, reqResult = pcall(function()
+                return requestFunc({
+                    Url = url,
+                    Method = "GET"
+                })
+            end)
+            if reqOk and type(reqResult) == "table" and type(reqResult.Body) == "string" then
+                ok = true
+                response = reqResult.Body
+            else
+                response = reqResult and type(reqResult) == "table" and tostring(reqResult.StatusCode) or tostring(reqResult)
+            end
+        else
+            ok, response = pcall(function()
+                return HttpService:GetAsync(url)
+            end)
+        end
+
 
         if not ok then
             if not silent then
