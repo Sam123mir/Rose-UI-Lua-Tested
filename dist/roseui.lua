@@ -1,14 +1,8 @@
 --[[
     RoseUI v2.5.0
     Created by RoseUI Team
-    Build Date: 7/3/2026, 11:17:43 p. m.
+    Build Date: 7/3/2026, 11:30:12 p. m.
     
-    ____  ____  _____ ______   __  ______
-   / __ \/ __ \/ ___// ____/  / / / /  _/
-  / /_/ / / / /\__ \/ __/    / / / // /  
- / _, _/ /_/ /___/ / /___   / /_/ // /   
-/_/ |_|\____//____/_____/   \____/___/   
-                                         
     This is a unified distribution file. 
 ]]
 
@@ -496,15 +490,29 @@ function Window:New(options, library)
     
     local WindowObj = {} 
 
+    local instanceId = tostring(os.clock()):gsub("%.", "")
+    local connKey = "RoseUI_" .. instanceId .. "_Connections"
+    local drawKey = "RoseUI_" .. instanceId .. "_Drawings"
+
     
     if _G.RoseUI_Connections then
         for _, conn in pairs(_G.RoseUI_Connections) do
             if typeof(conn) == "RBXScriptConnection" then conn:Disconnect() end
         end
     end
-    _G.RoseUI_Connections = {}
+    _G[connKey] = {}
+    _G[drawKey] = {}
 
-    local targetContainer = Services.CoreGui:FindFirstChild("RoseUI_Window") and Services.CoreGui or game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
+    local targetContainer
+    local ok = pcall(function() 
+        targetContainer = Services.CoreGui 
+    end)
+    
+    if not ok or not targetContainer or not targetContainer:FindFirstChild("RobloxGui") then
+        targetContainer = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui", 10)
+    end
+    
+    assert(targetContainer, "RoseUI: No se pudo encontrar un contenedor válido para la UI")
     
     if targetContainer:FindFirstChild("RoseUI_Window") then targetContainer.RoseUI_Window:Destroy() end
     
@@ -568,7 +576,7 @@ function Window:New(options, library)
         blurPart.Size = Vector3.new(sizeX, sizeY, 0.01)
         blurPart.CFrame = camera.CFrame * CFrame.new(posX, posY, -z)
     end)
-    table.insert(_G.RoseUI_Connections, blurConn)
+    table.insert(_G[connKey], blurConn)
 
     library.Utilities:MakeDraggable(mainFrame, mainFrame)
 
@@ -749,7 +757,7 @@ function Window:New(options, library)
             timeStat.Text = os.date("%H:%M:%S")
         end
     end)
-    table.insert(_G.RoseUI_Connections, statsUpdateConn)
+    table.insert(_G[connKey], statsUpdateConn)
 
     
     
@@ -1525,7 +1533,16 @@ function Window:New(options, library)
     function WindowObj:MakeTab(tabOptions)
         assert(self.Instance, "RoseUI: Llama CreateWindow antes de MakeTab")
         assert(tabOptions, "RoseUI: Faltan opciones para MakeTab")
-        assert(type(tabOptions) == "table" or type(tabOptions) == "string", "RoseUI: El nombre debe ser string o tabla")
+        
+        local tabName
+        if type(tabOptions) == "string" then
+            tabName = tabOptions
+            tabOptions = { Name = tabName }
+        elseif type(tabOptions) == "table" then
+            tabName = tabOptions.Name
+        end
+        
+        assert(type(tabName) == "string" and #tabName > 0, "RoseUI: El tab necesita un Name válido")
         return library.Tab:New(tabOptions, self)
     end
 
@@ -1572,7 +1589,7 @@ function Window:New(options, library)
             screenGui.Enabled = not screenGui.Enabled
         end
     end)
-    table.insert(_G.RoseUI_Connections, toggleConn)
+    table.insert(_G[connKey], toggleConn)
 
     function WindowObj:ShowDialog(config)
         local title = config.Title or "Dialog"
@@ -1703,23 +1720,30 @@ function Window:New(options, library)
         TweenService:Create(btnConfirmStroke, TweenInfo.new(0.3), {Transparency = 0}):Play()
     end
 
+    local alreadyDestroyed = false
+
+    function WindowObj:IsDestroyed()
+        return alreadyDestroyed
+    end
+
     function WindowObj:Destroy()
+        if alreadyDestroyed then return end
+        alreadyDestroyed = true
+        
         if self.Instance then self.Instance:Destroy() end
-        if _G.RoseUI_Connections then
-            for _, conn in pairs(_G.RoseUI_Connections) do
+        if _G[connKey] then
+            for _, conn in pairs(_G[connKey]) do
                 if typeof(conn) == "RBXScriptConnection" then conn:Disconnect() end
             end
-            _G.RoseUI_Connections = nil
+            _G[connKey] = nil
         end
-        if _G.RoseUI_Drawings then
-            for _, drawing in pairs(_G.RoseUI_Drawings) do
-                if drawing and typeof(drawing) == "table" and drawing.Remove then 
-                    drawing:Remove() 
-                elseif type(drawing) ~= "table" then
+        if _G[drawKey] then
+            for _, drawing in pairs(_G[drawKey]) do
+                if drawing then 
                     pcall(function() drawing:Remove() end)
                 end
             end
-            _G.RoseUI_Drawings = nil
+            _G[drawKey] = nil
         end
     end
 
