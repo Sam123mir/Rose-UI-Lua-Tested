@@ -7,7 +7,7 @@
                                          
     RoseUI v2.5.0
     Created by RoseUI Team
-    Build Date: 7/3/2026, 11:33:18 p. m.
+    Build Date: 7/3/2026, 11:38:21 p. m.
     
     This is a unified distribution file. 
 ]]
@@ -2766,6 +2766,9 @@ function Slider:Add(parent, options, library)
     end)
 
     if library.Flags then library.Flags[flag] = default end
+    if not library.FlagsMeta then library.FlagsMeta = {} end
+    library.FlagsMeta[flag] = { Min = min, Max = max }
+
     table.insert(library.Elements, SliderObj)
 
     return SliderObj
@@ -4444,20 +4447,120 @@ function RoseUI:LoadConfig(filename)
         return HttpService:JSONDecode(readfile(loadName))
     end)
     
-    if ok and type(data) == "table" then
-        for key, value in pairs(data) do
-            if self.Flags[key] ~= nil then
-                self.Flags[key] = value
-                
-                
-                for _, el in pairs(self.Elements) do
-                    if type(el) == "table" and el.Flag == key and el.Set then
-                        el:Set(value)
-                    end
+    if not ok or type(data) ~= "table" then
+        warn("RoseUI: LoadConfig — archivo corrupto o JSON inválido en '" .. loadName .. "'")
+        return
+    end
+    
+    for key, value in pairs(data) do
+        if self.Flags[key] == nil then
+            warn("RoseUI: LoadConfig — flag desconocido ignorado: '" .. tostring(key) .. "'")
+            continue
+        end
+
+        if type(value) ~= type(self.Flags[key]) then
+            warn(string.format(
+                "RoseUI: LoadConfig — tipo incorrecto para '%s': esperado %s, recibido %s",
+                tostring(key),
+                type(self.Flags[key]),
+                type(value)
+            ))
+            continue
+        end
+
+        if type(value) == "number" then
+            local meta = self.FlagsMeta and self.FlagsMeta[key]
+            if meta and meta.Min and meta.Max then
+                if value < meta.Min or value > meta.Max then
+                    warn(string.format(
+                        "RoseUI: LoadConfig — valor fuera de rango para '%s': %d (rango: %d-%d)",
+                        key, value, meta.Min, meta.Max
+                    ))
+                    continue
+                end
+            end
+        end
+
+        self.Flags[key] = value
+        for _, el in pairs(self.Elements) do
+            if type(el) == "table" and el.Flag == key and el.Set then
+                local cbOk, cbErr = pcall(function() el:Set(value) end)
+                if not cbOk then
+                    warn("RoseUI: LoadConfig — callback de '" .. key .. "' falló: " .. tostring(cbErr))
                 end
             end
         end
     end
+end
+
+function RoseUI:CheckVersion(options)
+    assert(type(options) == "table", "RoseUI: CheckVersion requiere una tabla de opciones")
+    assert(type(options.Repo) == "string", "RoseUI: CheckVersion requiere options.Repo (ej: 'Sam123mir/Rose-UI-Lua-Tested')")
+    assert(type(options.CurrentVersion) == "string", "RoseUI: CheckVersion requiere options.CurrentVersion (ej: '1.2.4')")
+
+    local onUpdate  = options.OnUpdate
+    local onCurrent = options.OnCurrent
+    local silent    = options.Silent or false
+
+    task.spawn(function()
+        local HttpService = game:GetService("HttpService")
+        local url = "https://api.github.com/repos/" .. options.Repo .. "/releases/latest"
+
+        local ok, response = pcall(function()
+            return HttpService:GetAsync(url)
+        end)
+
+        if not ok then
+            if not silent then
+                warn("RoseUI: CheckVersion — request HTTP falló: " .. tostring(response))
+                self:Notify({
+                    Title   = "RoseUI",
+                    Message = "No se pudo verificar actualizaciones.",
+                    Type    = "warning",
+                    Duration = 4
+                })
+            end
+            return
+        end
+
+        local parseOk, data = pcall(function()
+            return HttpService:JSONDecode(response)
+        end)
+
+        if not parseOk or type(data) ~= "table" or not data.tag_name then
+            if not silent then
+                warn("RoseUI: CheckVersion — respuesta de GitHub inesperada")
+            end
+            return
+        end
+
+        local latest  = tostring(data.tag_name):gsub("^v", "")
+        local current = tostring(options.CurrentVersion):gsub("^v", "")
+
+        if latest ~= current then
+            if not silent then
+                self:Notify({
+                    Title    = "🌹 RoseUI — Actualización disponible",
+                    Message  = "v" .. current .. " → v" .. latest .. ". Actualiza tu script.",
+                    Type     = "info",
+                    Duration = 8
+                })
+            end
+            if onUpdate then
+                local cbOk, cbErr = pcall(onUpdate, latest, current)
+                if not cbOk then
+                    warn("RoseUI: CheckVersion — onUpdate callback falló: " .. tostring(cbErr))
+                end
+            end
+        else
+            if onCurrent then
+                pcall(onCurrent)
+            end
+            if not silent then
+                print("RoseUI: v" .. current .. " — estás al día ✓")
+            end
+        end
+    end)
 end
 
 return RoseUI

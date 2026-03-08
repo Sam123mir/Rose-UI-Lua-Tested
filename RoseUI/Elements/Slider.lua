@@ -159,6 +159,9 @@ function Slider:Add(parent, options, library)
     end)
 
     if library.Flags then library.Flags[flag] = default end
+    if not library.FlagsMeta then library.FlagsMeta = {} end
+    library.FlagsMeta[flag] = { Min = min, Max = max }
+
     table.insert(library.Elements, SliderObj)
 
     return SliderObj
