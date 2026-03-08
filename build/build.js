@@ -14,6 +14,12 @@ const CONFIG = {
 function generateHeader() {
     const date = new Date().toLocaleString();
     return `--[[
+    ____  ____  _____ ______   __  ______
+   / __ \\/ __ \\/ ___// ____/  / / / /  _/
+  / /_/ / / / /\\__ \\/ __/    / / / // /  
+ / _, _/ /_/ /___/ / /___   / /_/ // /   
+/_/ |_|\\____//____/_____/   \\____/___/   
+                                         
     ${CONFIG.projectName} v${CONFIG.version}
     Created by ${CONFIG.author}
     Build Date: ${date}

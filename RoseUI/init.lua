@@ -56,34 +56,42 @@ function RoseUI:SetConfig(options)
     self.Config = options
 end
 
-function RoseUI:SaveConfig()
-    if not self.Config or not self.Config.SaveFile or not isfile or not writefile then return end
+function RoseUI:SaveConfig(filename)
+    local saveName = filename or (self.Config and self.Config.SaveFile) or "roseui_config.json"
+    if not isfile or not writefile then return end
+    
     local HttpService = game:GetService("HttpService")
     pcall(function()
         local data = {}
         for key, value in pairs(self.Flags) do
             data[key] = value
         end
-        writefile(self.Config.SaveFile, HttpService:JSONEncode(data))
+        writefile(saveName, HttpService:JSONEncode(data))
     end)
 end
 
-function RoseUI:LoadConfig()
-    if not self.Config or not self.Config.SaveFile or not isfile or not readfile then return end
+function RoseUI:LoadConfig(filename)
+    local loadName = filename or (self.Config and self.Config.SaveFile) or "roseui_config.json"
+    if not isfile or not readfile or not isfile(loadName) then return end
+    
     local HttpService = game:GetService("HttpService")
-    if isfile(self.Config.SaveFile) then
-        pcall(function()
-            local decoded = HttpService:JSONDecode(readfile(self.Config.SaveFile))
-            if type(decoded) == "table" then
-                for key, value in pairs(decoded) do
-                    for _, el in pairs(self.Elements) do
-                        if type(el) == "table" and el.Flag == key and el.Set then
-                            el:Set(value)
-                        end
+    local ok, data = pcall(function()
+        return HttpService:JSONDecode(readfile(loadName))
+    end)
+    
+    if ok and type(data) == "table" then
+        for key, value in pairs(data) do
+            if self.Flags[key] ~= nil then
+                self.Flags[key] = value
+                
+                -- Support updating elements based on loaded config
+                for _, el in pairs(self.Elements) do
+                    if type(el) == "table" and el.Flag == key and el.Set then
+                        el:Set(value)
                     end
                 end
             end
-        end)
+        end
     end
 end
 

@@ -1172,11 +1172,13 @@ function Window:New(options, library)
     end)
 
     -- Toggle Hotkey
-    WindowObj.ToggleKey = options.Keybind or Enum.KeyCode.RightControl
+    WindowObj.ToggleKey = options.ToggleKey or options.Keybind or Enum.KeyCode.RightShift
     
     local toggleConn = UserInputService.InputBegan:Connect(function(input, gpe)
         if not gpe and input.KeyCode == WindowObj.ToggleKey then
-            screenGui.Enabled = not screenGui.Enabled
+            if screenGui then
+                screenGui.Enabled = not screenGui.Enabled
+            end
         end
     end)
     table.insert(_G[connKey], toggleConn)

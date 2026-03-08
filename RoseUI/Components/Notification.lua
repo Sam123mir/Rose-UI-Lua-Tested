@@ -22,6 +22,14 @@ function Notification:New(options, library)
         Text = Color3.fromRGB(240, 255, 240)
     }
 
+    local typeColors = {
+        success = Color3.fromRGB(50, 255, 100),
+        error = Color3.fromRGB(255, 50, 50),
+        warning = Color3.fromRGB(255, 200, 50),
+        info = Color3.fromRGB(50, 150, 255)
+    }
+    local notifColor = typeColors[options.Type] or theme.Header
+
     local success, notifGui = pcall(function() return CoreGui:FindFirstChild("RoseUI_Notifs") end)
     local targetParent = success and CoreGui or game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
     notifGui = targetParent:FindFirstChild("RoseUI_Notifs")
@@ -93,7 +101,7 @@ function Notification:New(options, library)
     end)
     
     local stroke = Instance.new("UIStroke")
-    stroke.Color = theme.Header
+    stroke.Color = notifColor
     stroke.Thickness = 1
     stroke.Transparency = 0.5
     stroke.Parent = notifFrame
@@ -132,7 +140,7 @@ function Notification:New(options, library)
     local line = Instance.new("Frame")
     line.Size = UDim2.new(0, 0, 0, 2)
     line.Position = UDim2.new(0, 0, 1, -2)
-    line.BackgroundColor3 = theme.Header
+    line.BackgroundColor3 = notifColor
     line.BorderSizePixel = 0
     line.Parent = notifFrame
 

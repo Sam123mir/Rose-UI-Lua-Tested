@@ -96,6 +96,7 @@ function Keybind:Add(parent, options, library)
     end)
 
     if library.Flags then library.Flags[flag] = default end
+    table.insert(library.Elements, KeybindObj)
     return KeybindObj
 end
 

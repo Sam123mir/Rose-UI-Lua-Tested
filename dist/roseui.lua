@@ -1,7 +1,13 @@
 --[[
+    ____  ____  _____ ______   __  ______
+   / __ \/ __ \/ ___// ____/  / / / /  _/
+  / /_/ / / / /\__ \/ __/    / / / // /  
+ / _, _/ /_/ /___/ / /___   / /_/ // /   
+/_/ |_|\____//____/_____/   \____/___/   
+                                         
     RoseUI v2.5.0
     Created by RoseUI Team
-    Build Date: 7/3/2026, 11:30:12 p. m.
+    Build Date: 7/3/2026, 11:33:18 p. m.
     
     This is a unified distribution file. 
 ]]
@@ -278,6 +284,14 @@ function Notification:New(options, library)
         Text = Color3.fromRGB(240, 255, 240)
     }
 
+    local typeColors = {
+        success = Color3.fromRGB(50, 255, 100),
+        error = Color3.fromRGB(255, 50, 50),
+        warning = Color3.fromRGB(255, 200, 50),
+        info = Color3.fromRGB(50, 150, 255)
+    }
+    local notifColor = typeColors[options.Type] or theme.Header
+
     local success, notifGui = pcall(function() return CoreGui:FindFirstChild("RoseUI_Notifs") end)
     local targetParent = success and CoreGui or game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
     notifGui = targetParent:FindFirstChild("RoseUI_Notifs")
@@ -349,7 +363,7 @@ function Notification:New(options, library)
     end)
     
     local stroke = Instance.new("UIStroke")
-    stroke.Color = theme.Header
+    stroke.Color = notifColor
     stroke.Thickness = 1
     stroke.Transparency = 0.5
     stroke.Parent = notifFrame
@@ -388,7 +402,7 @@ function Notification:New(options, library)
     local line = Instance.new("Frame")
     line.Size = UDim2.new(0, 0, 0, 2)
     line.Position = UDim2.new(0, 0, 1, -2)
-    line.BackgroundColor3 = theme.Header
+    line.BackgroundColor3 = notifColor
     line.BorderSizePixel = 0
     line.Parent = notifFrame
 
@@ -1582,11 +1596,13 @@ function Window:New(options, library)
     end)
 
     
-    WindowObj.ToggleKey = options.Keybind or Enum.KeyCode.RightControl
+    WindowObj.ToggleKey = options.ToggleKey or options.Keybind or Enum.KeyCode.RightShift
     
     local toggleConn = UserInputService.InputBegan:Connect(function(input, gpe)
         if not gpe and input.KeyCode == WindowObj.ToggleKey then
-            screenGui.Enabled = not screenGui.Enabled
+            if screenGui then
+                screenGui.Enabled = not screenGui.Enabled
+            end
         end
     end)
     table.insert(_G[connKey], toggleConn)
@@ -3423,6 +3439,7 @@ function Keybind:Add(parent, options, library)
     end)
 
     if library.Flags then library.Flags[flag] = default end
+    table.insert(library.Elements, KeybindObj)
     return KeybindObj
 end
 
@@ -4404,34 +4421,42 @@ function RoseUI:SetConfig(options)
     self.Config = options
 end
 
-function RoseUI:SaveConfig()
-    if not self.Config or not self.Config.SaveFile or not isfile or not writefile then return end
+function RoseUI:SaveConfig(filename)
+    local saveName = filename or (self.Config and self.Config.SaveFile) or "roseui_config.json"
+    if not isfile or not writefile then return end
+    
     local HttpService = game:GetService("HttpService")
     pcall(function()
         local data = {}
         for key, value in pairs(self.Flags) do
             data[key] = value
         end
-        writefile(self.Config.SaveFile, HttpService:JSONEncode(data))
+        writefile(saveName, HttpService:JSONEncode(data))
     end)
 end
 
-function RoseUI:LoadConfig()
-    if not self.Config or not self.Config.SaveFile or not isfile or not readfile then return end
+function RoseUI:LoadConfig(filename)
+    local loadName = filename or (self.Config and self.Config.SaveFile) or "roseui_config.json"
+    if not isfile or not readfile or not isfile(loadName) then return end
+    
     local HttpService = game:GetService("HttpService")
-    if isfile(self.Config.SaveFile) then
-        pcall(function()
-            local decoded = HttpService:JSONDecode(readfile(self.Config.SaveFile))
-            if type(decoded) == "table" then
-                for key, value in pairs(decoded) do
-                    for _, el in pairs(self.Elements) do
-                        if type(el) == "table" and el.Flag == key and el.Set then
-                            el:Set(value)
-                        end
+    local ok, data = pcall(function()
+        return HttpService:JSONDecode(readfile(loadName))
+    end)
+    
+    if ok and type(data) == "table" then
+        for key, value in pairs(data) do
+            if self.Flags[key] ~= nil then
+                self.Flags[key] = value
+                
+                
+                for _, el in pairs(self.Elements) do
+                    if type(el) == "table" and el.Flag == key and el.Set then
+                        el:Set(value)
                     end
                 end
             end
-        end)
+        end
     end
 end
 
