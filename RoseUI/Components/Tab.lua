@@ -308,6 +308,25 @@ function Tab:New(tabOptions, window)
         return library.Elements.Button:Add(getNextCol(), options, library)
     end
 
+    function TabObj:AddTextbox(options)
+        return library.Elements.Textbox:Add(getNextCol(), options, library)
+    end
+    
+    function TabObj:AddLabel(options)
+        return library.Elements.Label:Add(getNextCol(), options, library)
+    end
+
+    TabObj.CreateSection = TabObj.AddSection
+    TabObj.CreateParagraph = TabObj.AddParagraph
+    TabObj.CreateColorPicker = TabObj.AddColorPicker
+    TabObj.CreateKeybind = TabObj.AddKeybind
+    TabObj.CreateToggle = TabObj.AddToggle
+    TabObj.CreateSlider = TabObj.AddSlider
+    TabObj.CreateDropdown = TabObj.AddDropdown
+    TabObj.CreateButton = TabObj.AddButton
+    TabObj.CreateTextBox = TabObj.AddTextbox
+    TabObj.CreateLabel = TabObj.AddLabel
+
     return TabObj
 end
 

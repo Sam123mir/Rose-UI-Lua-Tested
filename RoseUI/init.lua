@@ -180,7 +180,7 @@ function RoseUI:CheckVersion(options)
 
         if not parseOk or type(data) ~= "table" or not data.tag_name then
             if not silent then
-                warn("RoseUI: CheckVersion — respuesta de GitHub inesperada")
+                warn("RoseUI: CheckVersion — respuesta de GitHub inesperada o rate limit alcanzado. Detalles: " .. tostring(response))
             end
             return
         end

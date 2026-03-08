@@ -1339,6 +1339,9 @@ function Window:New(options, library)
         end
     end
 
+    WindowObj.CreatePage = WindowObj.MakeTab
+    WindowObj.CreateTab = WindowObj.MakeTab
+
     return WindowObj
 end
 

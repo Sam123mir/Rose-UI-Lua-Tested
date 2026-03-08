@@ -7,7 +7,7 @@
                                          
     RoseUI v2.5.0
     Created by RoseUI Team
-    Build Date: 7/3/2026, 11:57:34 p. m.
+    Build Date: 8/3/2026, 12:05:19 a. m.
     
     This is a unified distribution file. 
 ]]
@@ -1763,6 +1763,9 @@ function Window:New(options, library)
         end
     end
 
+    WindowObj.CreatePage = WindowObj.MakeTab
+    WindowObj.CreateTab = WindowObj.MakeTab
+
     return WindowObj
 end
 
@@ -2247,6 +2250,25 @@ function Tab:New(tabOptions, window)
         return library.Elements.Button:Add(getNextCol(), options, library)
     end
 
+    function TabObj:AddTextbox(options)
+        return library.Elements.Textbox:Add(getNextCol(), options, library)
+    end
+    
+    function TabObj:AddLabel(options)
+        return library.Elements.Label:Add(getNextCol(), options, library)
+    end
+
+    TabObj.CreateSection = TabObj.AddSection
+    TabObj.CreateParagraph = TabObj.AddParagraph
+    TabObj.CreateColorPicker = TabObj.AddColorPicker
+    TabObj.CreateKeybind = TabObj.AddKeybind
+    TabObj.CreateToggle = TabObj.AddToggle
+    TabObj.CreateSlider = TabObj.AddSlider
+    TabObj.CreateDropdown = TabObj.AddDropdown
+    TabObj.CreateButton = TabObj.AddButton
+    TabObj.CreateTextBox = TabObj.AddTextbox
+    TabObj.CreateLabel = TabObj.AddLabel
+
     return TabObj
 end
 
@@ -2379,6 +2401,21 @@ function Section:New(sName, tab)
     function SectionObj:AddPlotGrid(options)
         return library.Elements.PlotGrid:Add(self.Container, options, library)
     end
+
+    SectionObj.CreateButton = SectionObj.AddButton
+    SectionObj.CreateToggle = SectionObj.AddToggle
+    SectionObj.CreateSlider = SectionObj.AddSlider
+    SectionObj.CreateDropdown = SectionObj.AddDropdown
+    SectionObj.CreateSearchDropdown = SectionObj.AddSearchDropdown
+    SectionObj.CreateColorPicker = SectionObj.AddColorPicker
+    SectionObj.CreateKeybind = SectionObj.AddKeybind
+    SectionObj.CreateTextbox = SectionObj.AddTextbox
+    SectionObj.CreateTextBox = SectionObj.AddTextbox
+    SectionObj.CreateLabel = SectionObj.AddLabel
+    SectionObj.CreateParagraph = SectionObj.AddParagraph
+    SectionObj.CreateTargetList = SectionObj.AddTargetList
+    SectionObj.CreateInventoryGrid = SectionObj.AddInventoryGrid
+    SectionObj.CreatePlotGrid = SectionObj.AddPlotGrid
 
     return SectionObj
 end
@@ -4548,7 +4585,7 @@ function RoseUI:CheckVersion(options)
 
         if not parseOk or type(data) ~= "table" or not data.tag_name then
             if not silent then
-                warn("RoseUI: CheckVersion — respuesta de GitHub inesperada")
+                warn("RoseUI: CheckVersion — respuesta de GitHub inesperada o rate limit alcanzado. Detalles: " .. tostring(response))
             end
             return
         end

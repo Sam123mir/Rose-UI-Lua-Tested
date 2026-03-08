@@ -126,6 +126,21 @@ function Section:New(sName, tab)
         return library.Elements.PlotGrid:Add(self.Container, options, library)
     end
 
+    SectionObj.CreateButton = SectionObj.AddButton
+    SectionObj.CreateToggle = SectionObj.AddToggle
+    SectionObj.CreateSlider = SectionObj.AddSlider
+    SectionObj.CreateDropdown = SectionObj.AddDropdown
+    SectionObj.CreateSearchDropdown = SectionObj.AddSearchDropdown
+    SectionObj.CreateColorPicker = SectionObj.AddColorPicker
+    SectionObj.CreateKeybind = SectionObj.AddKeybind
+    SectionObj.CreateTextbox = SectionObj.AddTextbox
+    SectionObj.CreateTextBox = SectionObj.AddTextbox
+    SectionObj.CreateLabel = SectionObj.AddLabel
+    SectionObj.CreateParagraph = SectionObj.AddParagraph
+    SectionObj.CreateTargetList = SectionObj.AddTargetList
+    SectionObj.CreateInventoryGrid = SectionObj.AddInventoryGrid
+    SectionObj.CreatePlotGrid = SectionObj.AddPlotGrid
+
     return SectionObj
 end
 
